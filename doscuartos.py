@@ -14,6 +14,7 @@ import entornos
 from random import choice
 
 #yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
+#nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn
 
 class DosCuartos(entornos.Entorno):
     """
