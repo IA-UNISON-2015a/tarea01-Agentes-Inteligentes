@@ -4,6 +4,8 @@
 doscuartos.py.py
 ------------
 
+#probando de nuevo atte temoc
+
 Ejemplo de un entorno muy simple y agentes idem
 
 """
