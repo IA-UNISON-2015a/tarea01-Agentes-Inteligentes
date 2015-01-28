@@ -68,6 +68,7 @@ class AgenteAleatorio(entornos.Agente):
 
     def programa(self, percepcion):
         return choice(self.acciones)
+    #Nueva Funcion
     def ALGO(self):
 
 
