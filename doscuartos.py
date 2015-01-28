@@ -13,6 +13,7 @@ __author__ = 'juliowaissman'
 import entornos
 from random import choice
 
+#HOLA
 
 class DosCuartos(entornos.Entorno):
     """
