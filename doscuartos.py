@@ -13,7 +13,7 @@ __author__ = 'juliowaissman'
 import entornos
 from random import choice
 
-#HOLA
+#yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
 
 class DosCuartos(entornos.Entorno):
     """
@@ -68,6 +68,7 @@ class AgenteAleatorio(entornos.Agente):
 
     def programa(self, percepcion):
         return choice(self.acciones)
+    def ALGO(self):
 
 
 class AgenteReactivoDoscuartos(entornos.Agente):
