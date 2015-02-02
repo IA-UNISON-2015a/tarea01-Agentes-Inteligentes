@@ -42,11 +42,54 @@ Todos los incisos tienen un valor de 25 puntos sobre la calificación de la tare
 
 
 """
-__author__ = 'escribe_tu_nombre'
+__author__ = 'Gerardo'
 
 import entornos
 # Requiere el modulo entornos.py
 # El modulo doscuartos.py puede ser de utilidad para reutilizar código
 # Agrega los modulos que requieras de python
 
-
+class TresCuartos(entornos.Entorno):
+    
+    def transicion(self, estado, accion):
+        if not self.accion_legal(estado, accion):
+            raise ValueError("La accion no es legal para este estado")
+        
+        posicion, A, B = estado
+        
+        return (('Derecha', A, B) if accion == 'irDerecha' else
+                ('Izquierda', A, B) if accion == 'irIzquierda' else
+                ('Subir', A, B) if accion == 'subir' else
+                ('Bajar', A, B) if accion == 'bajar' else                
+                (posicion, A, B) if accion == 'noOp' else
+                ('down_1', A[0] = 'limpio', B) if accion == 'limpiar' and posicion == 'down_1' else
+                ('down_2', A[1] = 'limpio' , B) if accion == 'limpiar' and posicion == 'down_2' else
+                ('down_3', A[2] = 'limpio', B) if accion == 'limpiar' and posicion == 'down_3' else
+                ('up_1', B[0] = 'limpio', B) if accion == 'limpiar' and posicion == 'up_1' else
+                ('up_2', B[1] = 'limpio', B) if accion == 'limpiar' and posicion == 'up_2' else
+                ('up_3', B[2] = 'limpio', B)) 
+        
+    def sensores(self, estado):
+        posicion, A, B = estado
+        return posicion, A if posicion == 'A' else B        
+    
+    def accion_legal(self, estado, accion):
+        posicion, A, B = estado
+        pisoAbajo = ['down_1', 'down_2', 'down_3']
+        listaAcciones = ["irDerecha", "irIzquierda", "subir", "bajar", "limpiar", "noOp"]
+        if (posicion in pisoAbajo) and accion == 'subir' and accion in listaAcciones:
+            return True
+        elif posicion not in pisoAbajo and accion == 'bajar' and accion in listaAcciones:
+            return True
+        else return False
+        
+        
+    def desempeno_local(self, estado, accion):
+        posicion, A, B = estado
+        if accion == 'noOp' and all( i == 'limpio' for i in A) and all(i == 'limpio' for i in B):
+            return 0
+        elif accion == 'subir' or accion == 'bajar':
+            return -2
+        else:
+            return -1
+        

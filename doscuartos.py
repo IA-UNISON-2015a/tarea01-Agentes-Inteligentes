@@ -11,6 +11,7 @@ Ejemplo de un entorno muy simple y agentes idem
 __author__ = 'juliowaissman'
 
 import entornos
+from tarea_1 import TresCuartos
 from random import choice
 
 
@@ -120,6 +121,7 @@ def test():
                        AgenteAleatorio(['irA', 'irB', 'limpiar', 'noOp']),
                        ('A', 'sucio', 'sucio'), 100)
 
+    """
     print "Prueba del entorno de dos cuartos con un agente reactivo"
     entornos.simulador(DosCuartos(),
                        AgenteReactivoDoscuartos(),
@@ -130,5 +132,6 @@ def test():
                        AgenteReactivoModeloDosCuartos(),
                        ('A', 'sucio', 'sucio'), 100)
 
+    """
 if __name__ == '__main__':
     test()
