@@ -6,24 +6,6 @@ tarea_1.py
 
 Tarea de desarrollo de entornos y agentes
 ==========================================
-
-En esta tarea realiza las siguiente acciones:
-
-1.- Desarrolla un entorno similar al de los dos cuartos, 
-    pero con tres cuartos en el primer piso, 
-    y tres cuartos en el segundo piso. 
-    
-    Las acciones totales serán
-
-    A = {"irDerecha", "irIzquierda", "subir", "bajar", "limpiar" y "noOp"}
-
-    La acción de "subir" solo es legal en el piso de abajo (cualquier cuarto), 
-    y la acción de "bajar" solo es legal en el piso de arriba.
-
-    Las acciones de subir y bajar son mas costosas en término de energía 
-    que ir a la derecha y a la izquierda, por lo que la función de desempeño 
-    debe de ser de tener limpios todos los cuartos, con el menor numero de 
-    acciones posibles, y minimozando subir y bajar en relación a ir a los lados.
 """
 import entornos
 from random import choice
@@ -57,7 +39,7 @@ class TresCuartos(entornos.Entorno):
     def sensores(self, estado):
         robot, A, B, C, level = estado
         return (robot, A if robot == 'A' else
-        B if robot == 'B' else C,level)
+        B if robot == 'B' else C,'arriba' if level == 'arriba' else 'abajo')
 
 
     def accion_legal(self, estado, accion):
@@ -79,16 +61,47 @@ class AgenteAleatorio(entornos.Agente):
     def programa(self, percepcion):
         return choice(self.acciones)
 
+class AgenteReactivoModeloTresCuartos(entornos.Agente):
+    def __init__(self):
+        """
+        Inicializa el modelo interno en el peor de los casos
+
+        """
+        self.modelo = ['A', 'sucio', 'sucio','sucio','abajo']
+        self.lugar = {'A': 1, 'B': 2,'C':3}
+
+    def programa(self, percepcion):
+        robot, situacion, level = percepcion
+
+        # Actualiza el modelo interno
+        self.modelo[0] = robot
+        self.modelo[self.lugar[robot]] = situacion
+        self.modelo[4] = level
+
+        # Decide sobre el modelo interno
+        A, B, C = self.modelo[1], self.modelo[2], self.modelo[3]
+        return ('noOp' if A == B == C == 'limpio' else
+                'limpiar' if (situacion == 'sucio' or situacion == 'limpio(^)' and level == 'abajo') else
+                'limpiar' if (situacion == 'sucio' or situacion == 'limpio(v)' and level == 'arriba') else
+                'irDerecha' if robot != 'C' and level == 'abajo' else
+                'irIzquierda' if robot != 'A' and level == 'arriba'else
+                'subir' if (robot == 'A' or robot == 'C') and level == 'abajo' else
+                'bajar')
+#Despues de probar este modelo, su funcion de desempeño termino en -12, mientras que con el agente aleatorio fue de -131
 
 def test():
     """
     Prueba del entorno y los agentes
 
     """
-    print "Prueba del entorno de dos cuartos con un agente aleatorio"
+    print "Prueba del entorno de tres cuartos con un agente aleatorio"
     entornos.simulador(TresCuartos(),
                        AgenteAleatorio(["irDerecha", "irIzquierda", "subir", "bajar", "limpiar" , "noOp"]),
                        ('A', 'sucio', 'sucio','sucio','abajo'), 100)
+    print "Prueba del entorno de tres cuartos con un agente reactivo"
+    entornos.simulador(TresCuartos(),
+                       AgenteReactivoModeloTresCuartos(),
+                       ('A', 'sucio', 'sucio','sucio', 'abajo'), 100)
 
 __author__ = 'lcontiveros'
 #
