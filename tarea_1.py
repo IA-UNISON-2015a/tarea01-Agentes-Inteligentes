@@ -91,7 +91,7 @@ def test():
                        ('A', 'sucio', 'sucio','sucio','abajo'), 100)
 
 __author__ = 'lcontiveros'
-
+#
 import entornos
 # Requiere el modulo entornos.py
 # El modulo doscuartos.py puede ser de utilidad para reutilizar código
