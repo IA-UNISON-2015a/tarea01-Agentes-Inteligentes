@@ -117,10 +117,16 @@ def test():
 
     """
     print "Prueba del entorno de dos cuartos con un agente aleatorio"
-    entornos.simulador(DosCuartos(),
-                       AgenteAleatorio(['irA', 'irB', 'limpiar', 'noOp']),
-                       ('A', 'sucio', 'sucio'), 100)
-
+    #entornos.simulador(DosCuartos(),
+     #                  AgenteAleatorio(['irA', 'irB', 'limpiar', 'noOp']),
+     #                  ('A', 'sucio', 'sucio'), 100)
+    a = ['','','']
+    b = ['','','']
+    a[0] = a[1] = a[2] = 'sucio'
+    b[0] = b[1] = b[2] = 'sucio'
+    entornos.simulador(TresCuartos(),
+                       AgenteAleatorio(['irIzquierda', 'irDerecha', 'subir', 'bajar', 'limpiar', 'noOp']),
+                        ('down_1', a, b), 100)
     """
     print "Prueba del entorno de dos cuartos con un agente reactivo"
     entornos.simulador(DosCuartos(),

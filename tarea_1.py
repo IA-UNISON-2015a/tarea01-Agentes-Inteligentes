@@ -56,22 +56,48 @@ class TresCuartos(entornos.Entorno):
             raise ValueError("La accion no es legal para este estado")
         
         posicion, A, B = estado
+        if accion == 'irDerecha':
+            return (('down_2', A, B) if posicion == 'down_1' else
+                    ('down_3', A, B) if posicion == 'down_2' or posicion == 'down_3' else
+                    ('up_2', A, B) if posicion == 'up_1' else
+                    ('up_3', A, B))
+        elif accion == 'irIzquierda':
+            return (('down_1', A, B) if posicion == 'down_1' or posicion == 'down_2' else
+                    ('down_2', A, B) if posicion == 'down_3' else
+                    ('up_1', A, B) if posicion == 'up_1' or posicion == 'up_2' else
+                    ('up_2', A, B))
+        elif accion == 'subir':
+            return (('up_1', A, A) if posicion == 'down_1' else
+                    ('up_2', A, B) if posicion == 'down_2' else
+                    ('up_3', A, B))
+        elif accion == 'bajar':
+            return (('down_1', A, B) if posicion == 'up_1' else
+                    ('down_2', A, B) if posicion == 'up_2' else
+                    ('down_3', A, B))
+        elif accion == 'limpiar':
+            if posicion == 'down_1':
+                A[0] = 'limpio'
+            elif posicion == 'down_2': 
+                A[1] ='limpio'
+            elif posicion == 'down_3': 
+                A[2] ='limpio'
+            elif posicion == 'up_1':
+                B[0] = 'limpio'
+            elif posicion == 'up_2': 
+                B[1] = 'limpio'
+            else: 
+                B[2] = 'limpio'
         
-        return (('Derecha', A, B) if accion == 'irDerecha' else
-                ('Izquierda', A, B) if accion == 'irIzquierda' else
-                ('Subir', A, B) if accion == 'subir' else
-                ('Bajar', A, B) if accion == 'bajar' else                
-                (posicion, A, B) if accion == 'noOp' else
-                ('down_1', A[0] = 'limpio', B) if accion == 'limpiar' and posicion == 'down_1' else
-                ('down_2', A[1] = 'limpio' , B) if accion == 'limpiar' and posicion == 'down_2' else
-                ('down_3', A[2] = 'limpio', B) if accion == 'limpiar' and posicion == 'down_3' else
-                ('up_1', B[0] = 'limpio', B) if accion == 'limpiar' and posicion == 'up_1' else
-                ('up_2', B[1] = 'limpio', B) if accion == 'limpiar' and posicion == 'up_2' else
-                ('up_3', B[2] = 'limpio', B)) 
+        return (posicion, A, B)
+
         
     def sensores(self, estado):
         posicion, A, B = estado
-        return posicion, A if posicion == 'A' else B        
+        if 'down' in posicion:
+            return posicion, A[int(posicion[-1]) -1]
+        else:
+            return posicion, B[int(posicion[-1]) -1]
+                
     
     def accion_legal(self, estado, accion):
         posicion, A, B = estado
@@ -81,7 +107,10 @@ class TresCuartos(entornos.Entorno):
             return True
         elif posicion not in pisoAbajo and accion == 'bajar' and accion in listaAcciones:
             return True
-        else return False
+        elif accion == 'irDerecha' or accion == 'irIzquierda' or accion == 'noOp':
+            return True
+        else:
+            return False
         
         
     def desempeno_local(self, estado, accion):

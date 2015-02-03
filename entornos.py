@@ -97,6 +97,7 @@ def simulador(entorno, agente, estado_inicial, pasos=10, verbose=True):
         acciones.append(accion)
         estado = estado_n
 
+
     if verbose:
         print "\n\nSimulacion de entorno tipo " + \
               str(type(entorno)) + \
