@@ -87,7 +87,7 @@ class AgenteReactivoModeloTresCuartos(entornos.Agente):
                 'irIzquierda' if robot != 'A' and level == 'arriba'else
                 'subir' if (robot == 'A' or robot == 'C') and level == 'abajo' else
                 'bajar')
-#Despues de probar este modelo, su funcion de desempeño termino en -12, mientras que con el agente aleatorio fue de -131
+#Despues de probar este modelo, su funcion de desempeño termino en -12, mientras que con el agente aleatorio fue de -132
 
 def test():
     """
