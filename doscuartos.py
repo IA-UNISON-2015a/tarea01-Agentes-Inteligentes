@@ -67,6 +67,13 @@ class AgenteAleatorio(entornos.Agente):
         self.acciones = acciones
 
     def programa(self, percepcion):
+        posicion, estado = percepcion
+        if 'bajar' in self.acciones or 'subir' in self.acciones:
+            self.acciones.pop()
+        if 'down' in posicion and (int(posicion[-1]) == 1 or int(posicion[-1]) == 3):
+            self.acciones.append('subir')
+        elif 'up' in posicion and (int(posicion[-1]) -1 == 1 or int(posicion[-1]) -1 == 3):
+            self.acciones.append('bajar')
         return choice(self.acciones)
 
 
@@ -120,12 +127,12 @@ def test():
     #entornos.simulador(DosCuartos(),
      #                  AgenteAleatorio(['irA', 'irB', 'limpiar', 'noOp']),
      #                  ('A', 'sucio', 'sucio'), 100)
-    a = ['','','']
-    b = ['','','']
-    a[0] = a[1] = a[2] = 'sucio'
-    b[0] = b[1] = b[2] = 'sucio'
+    a = ['','',''] #Constuyo el piso de abajo
+    b = ['','',''] #Consruyo el piso de arriba
+    a[0] = a[1] = a[2] = b[0] = b[1] = b[2] = 'sucio' #Los ensucio
+    
     entornos.simulador(TresCuartos(),
-                       AgenteAleatorio(['irIzquierda', 'irDerecha', 'subir', 'bajar', 'limpiar', 'noOp']),
+                       AgenteAleatorio(['irIzquierda', 'irDerecha', 'limpiar', 'noOp']),
                         ('down_1', a, b), 100)
     """
     print "Prueba del entorno de dos cuartos con un agente reactivo"

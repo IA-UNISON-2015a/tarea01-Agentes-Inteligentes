@@ -6,7 +6,7 @@ entornos.py
 
 
 """
-
+from copy import deepcopy
 __author__ = 'juliowaissman'
 
 class Entorno(object):
@@ -83,19 +83,21 @@ def simulador(entorno, agente, estado_inicial, pasos=10, verbose=True):
     estado = estado_inicial
     performance = 0
     performances = [performance]
-    estados = [estado]
+    estados = [deepcopy(estado)]
     acciones = [None]
 
     for paso in range(pasos):
         percepcion = entorno.sensores(estado)
         accion = agente.programa(percepcion)
+        #accion = 'limpiar'        
         estado_n = entorno.transicion(estado, accion)
         performance += entorno.desempeno_local(estado, accion)
 
         performances.append(performance)
-        estados.append(estado_n)
+        estados.append(deepcopy(estado_n))
         acciones.append(accion)
         estado = estado_n
+        print estados
 
 
     if verbose:

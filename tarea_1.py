@@ -53,7 +53,7 @@ class TresCuartos(entornos.Entorno):
     
     def transicion(self, estado, accion):
         if not self.accion_legal(estado, accion):
-            raise ValueError("La accion no es legal para este estado")
+            raise ValueError("La accion " + accion + " no es legal para el estado " + estado[0])
         
         posicion, A, B = estado
         if accion == 'irDerecha':
@@ -67,7 +67,7 @@ class TresCuartos(entornos.Entorno):
                     ('up_1', A, B) if posicion == 'up_1' or posicion == 'up_2' else
                     ('up_2', A, B))
         elif accion == 'subir':
-            return (('up_1', A, A) if posicion == 'down_1' else
+            return (('up_1', A, B) if posicion == 'down_1' else
                     ('up_2', A, B) if posicion == 'down_2' else
                     ('up_3', A, B))
         elif accion == 'bajar':
@@ -107,9 +107,10 @@ class TresCuartos(entornos.Entorno):
             return True
         elif posicion not in pisoAbajo and accion == 'bajar' and accion in listaAcciones:
             return True
-        elif accion == 'irDerecha' or accion == 'irIzquierda' or accion == 'noOp':
+        elif accion == 'irDerecha' or accion == 'irIzquierda' or accion == 'noOp' or accion == 'limpiar':
             return True
         else:
+            
             return False
         
         
