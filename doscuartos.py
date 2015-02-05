@@ -3,34 +3,28 @@
 """
 doscuartos.py.py
 ------------
-
 Ejemplo de un entorno muy simple y agentes idem
-
 """
 
 __author__ = 'juliowaissman'
 
 import entornos
 from random import choice
-
+from random import randint
 
 class DosCuartos(entornos.Entorno):
     """
     Clase para un entorno de dos cuartos. Muy sencilla solo regrupa métodos.
-
     El estado se define como 
                 (robot, A, B) 
     donde robot puede tener los valores "A", "B"
     A y B pueden tener los valores "limpio", "sucio"
-
     Las acciones válidas en el entorno son 
             "irA", "irB", "limpiar" y "noOp". 
     Todas las acciones son válidas en todos los estados.
-
     Los sensores es una tupla 
                 (robot, limpio?) 
     con la ubicación del robot y el estado de limieza
-
     """
 
     def transicion(self, estado, accion):
@@ -60,7 +54,6 @@ class DosCuartos(entornos.Entorno):
 class AgenteAleatorio(entornos.Agente):
     """
     Un agente que solo regresa una accion al azar entre las acciones legales
-
     """
     def __init__(self, acciones):
         self.acciones = acciones
@@ -72,7 +65,6 @@ class AgenteAleatorio(entornos.Agente):
 class AgenteReactivoDoscuartos(entornos.Agente):
     """
     Un agente reactivo simple
-
     """
 
     def programa(self, percepcion):
@@ -85,35 +77,31 @@ class AgenteReactivoDoscuartos(entornos.Agente):
 class AgenteReactivoModeloDosCuartos(entornos.Agente):
     """
     Un agente reactivo basado en modelo
-
     """
     def __init__(self):
         """
         Inicializa el modelo interno en el peor de los casos
-
         """
         self.modelo = ['A', 'sucio', 'sucio']
         self.lugar = {'A': 1, 'B': 2}
 
     def programa(self, percepcion):
         robot, situacion = percepcion
-
+        r = randint(1,10)
         # Actualiza el modelo interno
         self.modelo[0] = robot
         self.modelo[self.lugar[robot]] = situacion
-
         # Decide sobre el modelo interno
         A, B = self.modelo[1], self.modelo[2]
         return ('noOp' if A == B == 'limpio' else
-                'limpiar' if situacion == 'sucio' else
+                'limpiar' if situacion == 'sucio' and r<=8 else #limpia el 80 por ciento de las veces
                 'irA' if robot == 'B' else
-                'irB')
-
-
+                'irB' if robot == 'A' else 'noOp')
+#despues de hacer varias pruebas el agente con probabilidad de 80% de limpiar tuvo -7 en su peor desempeño,
+#sin embargo sigue siendo mucho mejor que el aleatorio que tuvo -70
 def test():
     """
     Prueba del entorno y los agentes
-
     """
     print "Prueba del entorno de dos cuartos con un agente aleatorio"
     entornos.simulador(DosCuartos(),
