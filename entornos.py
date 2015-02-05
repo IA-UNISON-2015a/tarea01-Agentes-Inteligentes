@@ -89,7 +89,6 @@ def simulador(entorno, agente, estado_inicial, pasos=10, verbose=True):
     for paso in range(pasos):
         percepcion = entorno.sensores(estado)
         accion = agente.programa(percepcion)
-        #accion = 'limpiar'        
         estado_n = entorno.transicion(estado, accion)
         performance += entorno.desempeno_local(estado, accion)
 
@@ -97,7 +96,6 @@ def simulador(entorno, agente, estado_inicial, pasos=10, verbose=True):
         estados.append(deepcopy(estado_n))
         acciones.append(accion)
         estado = estado_n
-        print estados
 
 
     if verbose:

@@ -116,7 +116,7 @@ class TresCuartos(entornos.Entorno):
         
     def desempeno_local(self, estado, accion):
         posicion, A, B = estado
-        if accion == 'noOp' and all( i == 'limpio' for i in A) and all(i == 'limpio' for i in B):
+        if accion == 'noOp' and set(A) == set(B) == 'limpio':
             return 0
         elif accion == 'subir' or accion == 'bajar':
             return -2
