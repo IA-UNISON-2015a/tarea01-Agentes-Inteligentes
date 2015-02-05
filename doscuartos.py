@@ -55,7 +55,7 @@ class DosCuartos(entornos.Entorno):
     def desempeno_local(self, estado, accion):
         robot, A, B = estado
         return 0 if accion == 'noOp' and A == B == 'limpio' else -1
-
+#Probelma 3
 class AgenteReactivoModeloDosCuartos(entornos.Agente):
     """
     Un agente reactivo basado en modelo
