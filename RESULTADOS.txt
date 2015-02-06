@@ -1,0 +1,27 @@
+Problema 2:
+El agente reactivo basado en modelo, para el entorno de tres cuartos
+es mucho mas eficiento que el agente aleatorio. Llega a un 
+performance de -12 y no pasa de ahi, es decir no sigue bajando
+su desempeno, mientras que el agente aleatorio, sigue operando 
+(de manera aleatorio) y al tomar decisiones de esa manera su
+desempeno sigue empeorando.
+
+Problema 3:
+El agente aleatorio sigue siendo el mas ineficiente por su
+naturaleza, en cambio el agente que no sabe la situacion en la que
+se encuentra el cuarto creo que es lo mas racional posible, por lo 
+tanto limpia los cuartos y deja de operar, lo que detiene el
+descenso de su desempeno; esto debido a que recuerda lo que hizo
+en movimientos pasados (no se si era lo correcto hacer eso pero
+fue lo mas racional que se me ocurrio).
+
+Problema 4:
+El agente que solo limpia el 80 de las veces logra tener un mejor
+desempeno que el agente aleatorio, a pesar de que es probable
+que no sucede asi, la mayoria de las veces lo es. Esto debido
+a la caracteristica de que el entorno se hace estocastico.
+
+NOTAAA:
+Profe !, para el problema 3 (donde el agente no sabe la situacion del
+cuarto), hay que comentar y descomentar unas lineas en el entorno,
+usted sabra que ondas.
