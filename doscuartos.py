@@ -13,6 +13,7 @@ __author__ = 'juliowaissman'
 import entornos
 from tarea_1 import TresCuartos
 from random import choice
+from random import random
 import collections
 
 class DosCuartos(entornos.Entorno):
@@ -39,19 +40,20 @@ class DosCuartos(entornos.Entorno):
             raise ValueError("La accion no es legal para este estado")
 
         robot, A, B = estado
-
+        
         return (('A', A, B) if accion == 'irA' else
                 ('B', A, B) if accion == 'irB' else
                 (robot, A, B) if accion == 'noOp' else
                 ('A', 'limpio', B) if accion == 'limpiar' and robot == 'A' else
                 ('B', A, 'limpio'))
-
+        
+        
     def sensores(self, estado):
-        robot, A, B = estado
-        #return robot, A if robot == 'A' else B
+        robot, A, B = estado #Esta linea se comenta y la de abajo para el problema 3
+        return robot, A if robot == 'A' else B
         
         #Para el problema tres:
-        return robot
+        #return robot
 
     def accion_legal(self, estado, accion):
         return accion in ('irA', 'irB', 'limpiar', 'noOp')
@@ -61,7 +63,34 @@ class DosCuartos(entornos.Entorno):
         return 0 if accion == 'noOp' and A == B == 'limpio' else -1
 
 
-class AgenteAMedias(entornos.Agente):
+class AgenteProblema4(entornos.Agente):
+    
+    def __init__(self, acciones):
+        self.acciones = acciones
+        """
+        Inicializa el modelo interno en el peor de los casos
+
+        """
+        self.modelo = ['A', 'sucio', 'sucio']
+        self.lugar = {'A': 1, 'B': 2}
+        
+    def programa(self, percepciones):
+        # Actualiza el modelo interno
+        posicion, situacion = percepciones
+        self.modelo[0] = posicion
+        self.modelo[self.lugar[posicion]] = situacion
+
+        # Decide sobre el modelo interno
+        A, B = self.modelo[1], self.modelo[2]
+        num = random()
+        accion = choice(self.acciones)
+        return ('noOp' if A == B == 'limpio' else
+                'limpiar' if accion == 'limpiar' and num <= 8 else
+                 'irA' if posicion == 'B' else
+                 'irB')
+                
+
+class AgenteProblema3(entornos.Agente):
     """
     Un agente que no sabe el estado del cuarto
     """
@@ -206,24 +235,30 @@ def test():
     print "Prueba del entorno tres cuartos con un agente aleatorio"
     entornos.simulador(TresCuartos(),
                        AgenteAleatorioTresCuartos(['irIzquierda', 'irDerecha', 'limpiar', 'noOp']),
-                       ('down_1', a, b), 100)   
-    """
+                       ('down_1', a, b), 100) 
+    
+    
     print "Prueba del entorno de dos cuartos con un agente aleatorio"
     entornos.simulador(DosCuartos(),
                       AgenteAleatorioDosCuartos(['irA', 'irB', 'limpiar', 'noOp']),
                       ('A', 'sucio', 'sucio'), 100)
-    
-    
-    print "Prueba del entorno de dos cuartos con un agente que no ve como esta el rollo"
+    """
+    """
+    print "Prueba del entorno de dos cuartos con un agente que no ve el estado del cuarto"
     entornos.simulador(DosCuartos(),
-                       AgenteAMedias(['irA', 'irB', 'limpiar', 'noOp']),
+                       AgenteProblema3(['irA', 'irB', 'limpiar', 'noOp']),
                        ('A', 'sucio', 'sucio'), 100)
-"""
+    """
+    print "Prueba del entorno dos cuartos con un agente aleatorio. Problema 4"  
+    entornos.simulador(DosCuartos(),
+                      AgenteProblema4(['irA', 'irB', 'limpiar', 'noOp']),
+                      ('A', 'sucio', 'sucio'), 100)
+
     print "Prueba del entorno de dos cuartos con un agente reactivo"
     entornos.simulador(DosCuartos(),
-                       AgenteReactivoModeloDosCuartos(),
+                       AgenteAleatorioDosCuartos(['irA', 'irB', 'limpiar', 'noOp']),
                        ('A', 'sucio', 'sucio'), 100)
 
-    """
+    
 if __name__ == '__main__':
     test()
