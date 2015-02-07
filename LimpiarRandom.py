@@ -12,23 +12,24 @@ __author__ = 'juliowaissman'
 
 import entornos
 from random import choice
+import random
 
 
 class DosCuartos(entornos.Entorno):
     """
     Clase para un entorno de dos cuartos. Muy sencilla solo regrupa métodos.
 
-    El estado se define como 
-                (robot, A, B) 
+    El estado se define como
+                (robot, A, B)
     donde robot puede tener los valores "A", "B"
     A y B pueden tener los valores "limpio", "sucio"
 
-    Las acciones válidas en el entorno son 
-            "irA", "irB", "limpiar" y "noOp". 
+    Las acciones válidas en el entorno son
+            "irA", "irB", "limpiar" y "noOp".
     Todas las acciones son válidas en todos los estados.
 
-    Los sensores es una tupla 
-                (robot, limpio?) 
+    Los sensores es una tupla
+                (robot, limpio?)
     con la ubicación del robot y el estado de limieza
 
     """
@@ -42,8 +43,10 @@ class DosCuartos(entornos.Entorno):
         return (('A', A, B) if accion == 'irA' else
                 ('B', A, B) if accion == 'irB' else
                 (robot, A, B) if accion == 'noOp' else
-                ('A', 'limpio', B) if accion == 'limpiar' and robot == 'A' else
-                ('B', A, 'limpio'))
+                ('A', 'limpio', B) if accion == 'limpiar' and robot == 'A' and random.random()<0.80 else
+                ('B', A, 'limpio') if accion == 'limpiar' and robot == 'B' and random.random()<0.80 else
+                estado)
+
 
     def sensores(self, estado):
         robot, A, B = estado
@@ -69,20 +72,7 @@ class AgenteAleatorio(entornos.Agente):
         return choice(self.acciones)
 
 
-class AgenteReactivoDoscuartos(entornos.Agente):
-    """
-    Un agente reactivo simple
-
-    """
-
-    def programa(self, percepcion):
-        robot, situacion = percepcion
-        return ('limpiar' if situacion == 'sucio' else
-                'irA' if robot == 'B' else
-                'irB')
-
-
-class AgenteReactivoModeloDosCuartos(entornos.Agente):
+class AgenteLimpiara(entornos.Agente):
     """
     Un agente reactivo basado en modelo
 
@@ -109,35 +99,6 @@ class AgenteReactivoModeloDosCuartos(entornos.Agente):
                 'irA' if robot == 'B' else
                 'irB')
 
-class AgenteNoSabeSiLimpio(entornos.Agente):
-    """
-    Un agente reactivo basado en modelo que no sabe si una habitacion esta limpio
-
-    """
-    def __init__(self):
-        """
-        Inicializa el modelo interno en el peor de los casos
-
-        """
-        self.yalimpie = [0,0]
-        self.modelo = ['A']
-        self.lugar = {'A': 1, 'B': 2}
-
-    def programa(self, percepcion):
-        robot, situacion = percepcion
-
-        # Actualiza el modelo interno
-        self.modelo[0] = robot
-
-        # Decide sobre el modelo interno
-        if ((robot == 'A' and self.yalimpie[0]==0) or (robot == 'B' and self.yalimpie[1]==0)):
-            self.yalimpie[self.lugar[robot]-1] = 1
-            return 'limpiar'
-
-        return ('noOp' if self.yalimpie == [1,1] else
-                'irA' if robot == 'B' and self.yalimpie[1] == 1 else
-                'irB')
-
 
 def test():
     """
@@ -149,19 +110,10 @@ def test():
                        AgenteAleatorio(['irA', 'irB', 'limpiar', 'noOp']),
                        ('A', 'sucio', 'sucio'), 100)
 
-    print "Prueba del entorno de dos cuartos con un agente reactivo"
-    entornos.simulador(DosCuartos(),
-                       AgenteReactivoDoscuartos(),
-                       ('A', 'sucio', 'sucio'), 100)
 
-    print "Prueba del entorno de dos cuartos con un agente reactivo"
+    print "Prueba del entorno de dos cuartos con un agente que limpia el 80% de las veces"
     entornos.simulador(DosCuartos(),
-                       AgenteReactivoModeloDosCuartos(),
-                       ('A', 'sucio', 'sucio'), 100)
-
-    print "Prueba del entorno de dos cuartos con un agente reactivo que no sabe si una habitacion esta limpio"
-    entornos.simulador(DosCuartos(),
-                       AgenteNoSabeSiLimpio(),
+                       AgenteLimpiara(),
                        ('A', 'sucio', 'sucio'), 100)
 
 if __name__ == '__main__':
