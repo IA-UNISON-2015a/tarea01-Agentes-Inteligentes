@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-doscuartos.py.py
+doscuartos.py.py   gfhfhfhgfhgfh
 ------------
 
 Ejemplo de un entorno muy simple y agentes idem
@@ -13,6 +13,8 @@ __author__ = 'juliowaissman'
 import entornos
 from random import choice
 
+#yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
+#nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn
 
 class DosCuartos(entornos.Entorno):
     """
@@ -67,6 +69,8 @@ class AgenteAleatorio(entornos.Agente):
 
     def programa(self, percepcion):
         return choice(self.acciones)
+    #Nueva Funcion
+    def ALGO(self):
 
 
 class AgenteReactivoDoscuartos(entornos.Agente):
