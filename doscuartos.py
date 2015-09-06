@@ -38,13 +38,27 @@ class DosCuartos(entornos.Entorno):
             raise ValueError("La accion no es legal para este estado")
 
         robot, A, B = estado
-
+'''
         return (('A', A, B) if accion == 'irA' else
                 ('B', A, B) if accion == 'irB' else
                 (robot, A, B) if accion == 'noOp' else
                 ('A', 'limpio', B) if accion == 'limpiar' and robot == 'A' else
                 ('B', A, 'limpio'))
+'''
 
+        if accion == 'limpiar' and robot == 'A':
+            if random.randint(1, 100)<80: # El 80% de las veces
+                return (robot, A, B) # Regresa el nuevo estado
+            else:  # El 20% restante no hace nada
+                return ('A', 'noOp', B) # Regresa el nuevo estado
+        if accion == 'noOp' and robot == 'B':
+            if random.randint(1, 100)<80:
+                return (robot, A, B) # Regresa el nuevo estado
+            else:
+                return ('B', A, 'noOp') # Regresa el nuevo estado  
+        
+        return (robot,A,B)
+    
     def sensores(self, estado):
         robot, A, B = estado
         return robot, A if robot == 'A' else B
@@ -197,6 +211,17 @@ def test():
     entornos.simulador(DosCuartos(),
                        AgenteReactivoModeloDosCuartos(),
                        ('A', 'sucio', 'sucio'), 100)
+
+
+    print "Prueba del entorno Tres cuartos"
+    lista=[]
+    for i in range(0,3*3):
+        lista.append('sucio')
+    lista.append(0)
+    
+    entornos.simulador(TresCuartos(),
+                        AgenteAleatorio(['irDerecha', 'irIzquierda', 'irArriba', 'irAbajo', 'limpiar' , 'noOp']),
+                        lista, 100)
 
 if __name__ == '__main__':
     test()
