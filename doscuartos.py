@@ -38,14 +38,17 @@ class DosCuartos(entornos.Entorno):
             raise ValueError("La accion no es legal para este estado")
 
         robot, A, B = estado
-'''
+
+        '''
         return (('A', A, B) if accion == 'irA' else
                 ('B', A, B) if accion == 'irB' else
                 (robot, A, B) if accion == 'noOp' else
                 ('A', 'limpio', B) if accion == 'limpiar' and robot == 'A' else
                 ('B', A, 'limpio'))
-'''
+        '''
 
+        # __________#Inciso (4) de la tarea!!!!__________
+        
         if accion == 'limpiar' and robot == 'A':
             if random.randint(1, 100)<80: # El 80% de las veces
                 return (robot, A, B) # Regresa el nuevo estado
@@ -58,6 +61,8 @@ class DosCuartos(entornos.Entorno):
                 return ('B', A, 'noOp') # Regresa el nuevo estado  
         
         return (robot,A,B)
+        
+        #_______________________________________________
     
     def sensores(self, estado):
         robot, A, B = estado
