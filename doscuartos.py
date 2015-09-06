@@ -8,11 +8,11 @@ Ejemplo de un entorno muy simple y agentes idem
 
 """
 
-__author__ = 'juliowaissman'
+__author__ = 'Luis Fernando Suarez Astiazaran'
 
 import entornos
 from random import choice
-
+import random
 
 class DosCuartos(entornos.Entorno):
     """
@@ -56,7 +56,9 @@ class DosCuartos(entornos.Entorno):
         robot, A, B = estado
         return 0 if accion == 'noOp' and A == B == 'limpio' else -1
 
-
+"""
+______________________________________________________________________________
+"""
 class AgenteAleatorio(entornos.Agente):
     """
     Un agente que solo regresa una accion al azar entre las acciones legales
@@ -68,7 +70,9 @@ class AgenteAleatorio(entornos.Agente):
     def programa(self, percepcion):
         return choice(self.acciones)
 
-
+"""
+______________________________________________________________________________
+"""
 class AgenteReactivoDoscuartos(entornos.Agente):
     """
     Un agente reactivo simple
@@ -81,7 +85,9 @@ class AgenteReactivoDoscuartos(entornos.Agente):
                 'irA' if robot == 'B' else
                 'irB')
 
-
+"""
+______________________________________________________________________________
+"""
 class AgenteReactivoModeloDosCuartos(entornos.Agente):
     """
     Un agente reactivo basado en modelo
@@ -109,6 +115,68 @@ class AgenteReactivoModeloDosCuartos(entornos.Agente):
                 'irA' if robot == 'B' else
                 'irB')
 
+"""
+______________________________________________________________________________
+"""
+class TresCuartos(entornos.Entorno):
+
+
+        # son tres cuartos arriva y tres cuartos abajo #
+    def transicion(self, estado, accion):
+        if not self.accion_legal(estado, accion):
+            raise ValueError("La accion no es legal para este estado")
+
+        lista=list(estado)
+
+        if accion == 'irDerecha':
+            if lista[-1] == 3*3-1:
+                lista[-1]=0
+            else: 
+                lista[-1]+=1
+            return lista
+        elif accion == 'irIzquierda':
+            if lista[-1]==0:
+                lista[-1]=3*3-1
+            else: 
+                lista[-1]-=1
+            return lista
+        elif accion == 'irArriba':
+            lista[-1]-=3
+            if lista[-1]<0:
+                lista[-1]+=3*3-1
+            return lista
+        elif accion == 'irAbajo':
+            lista[-1]+=3
+            if lista[-1]>3*3-1:
+                lista[-1]-=3*3-1
+            return lista
+        elif accion == 'limpiar':
+            lista[lista[-1]]= 'limpio'
+            return lista
+
+        else:
+            return lista
+ 
+    def sensores(self, estado):
+        
+        return estado[-1],estado[estado[-1]]
+
+    def accion_legal(self, estado, accion):
+        return accion in ('irDerecha', 'irIzquierda', 'irArriba', 'irAbajo', 'limpiar' , 'noOp')
+
+    def desempeno_local(self, estado, accion):
+        return 0 if accion == 'noOp' and self.isClean(estado) else -1
+
+    def isClean(self,estado):
+        for s in range(0,3*3):
+            if estado[s]=='sucio':
+                return False
+        return True
+        
+        
+"""
+______________________________________________________________________________
+"""
 
 def test():
     """
