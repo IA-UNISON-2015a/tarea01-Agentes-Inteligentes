@@ -44,7 +44,7 @@ la tarea.
 
 
 """
-__author__ = 'escribe_tu_nombre'
+__author__ = 'Luis Fernando Suarez Astiazaran'
 
 import entornos
 # Requiere el modulo entornos.py
