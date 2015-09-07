@@ -10,30 +10,27 @@ __author__ = 'juliowaissman'
 
 import entornos
 from random import choice
+from random import random
 
 
 class DosCuartos(entornos.Entorno):
     """
-    -------------------------
-    Ejercicio 3
-    -------------------------
-    En vez de iniciar con los cuartos en "limpio" o "sucio", dependiendo de la entrada,
-    se recibe solamente el cuarto inicial. Los cuartos comenzarán con un estado "???", el cual
-    puede ser en realidad limpio o sucio, pero no se puede saber cuál de los 2 es.
-    Una vez que se limpia un cuarto, se marca como "limpio".
-
-    
+    Modificación del problema de los 2 cuartos. El 80% de los intentos de limpiado de un cuarto
+    lo dejan limpio, pero el otro 20% lo dejan sucio.
     """
 
+    #El valor p en esta función es la probabilidad de dejar el cuarto sucio
     def transicion(self, estado, accion):
         if not self.accion_legal(estado, accion):
             raise ValueError("La accion no es legal para este estado")
 
         robot, A, B = estado
 
+
+        p = 0.2
         return (('A', A, B) if accion == 'irA' else
                 ('B', A, B) if accion == 'irB' else
-                (robot, A, B) if accion == 'noOp' else
+                (robot, A, B) if accion == 'noOp' or random() < p else
                 ('A', 'limpio', B) if accion == 'limpiar' and robot == 'A' else
                 ('B', A, 'limpio'))
 
@@ -46,7 +43,6 @@ class DosCuartos(entornos.Entorno):
             return accion in ('irB', 'limpiar', 'noOp')
         else:
             return accion in ('irA', 'limpiar', 'noOp')
-        
 
     def desempeno_local(self, estado, accion):
         robot, A, B = estado
@@ -71,7 +67,9 @@ class AgenteReactivoDoscuartos(entornos.Agente):
 
     def programa(self, percepcion):
         robot, situacion = percepcion
-        return ('limpiar' if situacion == '???' else
+
+        
+        return ('limpiar' if situacion == 'sucio' else
                 'irA' if robot == 'B' else
                 'irB')
 
@@ -84,7 +82,7 @@ class AgenteReactivoModeloDosCuartos(entornos.Agente):
         """
         Inicializa el modelo interno en el peor de los casos
         """
-        self.modelo = ['A', '???', '???']
+        self.modelo = ['A', 'sucio', 'sucio']
         self.lugar = {'A': 1, 'B': 2}
 
     def programa(self, percepcion):
@@ -97,7 +95,7 @@ class AgenteReactivoModeloDosCuartos(entornos.Agente):
         # Decide sobre el modelo interno
         A, B = self.modelo[1], self.modelo[2]
         return ('noOp' if A == B == 'limpio' else
-                'limpiar' if situacion == '???' else
+                'limpiar' if situacion == 'sucio' else
                 'irA' if robot == 'B' else
                 'irB')
 
@@ -108,23 +106,23 @@ def test():
     """
     
     #Número de pruebas
-    n = 100
-
+    n = 50
+    
     
     print "Prueba del entorno de dos cuartos con un agente aleatorio"
     entornos.simulador(DosCuartos(),
                        AgenteAleatorio(['irA', 'irB', 'limpiar', 'noOp']),
-                       ('A', "???", "???"), n)
+                       ('A', 'sucio', 'sucio'), n)
 
     print "Prueba del entorno de dos cuartos con un agente reactivo"
     entornos.simulador(DosCuartos(),
                        AgenteReactivoDoscuartos(),
-                       ('A', "???", "???"), n)
+                       ('A', 'sucio', 'sucio'), n)
 
     print "Prueba del entorno de dos cuartos con un agente reactivo"
     entornos.simulador(DosCuartos(),
                        AgenteReactivoModeloDosCuartos(),
-                       ('A', "???", "???"), n)
+                       ('A', 'sucio', 'sucio'), n)
 
 if __name__ == '__main__':
     test()
