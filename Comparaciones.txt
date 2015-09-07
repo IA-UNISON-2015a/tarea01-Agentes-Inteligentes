@@ -1,0 +1,28 @@
+--------------
+Ejercicio 2
+--------------
+
+El agente reactivo basado en modelo resultó ser más eficiente en costo de energía, 
+pues una vez que limpia todos los cuartos, deja de consumir energía, mientras que
+el aleatorio seguirá consumiendo para la mayoría de las acciones que realize.
+
+Basándonos en las pruebas realizadas en el entorno, el agente reactivo simple es 
+el que gasta más energía, incluso más que el aleatorio.
+
+
+--------------
+Ejercicio 3
+--------------
+El ejercicio es similar al problema original, excepto que al no saber el estado de
+los cuartos, se supone que comienzan estando sucios.
+El agente reactivo basado en modelo será el más racional, ya que se detiene después
+de haber limpiado todos los cuartos.
+El agente reactivo simple es el más costoso, incluso más que el aleatorio, ya que
+todas sus acciones tendrán un costo mientras que en el aleatorio hay acciones de
+costo cero.
+
+--------------
+Ejercicio 4
+--------------
+Parecido al problema original y con resultados similares. Al ser estocástico habrá pequeñas
+diferencias en costos, pero los resultados siguen el patrón de los demás ejercicios.
