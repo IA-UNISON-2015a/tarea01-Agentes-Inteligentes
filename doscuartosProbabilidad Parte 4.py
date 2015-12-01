@@ -10,6 +10,7 @@ __author__ = 'juliowaissman'
 
 import entornos
 from random import choice
+from random import randint
 
 
 class DosCuartos(entornos.Entorno):
@@ -32,12 +33,19 @@ class DosCuartos(entornos.Entorno):
             raise ValueError("La accion no es legal para este estado")
 
         robot, A, B = estado
-
-        return (('A', A, B) if accion == 'irA' else
-                ('B', A, B) if accion == 'irB' else
-                (robot, A, B) if accion == 'noOp' else
-                ('A', 'limpio', B) if accion == 'limpiar' and robot == 'A' else
-                ('B', A, 'limpio'))
+        var = randint(1,10)
+        if(var <= 2):
+            return (('A', A, B) if accion == 'irA' else
+                    ('B', A, B) if accion == 'irB' else
+                    (robot, A, B) if accion == 'noOp' else
+                    ('A', A, B) if accion == 'limpiar' and robot == 'A' else
+                    ('B', A, B))
+        else:
+            return (('A', A, B) if accion == 'irA' else
+                    ('B', A, B) if accion == 'irB' else
+                    (robot, A, B) if accion == 'noOp' else
+                    ('A', 'limpio', B) if accion == 'limpiar' and robot == 'A' else
+                    ('B', A, 'limpio'))
 
     def sensores(self, estado):
         robot, A, B = estado
