@@ -15,15 +15,15 @@ from random import randint
 class DosCuartos(entornos.Entorno):
     """
     Clase para un entorno de dos cuartos. Muy sencilla solo regrupa métodos.
-    El estado se define como 
-                (robot, A, B) 
+    El estado se define como
+                (robot, A, B)
     donde robot puede tener los valores "A", "B"
     A y B pueden tener los valores "limpio", "sucio"
-    Las acciones válidas en el entorno son 
-            "irA", "irB", "limpiar" y "noOp". 
+    Las acciones válidas en el entorno son
+            "irA", "irB", "limpiar" y "noOp".
     Todas las acciones son válidas en todos los estados.
-    Los sensores es una tupla 
-                (robot, limpio?) 
+    Los sensores es una tupla
+                (robot, limpio?)
     con la ubicación del robot y el estado de limieza
     """
 
@@ -98,25 +98,25 @@ class AgenteReactivoModeloDosCuartos(entornos.Agente):
                 'irA' if robot == 'B' else
                 'irB' if robot == 'A' else 'noOp')
 #despues de hacer varias pruebas el agente con probabilidad de 80% de limpiar tuvo -7 en su peor desempeño,
-#sin embargo sigue siendo mucho mejor que el aleatorio que tuvo -70
+#sin embargo sigue siendo mucho mejor que el aleatorio que tuvo -75
 def test():
     """
     Prueba del entorno y los agentes
     """
-    print "Prueba del entorno de dos cuartos con un agente aleatorio"
+    print ("Prueba del entorno de dos cuartos con un agente aleatorio",
     entornos.simulador(DosCuartos(),
                        AgenteAleatorio(['irA', 'irB', 'limpiar', 'noOp']),
-                       ('A', 'sucio', 'sucio'), 100)
+                       ('A', 'sucio', 'sucio'), 100))
 
-    print "Prueba del entorno de dos cuartos con un agente reactivo"
+    print ("Prueba del entorno de dos cuartos con un agente reactivo",
     entornos.simulador(DosCuartos(),
                        AgenteReactivoDoscuartos(),
-                       ('A', 'sucio', 'sucio'), 100)
+                       ('A', 'sucio', 'sucio'), 100))
 
-    print "Prueba del entorno de dos cuartos con un agente reactivo"
+    print ("Prueba del entorno de dos cuartos con un agente reactivo modelo ",
     entornos.simulador(DosCuartos(),
                        AgenteReactivoModeloDosCuartos(),
-                       ('A', 'sucio', 'sucio'), 100)
+                       ('A', 'sucio', 'sucio'), 100))
 
 if __name__ == '__main__':
     test()

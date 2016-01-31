@@ -98,17 +98,17 @@ def simulador(entorno, agente, estado_inicial, pasos=10, verbose=True):
         estado = estado_n
 
     if verbose:
-        print "\n\nSimulacion de entorno tipo " + \ 
-              str(type(entorno)) + \ 
-              " con el agente tipo " + \ 
-              str(type(agente)) + "\n"
+        print ("\n\nSimulacion de entorno tipo " +
+              str(type(entorno)) +
+              " con el agente tipo " +
+              str(type(agente)) + "\n")
 
-        print 'Paso'.center(10) + \ 
-              'Estado'.center(40) + \ 
-              'Accion'.center(25) + \ 
-              u'Desempeño'.center(15)
+        print ('Paso'.center(10) +
+              'Estado'.center(40) +
+              'Accion'.center(25) +
+              u'Desempeño'.center(15))
 
-        print '_' * (10 + 40 + 25 + 15)
+        print ('_' * (10 + 40 + 25 + 15))
         
         for i in range(pasos):
             print (str(i).center(10) + 
@@ -116,6 +116,6 @@ def simulador(entorno, agente, estado_inicial, pasos=10, verbose=True):
                    str(acciones[i]).center(25) + 
                    str(performances[i]).rjust(12))
         
-        print '_' * (10 + 40 + 25 + 15) + '\n\n'
+        print ('_' * (10 + 40 + 25 + 15) + '\n\n')
 
     return estados, acciones, performances

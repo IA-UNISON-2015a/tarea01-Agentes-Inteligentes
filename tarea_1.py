@@ -94,14 +94,14 @@ def test():
     Prueba del entorno y los agentes
 
     """
-    print "Prueba del entorno de tres cuartos con un agente aleatorio"
+    print ("Prueba del entorno de tres cuartos con un agente aleatorio" ,
     entornos.simulador(TresCuartos(),
                        AgenteAleatorio(["irDerecha", "irIzquierda", "subir", "bajar", "limpiar" , "noOp"]),
-                       ('A', 'sucio', 'sucio','sucio','abajo'), 100)
-    print "Prueba del entorno de tres cuartos con un agente reactivo"
+                       ('A', 'sucio', 'sucio','sucio','abajo'), 100))
+    print ("Prueba del entorno de tres cuartos con un agente reactivo" ,
     entornos.simulador(TresCuartos(),
                        AgenteReactivoModeloTresCuartos(),
-                       ('A', 'sucio', 'sucio','sucio', 'abajo'), 100)
+                       ('A', 'sucio', 'sucio','sucio', 'abajo'), 100))
 
 __author__ = 'lcontiveros'
 #
