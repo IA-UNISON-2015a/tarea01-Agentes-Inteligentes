@@ -95,7 +95,7 @@ class AgenteReactivoModeloDosCuartos(entornos.Agente):
         A, B, C, D, E, F = self.modelo[1], self.modelo[2], self.modelo[3], self.modelo[4], self.modelo[5], self.modelo[6]
         return ('noOp' if A == B == C == D == E == F == 'limpio' else
                 'limpiar' if situacion == 'sucio' else
-                'irDerecha' if robot == 'A' or robot == 'B' and C != 'limpio' else
+                'irDerecha' if robot == 'A' or robot == 'B' else
                 'subir' if robot == 'C' else
                 'irIzquierda' if robot == 'F' or robot == 'E' else
                 'bajar')
