@@ -118,17 +118,17 @@ def test():
     print "Prueba del entorno de dos cuartos con un agente aleatorio"
     entornos.simulador(DosCuartos(),
                        AgenteAleatorio(['irA', 'irB', 'limpiar', 'noOp']),
-                       ('A', 'sucio', 'sucio'), 100)
+                       ('A', 'sucio', 'sucio'), 20)
 
     print "Prueba del entorno de dos cuartos con un agente reactivo"
     entornos.simulador(DosCuartos(),
                        AgenteReactivoDoscuartos(),
-                       ('A', 'sucio', 'sucio'), 100)
+                       ('A', 'sucio', 'sucio'), 20)
 
     print "Prueba del entorno de dos cuartos con un agente reactivo"
     entornos.simulador(DosCuartos(),
                        AgenteReactivoModeloDosCuartos(),
-                       ('A', 'sucio', 'sucio'), 100)
+                       ('A', 'sucio', 'sucio'), 20)
 
 if __name__ == '__main__':
     test()

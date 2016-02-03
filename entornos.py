@@ -15,7 +15,7 @@ class Entorno(object):
 
     """
 
-    def transicion(self, estado, estado_anterior, accion):
+    def transicion(self, estado, accion):
         """
         @param estado: Tupla con un estado válido para el entorno
         @param accion: Uno de los elementos de acciones_legales( estado)
