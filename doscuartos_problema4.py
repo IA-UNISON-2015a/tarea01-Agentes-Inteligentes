@@ -39,12 +39,13 @@ class DosCuartos(entornos.Entorno):
             raise ValueError("La accion no es legal para este estado")
 
         robot, A, B = estado
-
+        prob = random()*100
         return (('A', A, B) if accion == 'irA' else
                 ('B', A, B) if accion == 'irB' else
                 (robot, A, B) if accion == 'noOp' else
-                ('A', 'limpio', B) if accion == 'limpiar' and robot == 'A' else
-                ('B', A, 'limpio'))
+                ('A', 'limpio', B) if accion == 'limpiar' and robot == 'A' and prob >= 80 else
+                ('B', A, 'limpio') if accion == 'limpiar' and robot == 'B' and prob >= 80 else
+                (robot, A, B))
 
     def sensores(self, estado):
         robot, A, B = estado
@@ -78,8 +79,8 @@ class AgenteReactivoDoscuartos(entornos.Agente):
 
     def programa(self, percepcion):
         robot, situacion = percepcion
-        prob = random()*100
-        return ('limpiar' if situacion == 'sucio' and prob >= 80 else
+
+        return ('limpiar' if situacion == 'sucio' else
                 'irA' if robot == 'B' else
                 'irB')
 
