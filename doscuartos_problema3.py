@@ -8,28 +8,27 @@ Ejemplo de un entorno muy simple y agentes idem
 
 """
 
+__author__ = 'juliowaissman'
+
 import entornos
 from random import choice
 
 
-__author__ = 'juliowaissman'
-
- 
 class DosCuartos(entornos.Entorno):
     """
     Clase para un entorno de dos cuartos. Muy sencilla solo regrupa métodos.
 
-    El estado se define como 
-                (robot, A, B) 
+    El estado se define como
+                (robot, A, B)
     donde robot puede tener los valores "A", "B"
     A y B pueden tener los valores "limpio", "sucio"
 
-    Las acciones válidas en el entorno son 
-            "irA", "irB", "limpiar" y "noOp". 
+    Las acciones válidas en el entorno son
+            "irA", "irB", "limpiar" y "noOp".
     Todas las acciones son válidas en todos los estados.
 
-    Los sensores es una tupla 
-                (robot, limpio?) 
+    Los sensores es una tupla
+                (robot, limpio?)
     con la ubicación del robot y el estado de limieza
 
     """
@@ -38,24 +37,24 @@ class DosCuartos(entornos.Entorno):
         if not self.accion_legal(estado, accion):
             raise ValueError("La accion no es legal para este estado")
 
-        robot, a, b = estado
+        robot, A, B = estado
 
-        return (('A', a, b) if accion == 'irA' else
-                ('B', a, b) if accion == 'irB' else
-                (robot, a, b) if accion == 'noOp' else
-                ('A', 'limpio', b) if accion == 'limpiar' and robot == 'A' else
-                ('B', a, 'limpio'))
+        return (('A', A, B) if accion == 'irA' else
+                ('B', A, B) if accion == 'irB' else
+                (robot, A, B) if accion == 'noOp' else
+                ('A', A, B) if accion == 'limpiar' and robot == 'A' else
+                ('B', A, B))
 
     def sensores(self, estado):
-        robot, a, b = estado
-        return robot, a if robot == 'A' else b
+        robot, A, B = estado
+        return robot, A if robot == 'A' else B
 
     def accion_legal(self, estado, accion):
         return accion in ('irA', 'irB', 'limpiar', 'noOp')
 
     def desempeno_local(self, estado, accion):
-        robot, a, b = estado
-        return 0 if accion == 'noOp' and a == b == 'limpio' else -1
+        robot, A, B = estado
+        return 0 if accion == 'noOp' and A == B == 'limpio' else -1
 
 
 class AgenteAleatorio(entornos.Agente):
@@ -94,17 +93,18 @@ class AgenteReactivoModeloDosCuartos(entornos.Agente):
 
         """
         self.modelo = ['A', 'sucio', 'sucio']
+        self.lugar = {'A': 1, 'B': 2}
 
     def programa(self, percepcion):
         robot, situacion = percepcion
 
         # Actualiza el modelo interno
         self.modelo[0] = robot
-        self.modelo[' AB'.index(robot)] = situacion
+        self.modelo[self.lugar[robot]] = situacion
 
         # Decide sobre el modelo interno
-        a, b = self.modelo[1], self.modelo[2]
-        return ('noOp' if a == b == 'limpio' else
+        A, B = self.modelo[1], self.modelo[2]
+        return ('noOp' if A == B == 'limpio' else
                 'limpiar' if situacion == 'sucio' else
                 'irA' if robot == 'B' else
                 'irB')
