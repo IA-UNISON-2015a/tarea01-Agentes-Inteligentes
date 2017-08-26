@@ -51,10 +51,141 @@ Todos los incisos tienen un valor de 25 puntos sobre la calificación de
 la tarea.
 
 """
-__author__ = 'escribe_tu_nombre'
+__author__ = 'Erick Fernando López Fimbres'
 
-import entorno_o
+import entornos_o
+from random import choice
 
 # Requiere el modulo entornos_o.py
 # Usa el modulo doscuartos_o.py para reutilizar código
 # Agrega los modulos que requieras de python
+
+class SeisCuartos(entornos_o.Entorno):
+    """
+    Clase para un entorno de seis cuartos.
+
+    El estado se define como (robot, A, B, C, D, E, F)
+    donde robot puede tener los valores "A", "B", "C", "D", "E" y "F"
+    A, B, C, D, E, F pueden tener los valores "limpio", "sucio"
+
+    Las acciones válidas en el entorno son ("ir_Izquierda", "ir_Derecha", "limpiar", "nada") en
+    cualquier cuarto ("subir") solo si se encuentra en los cuartos de abajo.
+    ("bajar") solo si se encuentra en los cuartos de arriba ("D","E","F").
+    
+    Los sensores es una tupla (robot, limpio?)
+    con la ubicación del robot y el estado de limpieza
+    """
+    
+    def __init__(self, x0=["A", "sucio", "sucio","sucio", "sucio","sucio", "sucio"]):
+        """
+        Por default inicialmente el robot está en A y losdemas cuartos
+        están sucios
+        """
+        
+        self.x = x0[:]
+        self.desempeño = 0
+
+    def acción_legal(self, acción):
+        acción_legal=True
+        if(acción=="bajar" and (self.x[0]=="A" or self.x[0]=="B" or self.x[0]=="C")):
+            acción_legal=False
+        if(acción=="subir"and (self.x[0]=="D" or self.x[0]=="E" or self.x[0]=="F")):
+            acción_legal=False
+        return acción_legal
+
+    def transición(self, acción):
+        try:
+            
+            if not self.acción_legal(acción):
+                raise ValueError("La acción",acción," no es legal para el estado",self.x[0])
+            else:
+                dic = {1:"A", 2:"B",3:"C",4:"D",5:"E",6:"F"}
+                
+                robot, a, b,c,d,e,f = self.x
+                if(acción=="subir"):
+                    self.x[0]=dic[" ABCDEF".find(robot)+3]
+                    self.desempeño-=5
+                elif(acción=="bajar"):
+                    self.x[0]=dic[" ABCDEF".find(robot)-3]
+                    self.desempeño-=5
+                elif(acción=="ir_Derecha" and (robot!="C" and robot!="F")):
+                    self.x[0]=dic[" ABCDEF".find(robot)+1]
+                    self.desempeño-=1
+                elif(acción=="ir_Izquierda" and (robot!="A" and robot!="D")):
+                    self.x[0]=dic[" ABCDEF".find(robot)-1]
+                    self.desempeño-=1
+                elif acción is "limpiar":
+                    self.x[" ABCDEF".find(self.x[0])] = "limpio"
+                    self.desempeño -= 1
+                elif (acción is "nada" and a is "sucio" or b is "sucio" or c is "sucio" or d is "sucio" or e is "sucio" or f is "sucio"):
+                    self.desempeño -= 1
+                else:
+                    self.desempeño -= 0
+                print(self.desempeño)
+                
+        except Exception as error:
+            print('Error: ' + repr(error))
+
+    def percepción(self):
+        return self.x[0], self.x[" ABCDEF".find(self.x[0])]
+
+class AgenteAleatorio(entornos_o.Agente):
+    """
+    Un agente que solo regresa una accion al azar entre las acciones legales
+
+    """
+    def __init__(self, acciones):
+        self.acciones = acciones
+
+    def programa(self, percepcion):
+        return choice(self.acciones)
+    
+class AgenteReactivoModeloSeisCuartos(entornos_o.Agente):
+    """
+    Un agente reactivo basado en modelo
+
+    """
+    def __init__(self):
+        """
+        Inicializa el modelo interno en el peor de los casos
+
+        """
+        self.modelo = ['A', 'sucio', 'sucio', 'sucio', 'sucio', 'sucio', 'sucio']
+
+    def programa(self, percepción):
+        robot, situación = percepción
+
+        # Actualiza el modelo interno
+        self.modelo[0] = robot
+        self.modelo[' ABCDEF'.find(robot)] = situación
+
+        # Decide sobre el modelo interno
+        a, b, c, d, e, f = self.modelo[1], self.modelo[2],self.modelo[3], self.modelo[4],self.modelo[5], self.modelo[6]
+        print(situación)
+        return ('nada' if a == b == c == d == e == f == 'limpio' else
+                'limpiar' if situación == 'sucio' else
+                'ir_Derecha' if robot == 'B' or robot== 'A' else
+                'ir_Izquierda' if robot=='E' or robot== 'F' else
+                'subir' if robot=='C' else
+                'nada')
+def test():
+    """
+    Prueba del entorno y los agentes
+
+    """
+    """print("Prueba del entorno con un agente aleatorio")
+    entornos_o.simulador(SeisCuartos(),
+                         AgenteAleatorio(['ir_Izquierda', 'ir_Derecha','subir','bajar', 'limpiar', 'nada']),
+                         100)
+    """
+    print("Prueba del entorno con un agente reactivo con modelo")
+    entornos_o.simulador(SeisCuartos(), AgenteReactivoModeloSeisCuartos(), 100)
+
+
+    """print("Prueba del entorno con un agente reactivo")
+    entornos_o.simulador(DosCuartos(), AgenteReactivoDoscuartos(), 100)
+
+    """
+
+if __name__ == "__main__":
+    test()
