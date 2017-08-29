@@ -67,7 +67,7 @@ class Environment:
         self.performance = 0
 
     def transition(self, action):
-        if not self.is_legal(action):
+        if action not in self.legal_actions():
             raise ValueError("Accion ilegal")
         return self._transition(action)
 
@@ -83,7 +83,7 @@ class Environment:
 
     @property
     def legal_actions(self):
-        raise NotImplementedError
+        return self.actions
 
     @property
     def percerpts(self):
