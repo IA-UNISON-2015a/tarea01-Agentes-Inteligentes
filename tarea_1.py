@@ -76,7 +76,7 @@ class Environment:
 
     @property
     def state(self):
-        return self._state
+        return tuple(self._state)
 
     @property
     def legal_actions(self):
@@ -100,7 +100,7 @@ class TwoRoomEnvironment(Environment):
     '''
     Clase para el problema con dos cuartos y una aspiradora
     '''
-    actions = {'go_a', 'go_b', 'clean', 'noop'}
+    actions = ('go_a', 'go_b', 'clean', 'noop')
 
     def _transition(self, action):
         if action == 'noop':
@@ -114,11 +114,10 @@ class TwoRoomEnvironment(Environment):
             self._state[0] = 1
         elif action == 'clean':
             position = self_state[0]
-            self._state[position + 1] = 'clean'
+            self._clean_room(position)
 
-    @property
-    def state(self):
-        return self._state[:]
+    def _clean_room(self, room):
+        self._state[room + 1] = 'clean'
 
     @property
     def percerpts(self):
@@ -128,6 +127,12 @@ class TwoRoomEnvironment(Environment):
     @staticmethod
     def default_state():
         return [0, 'dirty', 'dirty']
+
+
+class StochasticTwoRoomEnvironment(TwoRoomEnvironment):
+    def _clean_room(self, room):
+        if random.random() < 0.8:
+            super()._clean_room(room)
 
 
 class HouseState(namedtuple('HouseState', ['position', 'rooms'])):
