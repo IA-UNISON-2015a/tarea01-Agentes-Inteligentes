@@ -67,23 +67,40 @@ class Environment:
         self.performance = 0
 
     def transition(self, action):
+        '''
+        Metodo publico para representar la transicion de un estado a otro
+        '''
         if action not in self.legal_actions:
             raise ValueError("Accion ilegal")
         return self._transition(action)
 
     def _transition(self, action):
+        '''
+        Reemplaza este metodo para describir transiciones entre estados
+        '''
         raise NotImplementedError
 
     @property
     def state(self):
+        '''
+        Propiedad de solo lectura que regresa el estado del modelo
+        Regresar una copia o un objeto inmutable s'il vous plait
+        '''
         return tuple(self._state)
 
     @property
     def legal_actions(self):
+        '''
+        Atributo que regresa un iterable con todas las acciones posibles
+        para el estado del modelo
+        '''
         return self.actions
 
     @property
     def percepts(self):
+        '''
+        Atributo para las percepciones que permite el modelo
+        '''
         return self.state
 
     def __repr__(self):
@@ -93,7 +110,10 @@ class Environment:
                                                     self.performance)
     @staticmethod
     def default_state():
-        return None
+        '''
+        Metodo para construir un estado por defecto
+        '''
+        raise ValueError('Este ambiente no especifica un estado por default')
 
 
 class TwoRoomEnvironment(Environment):
@@ -130,12 +150,19 @@ class TwoRoomEnvironment(Environment):
 
 
 class StochasticTwoRoomEnvironment(TwoRoomEnvironment):
+    '''
+    Entorno para el mismo problema de dos cuartos con la diferencia de que
+    existe una probablidad de 0.2 de que un cuarto no se limpie
+    '''
     def _clean_room(self, room):
         if random.random() < 0.8:
             super()._clean_room(room)
 
 
 class HouseState(namedtuple('HouseState', ['position', 'rooms'])):
+    '''
+    Representa un estado en el problema de seis cuartos
+    '''
     def __str__(self):
         position, rooms = self
         dirty_rooms = sum(1 for x in rooms if x == 'dirty')
@@ -171,11 +198,7 @@ class HouseEnvironment(Environment):
             self._state = HouseState(position - 3, rooms)
         elif action == 'clean':
             self.performance -= 1
-            self._clean_room(position)
-
-    def _clean_room(self, idx):
-        position, rooms = self._state
-        rooms[position] = 'clean'
+            rooms[position] = 'clean'
 
     @property
     def state(self):
@@ -204,6 +227,10 @@ class HouseEnvironment(Environment):
 
 
 class BlindHouseEnvironment(HouseEnvironment):
+    '''
+    Entorno de los seis cuartos con la unica diferencia siendo que la
+    percepcion es mas limitada (solo incluye la posicion)
+    '''
     @property
     def percepts(self):
         position, _ = self._state
@@ -211,6 +238,9 @@ class BlindHouseEnvironment(HouseEnvironment):
 
 
 class RandomAgent:
+    '''
+    Agente aleatorio generico
+    '''
     def __init__(self, environment):
         self.environment = environment
 
@@ -257,6 +287,10 @@ class ReactiveHouseAgent:
 
 
 class BlindReactiveHouseAgent(ReactiveHouseAgent):
+    '''
+    Agente reactivo para el problema de los seis cuartos a ciegas,
+    construido sobre el agente reactivo normal
+    '''
     def __init__(self):
         super().__init__()
         self.cycle_state = 'clean'
@@ -269,6 +303,9 @@ class BlindReactiveHouseAgent(ReactiveHouseAgent):
 
 
 class TwoRoomReactiveModelAgent:
+    '''
+    Agente reactivo para el problema de dos cuartos
+    '''
     def __init__(self):
         self.starting_position = None
 
