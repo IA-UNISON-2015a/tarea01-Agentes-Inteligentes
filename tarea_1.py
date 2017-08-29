@@ -83,7 +83,7 @@ class Environment:
         return self.actions
 
     @property
-    def percerpts(self):
+    def percepts(self):
         return self.state
 
     def __repr__(self):
@@ -113,14 +113,14 @@ class TwoRoomEnvironment(Environment):
         elif action == 'go_b':
             self._state[0] = 1
         elif action == 'clean':
-            position = self_state[0]
+            position = self._state[0]
             self._clean_room(position)
 
     def _clean_room(self, room):
         self._state[room + 1] = 'clean'
 
     @property
-    def percerpts(self):
+    def percepts(self):
         position = self._state[0]
         return position, self._state[position + 1]
 
@@ -209,6 +209,7 @@ class BlindHouseEnvironment(HouseEnvironment):
         position, _ = self._state
         return position
 
+
 class RandomAgent:
     def __init__(self, environment):
         self.environment = environment
@@ -267,6 +268,24 @@ class BlindReactiveHouseAgent(ReactiveHouseAgent):
         return super().program((position, self.cycle_state))
 
 
+class TwoRoomReactiveModelAgent:
+    def __init__(self):
+        self.starting_position = None
+
+    def program(self, percepts):
+        position, room_state = percepts
+        if self.starting_position is None:
+            self.starting_position = position
+
+        return ('clean' if room_state == 'dirty' else
+                'noop' if position != self.starting_position else
+                'go_a' if position == 1 else 'go_b')
+
+    def __repr__(self):
+        return "TwoRoomReactiveModelAgent"
+
+
+
 def simulate(environment, agent, steps=20):
     for _ in range(steps):
         p = environment.percepts
@@ -310,4 +329,14 @@ if __name__ == '__main__':
     # probar agente reactivo a ciegas
     environment = BlindHouseEnvironment()
     agent = BlindReactiveHouseAgent()
+    test_agent(agent, environment)
+
+    # probar agente aleatorio para dos cuartos estocastico
+    environment = StochasticTwoRoomEnvironment()
+    agent = RandomAgent(environment)
+    test_agent(agent, environment)
+
+    # probar agente aleatorio para dos cuartos estocastico
+    environment = StochasticTwoRoomEnvironment()
+    agent = TwoRoomReactiveModelAgent()
     test_agent(agent, environment)
