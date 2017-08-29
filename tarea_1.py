@@ -149,6 +149,12 @@ class TwoRoomEnvironment(Environment):
         return [0, 'dirty', 'dirty']
 
 
+class BlindTwoRoomEnvironment(TwoRoomEnvironment):
+    @property
+    def percepts(self):
+        return self._state[0]
+
+
 class StochasticTwoRoomEnvironment(TwoRoomEnvironment):
     '''
     Entorno para el mismo problema de dos cuartos con la diferencia de que
@@ -169,11 +175,17 @@ class HouseState(namedtuple('HouseState', ['position', 'rooms'])):
         return "Estado({} sucios, posicion: {})".format(dirty_rooms, position)
 
 
-
 class HouseEnvironment(Environment):
     '''
     Modelo del ambiente de una casa de seis cuartos, para que una
     aspiradora robotica haga lo suyo
+
+    La posicion actual se representa en el estado de acuerdo con este diagrama:
+    -------
+    |3|4|5|
+    -------
+    |0|1|2|
+    -------
     '''
     actions = {'left', 'right', 'up', 'down', 'clean', 'noop'}
 
@@ -191,7 +203,7 @@ class HouseEnvironment(Environment):
                            else position
             self._state = HouseState(new_position, rooms)
         elif action == 'up':
-            self.performance -= 2
+            self.performance -= 2 # es mas costoso moverse verticalmente
             self._state = HouseState(position + 3, rooms)
         elif action == 'down':
             self.performance -= 2
@@ -203,7 +215,7 @@ class HouseEnvironment(Environment):
     @property
     def state(self):
         current = self._state
-        return HouseState(current.position, current.rooms[:])
+        return HouseState(current.position, current.rooms[:]) #hacer copia
 
     @property
     def legal_actions(self):
@@ -226,6 +238,7 @@ class HouseEnvironment(Environment):
         return HouseState(0, ['dirty' for _ in range(6)])
 
 
+# Esto lo hice de mas porque no se leer
 class BlindHouseEnvironment(HouseEnvironment):
     '''
     Entorno de los seis cuartos con la unica diferencia siendo que la
@@ -286,6 +299,7 @@ class ReactiveHouseAgent:
             .format(self.starting_position)
 
 
+# Esto tambien esta de mas
 class BlindReactiveHouseAgent(ReactiveHouseAgent):
     '''
     Agente reactivo para el problema de los seis cuartos a ciegas,
@@ -320,6 +334,20 @@ class TwoRoomReactiveModelAgent:
 
     def __repr__(self):
         return "TwoRoomReactiveModelAgent"
+
+
+class BlindTwoRoomReactiveModelAgent(TwoRoomReactiveModelAgent):
+    def __init__(self):
+        super().__init__()
+        self.cycle_state = 'clean'
+
+    def program(self, position):
+        if self.starting_position != positiion and cycle_state == 'dirty':
+            return 'noop'
+
+        self.cycle_state = 'clean' if self.cycle_state == 'dirty' else 'dirty'
+        return super().program((position, self.cycle_state))
+
 
 
 
@@ -365,8 +393,8 @@ if __name__ == '__main__':
     test_agent(agent, environment)
 
     # probar agente reactivo a ciegas
-    environment = BlindHouseEnvironment()
-    agent = BlindReactiveHouseAgent()
+    environment = BlindTwoRoomEnvironment()
+    agent = BlindTwoRoomReactiveModelAgent()
     test_agent(agent, environment)
 
     # probar agente aleatorio a ciegas
