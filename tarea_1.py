@@ -141,7 +141,10 @@ class HouseEnvironment(Environment):
             self._state = HouseState(position - 3, rooms)
         elif action == 'clean':
             self.performance -= 1
-            rooms[position] = 'clean'
+            self._clean_room(position)
+
+    def _clean_room(self, idx):
+        rooms[position] = 'clean'
 
     @property
     def state(self):
@@ -272,4 +275,4 @@ if __name__ == '__main__':
     # probar agente reactivo a ciegas
     environment = BlindHouseEnvironment()
     agent = BlindReactiveHouseAgent()
-    test_agent(agent, environment)
+    test_agent(agent, environment)z
