@@ -71,10 +71,6 @@ class Environment:
             raise ValueError("Accion ilegal")
         return self._transition(action)
 
-    @staticmethod
-    def default_state():
-        return None
-
     def is_legal(self, action):
         raise NotImplementedError
 
@@ -98,12 +94,43 @@ class Environment:
         return "{}(estado={}, desempeño={})".format(class_name,
                                                     self._state,
                                                     self.performance)
+    @staticmethod
+    def default_state():
+        return None
+
 
 class TwoRoomEnvironment(Environment):
-    def __init__(self, x0=None):
-        if x0 is None:
-            x0 = HouseState(0, ['dirty' for _ in range(6)])
-        super().__init__(x0)
+    '''
+    Clase para el problema con dos cuartos y una aspiradora
+    '''
+    actions = {'go_a', 'go_b', 'clean', 'noop'}
+
+    def _transition(self, action):
+        if action == 'noop':
+            return
+        else:
+            self.performance -= 1
+
+        elif action == 'go_a':
+            self._state[0] = 0
+        elif action == 'go_b':
+            self._state[0] = 1
+        elif action == 'clean':
+            position = self_state[0]
+            self._state[position + 1] = 'clean'
+
+    @property
+    def state(self):
+        return self._state[:]
+
+    @property
+    def percerpts(self):
+        position = self._state[0]
+        return position, self._state[position + 1]
+
+    @staticmethod
+    def default_state():
+        return [0, 'dirty', 'dirty']
 
 
 class HouseState(namedtuple('HouseState', ['position', 'rooms'])):
@@ -170,14 +197,14 @@ class HouseEnvironment(Environment):
 
         return tuple(actions)
 
-    @staticmethod
-    def default_state():
-        return HouseState(0, ['dirty' for _ in range(6)])
-
     @property
     def percepts(self):
         position, rooms = self._state
         return position, rooms[position]
+
+    @staticmethod
+    def default_state():
+        return HouseState(0, ['dirty' for _ in range(6)])
 
 
 class BlindHouseEnvironment(HouseEnvironment):
