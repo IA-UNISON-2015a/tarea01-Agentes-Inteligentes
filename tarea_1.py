@@ -109,7 +109,9 @@ class HouseEnvironment(Environment):
     '''
     actions = {'left', 'right', 'up', 'down', 'clean', 'noop'}
 
-    def __init__(self, x0=HouseState(0, ['dirty' for _ in range(6)])):
+    def __init__(self, x0=None):
+        if x0 is None:
+            x0 = HouseState(0, ['dirty' for _ in range(6)])
         super().__init__(x0)
 
     def is_legal(self, action):
@@ -163,6 +165,12 @@ class HouseEnvironment(Environment):
         return position, rooms[position]
 
 
+class BlindHouseEnvironment(HouseEnvironment):
+    @property
+    def percepts(self):
+        position, _ = self._state
+        return position
+
 class RandomAgent:
     def __init__(self, environment):
         self.environment = environment
@@ -186,6 +194,7 @@ class ReactiveHouseAgent:
     route = [1, 2, 5, 0, 3, 4]
     def __init__(self):
         self.starting_position = None
+        self.done = False
 
     def program(self, percerpts):
         position, room_state = percerpts
@@ -198,6 +207,7 @@ class ReactiveHouseAgent:
         if room_state == 'dirty':
             return 'clean'
         elif self.starting_position == next_room:
+            self.done = True
             return 'noop'
         else:
             return self.movement_sequence[position]
@@ -207,6 +217,18 @@ class ReactiveHouseAgent:
             .format(self.starting_position)
 
 
+class BlindReactiveHouseAgent(ReactiveHouseAgent):
+    def __init__(self):
+        super().__init__()
+        self.cycle_state = 'clean'
+
+    def program(self, position):
+        if self.done:
+            return 'noop'
+        self.cycle_state = 'clean' if self.cycle_state == 'dirty' else 'dirty'
+        return super().program((position, self.cycle_state))
+
+
 def simulate(environment, agent, steps=20):
     for _ in range(steps):
         p = environment.percepts
@@ -214,7 +236,6 @@ def simulate(environment, agent, steps=20):
         environment.transition(a)
 
         yield environment.state, p, a, environment.performance
-
 
 
 def print_simulation(simulation):
@@ -230,11 +251,25 @@ def print_simulation(simulation):
     print('-' * 79)
 
 
+def test_agent(agent, environment, steps=20):
+    print('Simulando ambiente {} con agente {}'.format(environment, agent))
+    simulation = simulate(environment, agent)
+    print_simulation(simulation)
+
+
 if __name__ == '__main__':
+
+    # probar agente aleatorio
     environment = HouseEnvironment()
     agent = RandomAgent(environment)
-    print('Simulando ambiente {} con agente {}'.format(environment, agent))
+    test_agent(agent, environment)
 
-    simulation = simulate(environment, agent)
+    # probar agente reactivo
+    environment = HouseEnvironment()
+    agent = ReactiveHouseAgent()
+    test_agent(agent, environment)
 
-    print_simulation(simulation)
+    # probar agente reactivo a ciegas
+    environment = BlindHouseEnvironment()
+    agent = BlindReactiveHouseAgent()
+    test_agent(agent, environment)
