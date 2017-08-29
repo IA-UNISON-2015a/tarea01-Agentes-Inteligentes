@@ -67,12 +67,9 @@ class Environment:
         self.performance = 0
 
     def transition(self, action):
-        if action not in self.legal_actions():
+        if action not in self.legal_actions:
             raise ValueError("Accion ilegal")
         return self._transition(action)
-
-    def is_legal(self, action):
-        raise NotImplementedError
 
     def _transition(self, action):
         raise NotImplementedError
@@ -111,7 +108,7 @@ class TwoRoomEnvironment(Environment):
         else:
             self.performance -= 1
 
-        elif action == 'go_a':
+        if action == 'go_a':
             self._state[0] = 0
         elif action == 'go_b':
             self._state[0] = 1
@@ -147,12 +144,6 @@ class HouseEnvironment(Environment):
     aspiradora robotica haga lo suyo
     '''
     actions = {'left', 'right', 'up', 'down', 'clean', 'noop'}
-
-    def is_legal(self, action):
-        pos = self._state.position
-        return (action in self.actions and not
-                (action == 'up' and  pos > 2) or
-                (action == 'down' and pos < 3))
 
     def _transition(self, action):
         position, rooms = self._state
