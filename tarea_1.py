@@ -346,9 +346,10 @@ def print_simulation(simulation):
 
 
 def test_agent(agent, environment, steps=20):
-    print('Simulando ambiente {} con agente {}'.format(environment, agent))
+    print('==Simulacion==\nEntorno: {}\nAgente: {}'.format(environment, agent))
     simulation = simulate(environment, agent)
     print_simulation(simulation)
+    print('\n')
 
 
 if __name__ == '__main__':
