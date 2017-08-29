@@ -65,11 +65,11 @@ class Environment:
         self.performance = 0
 
     def transition(self, action):
-        if not self.legal_action(action):
+        if not self.is_legal(action):
             raise ValueError("Accion ilegal")
         return self._transition(action)
 
-    def legal_action(self, action):
+    def is_legal(self, action):
         raise NotImplementedError
 
     def _transition(self, action):
@@ -78,6 +78,10 @@ class Environment:
     @property
     def state(self):
         return self._state
+
+    @property
+    def legal_actions(self):
+        raise NotImplementedError
 
     @property
     def percerpts(self):
@@ -90,7 +94,13 @@ class Environment:
                                                     self.performance)
 
 
-HouseState = namedtuple('HouseState', ['position', 'rooms'])
+class HouseState(namedtuple('HouseState', ['position', 'rooms'])):
+    def __str__(self):
+        position, rooms = self
+        dirty_rooms = sum(1 for x in rooms if x == 'dirty')
+        return "Estado({} sucios, posicion: {})".format(dirty_rooms, position)
+
+
 
 class HouseEnvironment(Environment):
     '''
@@ -102,7 +112,7 @@ class HouseEnvironment(Environment):
     def __init__(self, x0=HouseState(0, ['dirty' for _ in range(6)])):
         super().__init__(x0)
 
-    def legal_action(self, action):
+    def is_legal(self, action):
         pos = self._state.position
         return (action in self.actions and not
                 (action == 'up' and  pos > 2) or
@@ -118,7 +128,6 @@ class HouseEnvironment(Environment):
             self._state = HouseState(new_position, rooms)
         elif action == 'right':
             self.performance -= 1
-            print((position + 1) % 3)
             new_position = position + 1 if (position + 1) % 3 \
                            else position
             self._state = HouseState(new_position, rooms)
@@ -138,9 +147,31 @@ class HouseEnvironment(Environment):
         return HouseState(current.position, current.rooms[:])
 
     @property
+    def legal_actions(self):
+        position, _ = self._state
+        actions = set(self.actions)
+        if position > 2:
+            actions.remove('up')
+        else:
+            actions.remove('down')
+
+        return tuple(actions)
+
+    @property
     def percepts(self):
         position, rooms = self._state
         return position, rooms[position]
+
+
+class RandomAgent:
+    def __init__(self, environment):
+        self.environment = environment
+
+    def program(self, _):
+        return random.choice(self.environment.legal_actions)
+
+    def __repr__(self):
+        return "RandomAgent"
 
 
 class ReactiveHouseAgent:
@@ -171,22 +202,39 @@ class ReactiveHouseAgent:
         else:
             return self.movement_sequence[position]
 
+    def __repr__(self):
+        return "ReactiveHouseAgent(starting_position={})" \
+            .format(self.starting_position)
+
 
 def simulate(environment, agent, steps=20):
-    for step in range(steps):
+    for _ in range(steps):
         p = environment.percepts
-        print(p)
         a = agent.program(p)
         environment.transition(a)
 
-        yield step, environment.state, a, environment.performance
+        yield environment.state, p, a, environment.performance
 
-environment = HouseEnvironment()
-agent = ReactiveHouseAgent()
 
-for step, state, action, performance in simulate(environment, agent):
-    print(state, action)
 
-# Requiere el modulo entornos_o.py
-# Usa el modulo doscuartos_o.py para reutilizar código
-# Agrega los modulos que requieras de python
+def print_simulation(simulation):
+    row_str = '|{0:4}|{2:10}|{3:30}|{4:17}|{1:12}|'
+    print('-' * 79)
+    print(row_str.format('paso', 'acción', 'desempeño',
+                        'estado', 'percepción'))
+    print('-' * 79)
+    for step, result in enumerate(simulation):
+        state, percept, action, performance = result
+        print(row_str.format(step, action, performance, str(state), str(percept)))
+
+    print('-' * 79)
+
+
+if __name__ == '__main__':
+    environment = HouseEnvironment()
+    agent = RandomAgent(environment)
+    print('Simulando ambiente {} con agente {}'.format(environment, agent))
+
+    simulation = simulate(environment, agent)
+
+    print_simulation(simulation)
