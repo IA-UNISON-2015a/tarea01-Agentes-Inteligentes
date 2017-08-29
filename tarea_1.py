@@ -368,6 +368,11 @@ if __name__ == '__main__':
     agent = BlindReactiveHouseAgent()
     test_agent(agent, environment)
 
+    # probar agente aleatorio a ciegas
+    environment = BlindHouseEnvironment()
+    agent = RandomAgent(environment)
+    test_agent(agent, environment)
+
     # probar agente aleatorio para dos cuartos estocastico
     environment = StochasticTwoRoomEnvironment()
     agent = RandomAgent(environment)
