@@ -357,7 +357,7 @@ if __name__ == '__main__':
     agent = RandomAgent(environment)
     test_agent(agent, environment)
 
-    # probar agente aleatorio para dos cuartos estocastico
+    # probar agente reactivo para dos cuartos estocastico
     environment = StochasticTwoRoomEnvironment()
     agent = TwoRoomReactiveModelAgent()
     test_agent(agent, environment)
