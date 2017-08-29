@@ -60,7 +60,9 @@ class Environment:
     '''
     Clase abstracta para ambientes, implementa cosas utiles
     '''
-    def __init__(self, x0):
+    def __init__(self, x0=None):
+        if x0 is None:
+            x0 = self.default_state()
         self._state = x0
         self.performance = 0
 
@@ -68,6 +70,10 @@ class Environment:
         if not self.is_legal(action):
             raise ValueError("Accion ilegal")
         return self._transition(action)
+
+    @staticmethod
+    def default_state():
+        return None
 
     def is_legal(self, action):
         raise NotImplementedError
@@ -93,6 +99,12 @@ class Environment:
                                                     self._state,
                                                     self.performance)
 
+class TwoRoomEnvironment(Environment):
+    def __init__(self, x0=None):
+        if x0 is None:
+            x0 = HouseState(0, ['dirty' for _ in range(6)])
+        super().__init__(x0)
+
 
 class HouseState(namedtuple('HouseState', ['position', 'rooms'])):
     def __str__(self):
@@ -108,11 +120,6 @@ class HouseEnvironment(Environment):
     aspiradora robotica haga lo suyo
     '''
     actions = {'left', 'right', 'up', 'down', 'clean', 'noop'}
-
-    def __init__(self, x0=None):
-        if x0 is None:
-            x0 = HouseState(0, ['dirty' for _ in range(6)])
-        super().__init__(x0)
 
     def is_legal(self, action):
         pos = self._state.position
@@ -144,6 +151,7 @@ class HouseEnvironment(Environment):
             self._clean_room(position)
 
     def _clean_room(self, idx):
+        position, rooms = self._state
         rooms[position] = 'clean'
 
     @property
@@ -161,6 +169,10 @@ class HouseEnvironment(Environment):
             actions.remove('down')
 
         return tuple(actions)
+
+    @staticmethod
+    def default_state():
+        return HouseState(0, ['dirty' for _ in range(6)])
 
     @property
     def percepts(self):
@@ -275,4 +287,4 @@ if __name__ == '__main__':
     # probar agente reactivo a ciegas
     environment = BlindHouseEnvironment()
     agent = BlindReactiveHouseAgent()
-    test_agent(agent, environment)z
+    test_agent(agent, environment)
