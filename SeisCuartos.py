@@ -3,9 +3,26 @@ __author__ = "Roberto Salazar"
 import entornos_o
 import doscuartos_o
 
+class AgenteReactivoModeloSeisCuartos(entornos_o.Agente):
+    """Clase para el agente reactivo basado en modelo con seis cuartos"""
+    def __init__(self):
+        self.modelo = ['A', 'sucio', 'sucio', 'sucio', 'sucio', 'sucio', 'sucio'] #se inicializa el modelo
+
+    def programa(self, percepción):
+        robot, situación = percepción
+
+        self.modelo[0] = robot
+        self.modelo[' ABCDEF'.find(robot)] = situación
+
+        return ('nada' if not 'sucio' in self.modelo[1:] else
+                'limpiar' if situación == 'sucio' else
+                'ir_Derecha' if robot == 'A' or robot == 'B' else
+                'bajar' if robot == 'C' else
+                'ir_Izquierda')
+
 class SeisCuartos(entornos_o.Entorno):
     """Clase de los seis cuartos. Tres cuartos arriba y tres abajo."""
-    def __init__(self, x0 = ["B", "sucio", "sucio", "sucio", "sucio", "sucio", "sucio"]):
+    def __init__(self, x0 = ["A", "sucio", "sucio", "sucio", "sucio", "sucio", "sucio"]):
         """Basicamente el mismo constructor que la clase DosCuartos."""
         self.x = x0[:]
         self.desempeño = 0
@@ -64,4 +81,8 @@ if __name__ == "__main__":
     print("Prueba del entorno con un agente aleatorio")
     entornos_o.simulador(SeisCuartos(),
                          doscuartos_o.AgenteAleatorio(["ir_Derecha", "ir_Izquierda", "subir", "bajar", "limpiar", "nada"]),
+                         100)
+    print("Prueba del entorno con un reactivo basado en modelo")
+    entornos_o.simulador(SeisCuartos(),
+                         AgenteReactivoModeloSeisCuartos(),
                          100)

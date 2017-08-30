@@ -7,15 +7,15 @@ En esta tarea realiza las siguiente acciones:
 1. Desarrolla un entorno similar al de los dos cuartos (el cual se
    encuentra en el módulo doscuartos_o.py), pero con tres cuartos en
    el primer piso, y tres cuartos en el segundo piso.
-   
+
    El entorno se llamará `SeisCuartos`.
 
    Las acciones totales serán
-   
+
    ```
    ["ir_Derecha", "ir_Izquierda", "subir", "bajar", "limpiar", "nada"]
-   ``` 
-    
+   ```
+
    La acción de `"subir"` solo es legal en el piso de abajo (cualquier
    cuarto), y la acción de `"bajar"` solo es legal en el piso de arriba.
 
@@ -50,4 +50,3 @@ Todos los incisos tienen un valor de 25 puntos sobre la calificación de
 la tarea.
 
 La fecha límite para entrega de la tarea es el **lunes 4 de septiembre de 2017**.
-
