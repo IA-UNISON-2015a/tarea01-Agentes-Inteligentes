@@ -1,3 +1,10 @@
+#*******************************Observaciones***********************************
+#Al comparar el agente aleatorio con el basado en modelo, se puede observar que
+#el agente basado en modelo tiene más desempeño, esto se debe a que este agente
+#deja de hacer acciones cuando su modelo es cumplido, y ya que todos los cuartos
+#quedan limpios deja de perder rendimiento el agente. El agente aleatorio no se
+#preocupa por si los cuartos están limpios o están sucios, simplemente hace una
+#acción aleatoria sin importar como esté el estado.
 __author__ = "Roberto Salazar"
 
 import entornos_o
@@ -82,6 +89,7 @@ if __name__ == "__main__":
     entornos_o.simulador(SeisCuartos(),
                          doscuartos_o.AgenteAleatorio(["ir_Derecha", "ir_Izquierda", "subir", "bajar", "limpiar", "nada"]),
                          100)
+
     print("Prueba del entorno con un reactivo basado en modelo")
     entornos_o.simulador(SeisCuartos(),
                          AgenteReactivoModeloSeisCuartos(),
