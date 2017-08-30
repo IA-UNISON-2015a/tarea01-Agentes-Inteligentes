@@ -121,7 +121,6 @@ class SeisCuartos(entornos_o.Entorno):
                     self.desempeño -= 1
                 else:
                     self.desempeño -= 0
-                print(self.desempeño)
                 
         except Exception as error:
             print('Error: ' + repr(error))
@@ -161,13 +160,86 @@ class AgenteReactivoModeloSeisCuartos(entornos_o.Agente):
 
         # Decide sobre el modelo interno
         a, b, c, d, e, f = self.modelo[1], self.modelo[2],self.modelo[3], self.modelo[4],self.modelo[5], self.modelo[6]
-        print(situación)
+        
         return ('nada' if a == b == c == d == e == f == 'limpio' else
                 'limpiar' if situación == 'sucio' else
                 'ir_Derecha' if robot == 'B' or robot== 'A' else
                 'ir_Izquierda' if robot=='E' or robot== 'F' else
                 'subir' if robot=='C' else
                 'nada')
+        
+class DosCuartosCiegos(entornos_o.Entorno):
+    """
+    Clase para un entorno de dos cuartos. Muy sencilla solo regrupa métodos.
+
+    El estado se define como (robot, A, B)
+    donde robot puede tener los valores "A", "B"
+    A y B pueden tener los valores "limpio", "sucio"
+
+    Las acciones válidas en el entorno son ("ir_A", "ir_B", "limpiar", "nada").
+    Todas las acciones son válidas en todos los estados.
+    
+    Los sensores solo muestran el lugar que se encuentra
+    El sensor es (robot)
+    con la ubicación del robot.
+
+    """
+    def __init__(self, x0=["A", "sucio", "sucio"]):
+        """
+        Por default inicialmente el robot está en A y los dos cuartos
+        están sucios
+
+        """
+        self.x = x0[:]
+        self.desempeño = 0
+        
+    def acción_legal(self, acción):
+        return acción in ("ir_A", "ir_B", "limpiar", "nada")
+
+    def transición(self, acción):
+        if not self.acción_legal(acción):
+            raise ValueError("La acción no es legal para este estado")
+
+        robot, a, b = self.x
+        
+        if acción is not "nada" or a is "sucio" or b is "sucio":
+            self.desempeño -= 1
+        if acción is "limpiar":
+            self.x[" AB".find(self.x[0])] = "limpio"
+        elif acción is "ir_A":
+            self.x[0] = "A"
+        elif acción is "ir_B":
+            self.x[0] = "B"
+            
+
+    def percepción(self):
+        return self.x[0]
+
+class AgenteRacionalCiego(entornos_o.Agente):
+    """
+    Un agente racional
+
+    """
+    def __init__(self):
+        self.acc_Ant=[]
+        self.acc=''
+    def programa(self, percepción):
+        robot = percepción
+        
+        if(len(self.acc_Ant)>=2):
+            self.acc='nada'
+        else:
+            if(not(robot in self.acc_Ant)):
+                self.acc_Ant.append(robot)
+                self.acc='limpiar'
+            else:
+                if(robot=='A'):
+                    self.acc='ir_B'
+                else:
+                    self.acc='ir_A'
+            
+        return (self.acc)
+
 def test():
     """
     Prueba del entorno y los agentes
@@ -178,10 +250,13 @@ def test():
                          AgenteAleatorio(['ir_Izquierda', 'ir_Derecha','subir','bajar', 'limpiar', 'nada']),
                          100)
     """
-    print("Prueba del entorno con un agente reactivo con modelo")
+    """print("Prueba del entorno con un agente reactivo con modelo")
     entornos_o.simulador(SeisCuartos(), AgenteReactivoModeloSeisCuartos(), 100)
 
-
+    """
+    print("Prueba del entorno con un agente racional")
+    entornos_o.simulador(DosCuartosCiegos(), AgenteRacionalCiego(), 100)
+    
     """print("Prueba del entorno con un agente reactivo")
     entornos_o.simulador(DosCuartos(), AgenteReactivoDoscuartos(), 100)
 
