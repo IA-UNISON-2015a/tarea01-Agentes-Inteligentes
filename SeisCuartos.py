@@ -1,11 +1,11 @@
 __author__ = "Roberto Salazar"
 
 import entornos_o
-from random import choice
+import doscuartos_o
 
 class SeisCuartos(entornos_o.Entorno):
     """Clase de los seis cuartos. Tres cuartos arriba y tres abajo."""
-    def __init__(self, x0 = ["A", "sucio", "sucio", "sucio", "sucio", "sucio", "sucio"]):
+    def __init__(self, x0 = ["B", "sucio", "sucio", "sucio", "sucio", "sucio", "sucio"]):
         """Basicamente el mismo constructor que la clase DosCuartos."""
         self.x = x0[:]
         self.desempeño = 0
@@ -32,7 +32,7 @@ class SeisCuartos(entornos_o.Entorno):
             elif robot is "D":
                 self.x[0] = "E"
             elif robot is "E":
-                self.x = "F"
+                self.x[0] = "F"
         elif acción is "ir_Izquierda":
             if robot is "C":
                 self.x[0] = "B"
@@ -61,4 +61,7 @@ class SeisCuartos(entornos_o.Entorno):
         return self.x[0], self.x[" ABCDEF".find(self.x[0])]
 
 if __name__ == "__main__":
-    pass
+    print("Prueba del entorno con un agente aleatorio")
+    entornos_o.simulador(SeisCuartos(),
+                         doscuartos_o.AgenteAleatorio(["ir_Derecha", "ir_Izquierda", "subir", "bajar", "limpiar", "nada"]),
+                         100)
