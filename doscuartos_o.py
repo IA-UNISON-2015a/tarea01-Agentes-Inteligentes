@@ -28,7 +28,7 @@ class DosCuartos(entornos_o.Entorno):
     Todas las acciones son válidas en todos los estados.
 
     Los sensores es una tupla (robot, limpio?)
-    con la ubicación del robot y el estado de limpieza
+    con la ubicación del robot y el estado de limpieza (donde se encuentra el robot).
 
     """
     def __init__(self, x0=["A", "sucio", "sucio"]):
@@ -73,15 +73,37 @@ class AgenteAleatorio(entornos_o.Agente):
         return choice(self.acciones)
 
 
-class AgenteReactivoDoscuartos(entornos_o.Agente):
+class AgenteDoscuartosCiegos(entornos_o.Agente):
     """
-    Un agente reactivo simple
+    Un agente racional donde el robot no sabe si los cuartos estan limpios o sucios, pero si donde esta.
+    Como este no sabe si esta un cuarto sucio limpiara todos por igual.
+    """
+    def __init__(self):
+        """
+        Inicializa el modelo interno en el peor de los casos
 
-    """
+        """
+        self.modelo = ['A', 'sucio', 'sucio']
+
     def programa(self, percepción):
         robot, situación = percepción
-        return ('limpiar' if situación == 'sucio' else
-                'ir_A' if robot == 'B' else 'ir_B')
+
+        self.modelo[0] = robot
+        a, b = self.modelo[1], self.modelo[2]
+
+        if a == 'limpio' and b == 'limpio':
+            aux = 'nada'
+
+        #NO se sabe si A o B estan limpios o sucios asi que solo se checa si los cuartos tienen una palabra inicializada
+        #if len(a) != 0 or len(b) != 0:
+        #    aux = 'limpiar'
+
+        if robot == 'A':
+            aux = 'ir_B'
+        elif robot == 'B':
+            aux = 'ir_A'
+
+        return(aux)
 
 
 class AgenteReactivoModeloDosCuartos(entornos_o.Agente):
@@ -121,7 +143,7 @@ def test():
                          100)
 
     print("Prueba del entorno con un agente reactivo")
-    entornos_o.simulador(DosCuartos(), AgenteReactivoDoscuartos(), 100)
+    entornos_o.simulador(DosCuartos(), AgenteDoscuartosCiegos(), 100)
 
     print("Prueba del entorno con un agente reactivo con modelo")
     entornos_o.simulador(DosCuartos(), AgenteReactivoModeloDosCuartos(), 100)
@@ -130,7 +152,7 @@ def test():
 if __name__ == "__main__":
     test()
     e = DosCuartos()
-    e.transición('ir_B')
-    print(e.x)
-    e = DosCuartos()
-    print(e.x)
+    #e.transición('ir_B')
+    #print(e.x)
+    #e = DosCuartos()
+    #print(e.x)
