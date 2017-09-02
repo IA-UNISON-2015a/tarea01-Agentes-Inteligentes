@@ -88,7 +88,9 @@ class SesCuartos(entornos_o.Entorno):
             raise ValueError("La acción no es legal para este estado")
 
         robot, a1, a2, a3, b1, b2, b3  = self.x
-        if acción is not "nada" or a1 is "sucio" or a2 is "sucio" or a3 is "sucio" or b1 is "sucio" or b2 is "sucio" or b3 is "sucio"
+        if acción is not "nada" or a1 is "sucio" or a2 is "sucio" or a3 is "sucio" or b1 is "sucio" or b2 is "sucio" or b3 is "sucio":
+            if acción is "subir" or "bajar":
+                self.desempeño -=1
             self.desempeño -= 1
         if acción is "limpiar":
             self.x[" ABCDEF".find(self.x[0])] = "limpio"
@@ -169,13 +171,16 @@ class AgenteReactivoModeloSeisCuartos(entornos_o.Agente):
 
         # Actualiza el modelo interno
         self.modelo[0] = robot
-        self.modelo[' AB'.find(robot)] = situación
+        self.modelo[' ABCDEF'.find(robot)] = situación
 
         # Decide sobre el modelo interno
-        a, b = self.modelo[1], self.modelo[2]
-        return ('nada' if a == b == 'limpio' else
+        _, a, b, c, d, e, f = self.modelo
+        return ('nada' if not 'sucio' in self.modelo else
                 'limpiar' if situación == 'sucio' else
-                'ir_A' if robot == 'B' else 'ir_B')
+                'ir_Derecha' if robot == 'A' or robot == 'B' else
+                'ir_Izquierda' if robot == 'F' or robot == 'E' else
+                'bajar' if robot == 'C' else
+                'subir' if robot == 'D')
 
 
 def test():
