@@ -55,6 +55,8 @@ __author__ = 'Erick Fernando López Fimbres'
 
 import entornos_o
 from random import choice
+from random import random
+
 
 # Requiere el modulo entornos_o.py
 # Usa el modulo doscuartos_o.py para reutilizar código
@@ -104,10 +106,10 @@ class SeisCuartos(entornos_o.Entorno):
                 robot, a, b,c,d,e,f = self.x
                 if(acción=="subir"):
                     self.x[0]=dic[" ABCDEF".find(robot)+3]
-                    self.desempeño-=5
+                    self.desempeño-=2
                 elif(acción=="bajar"):
                     self.x[0]=dic[" ABCDEF".find(robot)-3]
-                    self.desempeño-=5
+                    self.desempeño-=2
                 elif(acción=="ir_Derecha" and (robot!="C" and robot!="F")):
                     self.x[0]=dic[" ABCDEF".find(robot)+1]
                     self.desempeño-=1
@@ -166,6 +168,7 @@ class AgenteReactivoModeloSeisCuartos(entornos_o.Agente):
                 'ir_Derecha' if robot == 'B' or robot== 'A' else
                 'ir_Izquierda' if robot=='E' or robot== 'F' else
                 'subir' if robot=='C' else
+                'bajar' if robot=='D' else
                 'nada')
         
 class DosCuartosCiegos(entornos_o.Entorno):
@@ -237,30 +240,130 @@ class AgenteRacionalCiego(entornos_o.Agente):
                     self.acc='ir_B'
                 else:
                     self.acc='ir_A'
-            
         return (self.acc)
+
+class DosCuartosEstocástico(entornos_o.Entorno):
+    """
+
+    El estado se define como (robot, A, B)
+    donde robot puede tener los valores "A", "B"
+    A y B pueden tener los valores "limpio", "sucio"
+
+    Las acciones válidas en el entorno son ("ir_A", "ir_B", "limpiar", "nada").
+    Todas las acciones son válidas en todos los estados.
+
+    Los sensores es una tupla (robot, limpio?)
+    con la ubicación del robot y el estado de limpieza
+    
+    solo limpia el 80% de las veces, el resto queda igual
+
+    """
+    def __init__(self, x0=["A", "sucio", "sucio"]):
+        """
+        Por default inicialmente el robot está en A y los dos cuartos
+        están sucios
+        """
+        
+        self.x = x0[:]
+        self.desempeño = 0
+
+    def acción_legal(self, acción):
+        return acción in ("ir_A", "ir_B", "limpiar", "nada")
+
+    def transición(self, acción):
+        if not self.acción_legal(acción):
+            raise ValueError("La acción no es legal para este estado")
+
+        robot, a, b = self.x
+        if acción is not "nada" or a is "sucio" or b is "sucio":
+            self.desempeño -= 1
+        if acción is "limpiar" and (random()<0.8):
+            self.x[" AB".find(self.x[0])] = "limpio"
+        elif acción is "ir_A":
+            self.x[0] = "A"
+        elif acción is "ir_B":
+            self.x[0] = "B"
+
+    def percepción(self):
+        return self.x[0], self.x[" AB".find(self.x[0])]
+
+class AgenteRacionalEstocástico(entornos_o.Agente):
+    """
+    Un agente reactivo basado en modelo
+
+    """
+    def __init__(self):
+        """
+        Inicializa el modelo interno en el peor de los casos
+
+        """
+        self.modelo = ['A', 'sucio', 'sucio']
+
+    def programa(self, percepción):
+        robot, situación = percepción
+
+        # Actualiza el modelo interno
+        self.modelo[0] = robot
+        self.modelo[' AB'.find(robot)] = situación
+
+        # Decide sobre el modelo interno
+        a, b = self.modelo[1], self.modelo[2]
+        return ('nada' if a == b == 'limpio' else
+                'limpiar' if situación == 'sucio' else
+                'ir_A' if robot == 'B' else 'ir_B')
 
 def test():
     """
     Prueba del entorno y los agentes
 
     """
-    """print("Prueba del entorno con un agente aleatorio")
+    print("Prueba del entorno con un agente aleatorio")
     entornos_o.simulador(SeisCuartos(),
                          AgenteAleatorio(['ir_Izquierda', 'ir_Derecha','subir','bajar', 'limpiar', 'nada']),
                          100)
-    """
-    """print("Prueba del entorno con un agente reactivo con modelo")
+
+    print("Prueba del entorno con un agente reactivo con modelo")
     entornos_o.simulador(SeisCuartos(), AgenteReactivoModeloSeisCuartos(), 100)
 
-    """
-    print("Prueba del entorno con un agente racional")
+    print("Prueba del entorno con un agente aleatorio")
+    entornos_o.simulador(DosCuartosCiegos(), AgenteAleatorio(['ir_A', 'ir_B', 'limpiar', 'nada']), 100)
+    
+    print("Prueba del entorno con un agente racional ciego")
     entornos_o.simulador(DosCuartosCiegos(), AgenteRacionalCiego(), 100)
     
-    """print("Prueba del entorno con un agente reactivo")
-    entornos_o.simulador(DosCuartos(), AgenteReactivoDoscuartos(), 100)
+    print("Prueba del entorno con un agente reactivo")
+    entornos_o.simulador(DosCuartosEstocástico(), AgenteAleatorio(['ir_A', 'ir_B', 'limpiar', 'nada']), 100)
 
-    """
+    print("Prueba del entorno con un agente reactivo")
+    entornos_o.simulador(DosCuartosEstocástico(), AgenteRacionalEstocástico(), 100)
+
 
 if __name__ == "__main__":
     test()
+
+"""
+CONCLUSIONES
+
+SEISCUARTOS AGENTE MODELO VS ALEATORIO
+    El desempeño del agente aleatorio es bastante malo que el del
+    agente modelo, aveces ni siquiera alcanza a limpiar todos los
+    cuartos el agente aleatorio y tiene varias acciones ilegales. 
+    En cambio el agente modelo siempre obtiene el mejor resultado
+    en cualquier situación.
+
+AGENTE CIEGO VS ALEATORIO
+    El agente ciego tiene que usar una memoria adicional en la que guarda
+    la accion anterior para poder determinar las acciones que le ayudaran
+    a cumplir su objetivo y asi obtener un mejor desempeño haciendolo 
+    racional.Aunque siempre limpia en el peor de los casos es lo mejor
+    que puede hacer en base a sus percepciones.
+    El agente aleatorio tendria un mejor desempeño si no tuviera
+    memoria el agente ciego.
+
+AGENTE ESTOCASTICO VS ALEATORIO
+    El agente estocastico tiene un mejor desempeño que el agente aleatorio,
+    puesto que sabe que accion tomar mas no sabe si va a limpiar (aunque con
+    el 80% es una probabilidad muy alta de que lo hara) y en cambio el aleatorio
+    anda haciendo cualquier accion gastando energia y obteniendo un menor desempeño.
+
+"""
