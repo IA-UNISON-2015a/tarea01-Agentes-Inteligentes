@@ -55,6 +55,7 @@ __author__ = 'Belen_Chavarría'
 
 import entornos_o
 from random import choice
+import numpy.random as np
 
 # Requiere el modulo entornos_o.py
 # Usa el modulo doscuartos_o.py para reutilizar código
@@ -248,6 +249,82 @@ class AgenteReactivoModeloDosCuartosCiego(entornos_o.Agente):
                 'limpiar' if self.flag else
                 'ir_A' if percepción == 'B' else 'ir_B')
 
+   
+###########################################
+class DosCuartosEstocastico(entornos_o.Entorno):
+    """
+    Clase para un entorno de dos cuartos.
+
+    El estado se define como (robot, A, B)
+    donde robot puede tener los valores "A", "B"
+    A y B pueden tener los valores "limpio", "sucio"
+
+    Las acciones válidas en el entorno son ("ir_A", "ir_B", "limpiar", "nada").
+    Todas las acciones son válidas en todos los estados.
+
+    Los sensores es una tupla (robot, limpio?)
+    con la ubicación del robot y el estado de limpieza
+    
+    La particularidad de este entorno es que se tiene un 80% de probabilidad 
+    de que el cuarto se limpie una vez tomada la decisión de limpiar.
+
+    """
+    def __init__(self, x0=["A", "sucio", "sucio"]):
+        """
+        Por default inicialmente el robot está en A y los dos cuartos
+        están sucios
+
+        """
+        self.x = x0[:]
+        self.desempeño = 0
+
+    def acción_legal(self, acción):
+        return acción in ("ir_A", "ir_B", "limpiar", "nada")
+
+    def transición(self, acción):
+        if not self.acción_legal(acción):
+            raise ValueError("La acción no es legal para este estado")
+
+        robot, a, b = self.x
+        if acción is not "nada" or a is "sucio" or b is "sucio":
+            self.desempeño -= 1
+        if acción is "limpiar":
+            if np.random_integers(1, 100) <= 80:
+                self.x[" AB".find(self.x[0])] = "limpio"
+        elif acción is "ir_A":
+            self.x[0] = "A"
+        elif acción is "ir_B":
+            self.x[0] = "B"
+
+    def percepción(self):
+        return self.x[0], self.x[" AB".find(self.x[0])]
+
+########################################### 
+class ARM_DosCuartosEstocastico(entornos_o.Agente):
+    """
+    Un agente reactivo basado en modelo
+
+    """
+    def __init__(self):
+        """
+        Inicializa el modelo interno en el peor de los casos
+
+        """
+        self.modelo = ['A', 'sucio', 'sucio']
+        
+    def programa(self, percepción):
+        robot, situación = percepción
+
+        # Actualiza el modelo interno
+        self.modelo[0] = robot
+        self.modelo[' AB'.find(robot)] = situación
+
+        # Decide sobre el modelo interno
+        a, b = self.modelo[1], self.modelo[2]
+        return ('nada' if a == b == 'limpio' else
+                'limpiar' if situación == 'sucio' else
+                'ir_A' if robot == 'B' else 'ir_B')
+
 
 ###########################################    
 def test():
@@ -276,6 +353,15 @@ def test():
     entornos_o.simulador(DosCuartosCiego(), AgenteReactivoModeloDosCuartosCiego(), 100)
     
     ###############
+    
+    print("ENTORNO: DOS CUARTOS ESTOCÁSTICO \n Prueba del entorno con un agente aleatorio")
+    entornos_o.simulador(DosCuartosEstocastico(),
+                        AgenteAleatorio(['ir_A', 'ir_B', 'limpiar', 'nada']),
+                        100)
+
+
+    print("Prueba del entorno con un agente reactivo con modelo")
+    entornos_o.simulador(DosCuartosEstocastico(), ARM_DosCuartosEstocastico(), 100)
     
 
 ###########################################
