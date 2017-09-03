@@ -331,10 +331,10 @@ def test():
     print("Prueba del entorno con un agente racional ciego")
     entornos_o.simulador(DosCuartosCiegos(), AgenteRacionalCiego(), 100)
     
-    print("Prueba del entorno con un agente reactivo")
+    print("Prueba del entorno con un agente aleatorio")
     entornos_o.simulador(DosCuartosEstocástico(), AgenteAleatorio(['ir_A', 'ir_B', 'limpiar', 'nada']), 100)
 
-    print("Prueba del entorno con un agente reactivo")
+    print("Prueba del entorno con un agente racional estocástico")
     entornos_o.simulador(DosCuartosEstocástico(), AgenteRacionalEstocástico(), 100)
 
 
@@ -355,15 +355,15 @@ AGENTE CIEGO VS ALEATORIO
     El agente ciego tiene que usar una memoria adicional en la que guarda
     la accion anterior para poder determinar las acciones que le ayudaran
     a cumplir su objetivo y asi obtener un mejor desempeño haciendolo 
-    racional.Aunque siempre limpia en el peor de los casos es lo mejor
+    racional.Aunque siempre limpia en el peor y mejor de los casos es lo mejor
     que puede hacer en base a sus percepciones.
     El agente aleatorio tendria un mejor desempeño si no tuviera
     memoria el agente ciego.
 
 AGENTE ESTOCASTICO VS ALEATORIO
-    El agente estocastico tiene un mejor desempeño que el agente aleatorio,
+    El agente estocástico tiene un mejor desempeño que el agente aleatorio,
     puesto que sabe que accion tomar mas no sabe si va a limpiar (aunque con
     el 80% es una probabilidad muy alta de que lo hara) y en cambio el aleatorio
-    anda haciendo cualquier accion gastando energia y obteniendo un menor desempeño.
+    anda haciendo cualquier acción gastando energia y obteniendo un menor desempeño.
 
 """
