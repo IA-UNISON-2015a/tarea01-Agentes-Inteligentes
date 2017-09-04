@@ -53,6 +53,21 @@ la tarea.
 """
 __author__ = 'Patricia Quiroz'
 
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+from random import choice
+
+"""
+Created on Thu Aug 31 13:48:52 
+
+entornos_o.py
+------------
+
+Entornos y agentes desde una prespectiva OO
+
+"""
+
+
 class Entorno:
     """
     Clase abstracta para entornos
@@ -190,7 +205,7 @@ class DosCuartos(Entorno):
 
     """
 
-    def __init__(self, x0=["A", "sucio", "sucio", "sucio", "sucio", "sucio", "sucio"]):
+    def __init__(self, x0=["A", "sucio", "limpio", "sucio", "sucio", "limpio", "sucio"]):
         """ El robot esta en el cuarto A y todos los cuartos estan sucios
             x=[robot,A,B,C,D,E,F]
             cuartos: D,E,F
@@ -211,11 +226,11 @@ class DosCuartos(Entorno):
             raise ValueError("La acción no es legal para este estado")
 
         robot, a, b, c, d, e, f = self.x
-        if accion is "subir" or accion is "bajar":
-            self.desempeno -= 1
 
-        if accion is not "nada" or a is "sucio" or b is "sucio" or c is"sucio" or d is "sucio" or e is "sucio" or f is "sucio":
+        if accion != "nada" or a is "sucio" or b is "sucio" or c is"sucio" or d is "sucio" or e is "sucio" or f is "sucio":
             self.desempeno -= 1
+            if accion is "subir" or accion is "bajar":
+                self.desempeno -= 1
 
         if accion is "limpiar":
             self.x[" ABCDEF".find(self.x[0])] = "limpio"
@@ -233,22 +248,22 @@ class DosCuartos(Entorno):
         elif accion is "ir_Izq" and self.x[0] is "C":
             self.x[0] = "B"
         elif accion is "subir" and self.x[0] is "C":
-            self.x[0] = "F"
+            self.x[0] = "D"
         # MOVERTE EN LOS CUARTOS DE ARRIBA
-        elif accion is "ir_Der" and self.x[0] is "D":
+        elif accion is "ir_Izq" and self.x[0] is "D":
             self.x[0] = "E"
         elif accion is "bajar" and self.x[0] is "D":
             self.x[0] = "A"
         elif accion is "ir_Der" and self.x[0] is "E":
-            self.x[0] = "F"
-        elif accion is "ir_Izq" and self.x[0] is "E":
             self.x[0] = "D"
+        elif accion is "ir_Izq" and self.x[0] is "E":
+            self.x[0] = "F"
         elif accion is "bajar" and self.x[0] is "E":
             self.x[0] = "B"
-        elif accion is "ir_Izq" and self.x[0] is "F":
+        elif accion is "ir_Der" and self.x[0] is "F":
             self.x[0] = "E"
         elif accion is "bajar" and self.x[0] is "F":
-            self.x[0] = "C"
+            self.x[0] = "A"
             # MOVERTE DE UN CUARTO DE ABAJO HACIA ARRIBA
 
     def percepcion(self):
@@ -279,7 +294,7 @@ class AgenteReactivoModeloDosCuartos(Agente):
         Inicializa el modelo interno en el peor de los casos
 
         """
-        self.modelo = ['A', 'sucio', 'sucio', 'sucio', 'sucio', 'sucio', 'sucio']
+        self.modelo = ['A', 'sucio', 'limpio', 'sucio', 'limpio', 'sucio', 'sucio']
 
     def programa(self, percepcion):
         robot, situacion = percepcion
@@ -295,14 +310,17 @@ class AgenteReactivoModeloDosCuartos(Agente):
             aux='nada'
         elif situacion is 'sucio':
             aux='limpiar'
+
+        #checar si alguno de los cuartos de abajo estan sucios
+        #checar si alguno de los cuartos de arriba estan sucios
         elif robot == 'A' or robot == 'B':
             aux='ir_Der'
         elif robot == 'C':
             aux='subir'
-        elif robot == 'F' or robot == 'E':
+        elif robot == 'D' or robot == 'E':
             aux='ir_Izq'
-        elif robot == 'D':
-            aux='bajar'
+        elif robot == 'F': #No esta entrando a limpiar D
+            aux='ir_Der'
 
         return (aux)
 
@@ -326,7 +344,3 @@ if __name__ == "__main__":
     e = DosCuartos()
     # e = DosCuartos()
     # print(e.x)
-
-# Requiere el modulo entornos_o.py
-# Usa el modulo doscuartos_o.py para reutilizar código
-# Agrega los modulos que requieras de python
