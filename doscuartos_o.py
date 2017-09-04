@@ -2,16 +2,37 @@
 # -*- coding: utf-8 -*-
 
 """
+Tarea de desarrollo de entornos y agentes
+==========================================
+
+En esta tarea realiza las siguiente acciones:
+
+3.- Al ejemplo original de los dos cuartos, modificalo de manera que el agente
+    solo pueda saber en que cuarto se encuentra pero no sabe si está limpio
+    o sucio.
+
+    A este nuevo entorno llamalo DosCuartosCiego
+
+    Diseña un agente racional para este problema, pruebalo y comparalo
+    con el agente aleatorio.
+
+4.- Reconsidera el problema original de los dos cuartos, pero ahora modificalo
+    para que cuando el agente decida aspirar, el 80% de las veces limpie pero
+    el 20% (aleatorio) deje sucio el cuarto. Diseña un agente racional
+    para este problema, pruebalo y comparalo con el agente aleatorio.
+
+    A este entorno llamalo DosCuartosEstocástico
+"""
+
+"""
 doscuartos.py.py
 ------------
-
 Ejemplo de un entorno muy simple y agentes idem
 
 """
 
 import entornos_o
 from random import choice
-
 
 __author__ = 'patriciaquiroz'
 
@@ -30,13 +51,12 @@ class DosCuartos(entornos_o.Entorno):
 
     Los sensores es una tupla (robot, limpio?)
     con la ubicación del robot y el estado de limpieza (donde se encuentra el robot).
-
     """
+
     def __init__(self, x0=["A", "sucio", "sucio"]):
         """
         Por default inicialmente el robot está en A y los dos cuartos
         están sucios
-
         """
         self.x = x0[:]
         self.desempeño = 0
@@ -76,24 +96,17 @@ class AgenteAleatorio(entornos_o.Agente):
 
 class AgenteDoscuartosCiegos(entornos_o.Agente):
     """
-    Un agente racional donde el robot no sabe si los cuartos estan limpios o sucios, pero si donde esta.
-    Como este no sabe si esta un cuarto sucio limpiara todos por igual.
-
-
-    Al ejemplo original de los dos cuartos, modificalo de manera que el agente solo pueda saber en que cuarto se encuentra pero no sabe si está limpio o sucio.
-    A este nuevo entorno llamalo DosCuartosCiego.
-    Diseña un agente racional para este problema, pruebalo y comparalo con el agente aleatorio.
+    Un agente racional donde el robot no sabe si los cuartos estan limpios o sucios, pero en que cuarto se encuentra.
+    Como este no sabe si esta un cuarto sucio, por default pensara que todos los cuartos estan sucios.
     """
     def __init__(self):
         """
         Inicializa el modelo interno en el peor de los casos
-
         """
         self.modelo = ['A', 'sucio', 'sucio']
 
     def programa(self, percepción):
         robot, situación = percepción
-        #por default el robot piensa que todos los cuartos estan sucios
 
         # Actualiza el modelo interno
         self.modelo[0] = robot
@@ -106,27 +119,25 @@ class AgenteDoscuartosCiegos(entornos_o.Agente):
         elif robot == 'A':
             if a=='sucio':
                 aux='limpiar'
-                self.modelo[1]='limpio'
+                self.modelo[1]='limpio' #Se actualiza la situacion del modelo para el cuarto A
             else:
                 aux='ir_B'
         elif robot == 'B':
             if b=='sucio':
                 aux='limpiar'
-                self.modelo[2]='limpio'
+                self.modelo[2]='limpio' #Se actualiza la situacion del modelo para el cuarto B
             else:
                 aux='ir_A'
         return(aux)
 
 class AgenteDosCuartosEstocastico:
     """
-     Un agente reactivo basado en modelo
-
-     """
+    El agente limpia el 80% de las veces, pero el 20% (aleatorio) deja sucio el cuarto.
+    """
 
     def __init__(self):
         """
         Inicializa el modelo interno en el peor de los casos
-
         """
         self.modelo = ['A', 'sucio', 'sucio']
 
@@ -151,38 +162,7 @@ class AgenteDosCuartosEstocastico:
         return aux
 
     def limpiezaEst(self):
-        ran=random.random()
-        if ran <=0.8:
-            sit='limpiar'
-        else:
-            sit='nada'
-        return sit
-
-
-class AgenteReactivoModeloDosCuartos(entornos_o.Agente):
-    """
-    Un agente reactivo basado en modelo
-
-    """
-    def __init__(self):
-        """
-        Inicializa el modelo interno en el peor de los casos
-
-        """
-        self.modelo = ['A', 'sucio', 'sucio']
-
-    def programa(self, percepción):
-        robot, situación = percepción
-
-        # Actualiza el modelo interno
-        self.modelo[0] = robot
-        self.modelo[' AB'.find(robot)] = situación
-
-        # Decide sobre el modelo interno
-        a, b = self.modelo[1], self.modelo[2]
-        return ('nada' if a == b == 'limpio' else
-                'limpiar' if situación == 'sucio' else
-                'ir_A' if robot == 'B' else 'ir_B')
+        return ('limpiar' if random.random() <=0.8 else 'nada')
 
 
 def test():
@@ -191,24 +171,12 @@ def test():
 
     """
     print("Prueba del entorno con un agente aleatorio")
-    entornos_o.simulador(DosCuartos(),
-                         AgenteAleatorio(['ir_A', 'ir_B', 'limpiar', 'nada']),
-                         20)
+    entornos_o.simulador(DosCuartos(), AgenteAleatorio(['ir_A', 'ir_B', 'limpiar', 'nada']), 20)
 
     print("Prueba del entorno con un agente ciego")
     entornos_o.simulador(DosCuartos(), AgenteDoscuartosCiegos(), 20)
-
-    #print("Prueba del entorno con un agente estocastico")
-    #entornos_o.simulador(DosCuartos(), AgenteDosCuartosEstocastico(), 20)
-
-    #print("Prueba del entorno con un agente reactivo con modelo")
-    #entornos_o.simulador(DosCuartos(), AgenteReactivoModeloDosCuartos(), 20)
 
 
 if __name__ == "__main__":
     test()
     e = DosCuartos()
-    #e.transición('ir_B')
-    #print(e.x)
-    #e = DosCuartos()
-    #print(e.x)
