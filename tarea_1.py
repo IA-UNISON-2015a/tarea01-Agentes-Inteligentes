@@ -231,21 +231,28 @@ class AgenteReactivoModeloSeisCuartos(entornos_o.Agente):
                 'ir_Derecha' if robot == 'A' or robot == 'B' else
                 'ir_Izquierda' if robot == 'F' or robot == 'E' else
                 'subir' if robot == 'C' else 'bajar')
-        '''
-        if not 'sucio' in self.modelo:
-            return 'nada'
-        elif situación == 'sucio':
-            return 'limpiar'
-        elif robot == 'A' or robot == 'B':
-            return 'ir_Derecha'
-        elif robot == 'F' or robot == 'E':
-            return 'ir_Izquierda'
-        elif robot == 'C':
-            return 'bajar'
-        else:
-            return 'subir'
-        '''
+class AgenteReactivoModeloDosCuartosCiego(entornos_o.Agente):
+    def __init__(self):
+        self.modelo = ['A', 'sucio', 'sucio']
 
+    def programa(self, percepción):
+        robot = percepción
+        # Actualiza el modelo interno
+        self.modelo[0] = robot
+        place = 1 if robot =='A' else 2
+
+        # Decide sobre el modelo interno
+        a, b = self.modelo[1], self.modelo[2]
+
+        if a==b=='limpio':
+            return 'nada'
+        elif self.modelo[place] == 'sucio':
+            self.modelo[place] = 'limpio'
+            return 'limpiar'
+        elif robot == 'B':
+            return 'ir_A'
+        else:
+            return 'ir_B'
 class AgenteReactivoModeloDosCuartos(entornos_o.Agente):
     def __init__(self):
         self.modelo = ['A', 'sucio', 'sucio']
@@ -264,26 +271,18 @@ class AgenteReactivoModeloDosCuartos(entornos_o.Agente):
                 'ir_A' if robot == 'B' else 'ir_B')
 
 def test():
-    """
-    Prueba del entorno y los agentes
-
-
-    print("Prueba del entorno con un agente aleatorio")
     entornos_o.simulador(SeisCuartos(),
                          AgenteAleatorio(["ir_Derecha", "ir_Izquierda", "subir", "bajar", "limpiar", "nada"]),
                          100)
-
-    print("Prueba del entorno con un agente reactivo")
     entornos_o.simulador(SeisCuartos(), AgenteReactivoModeloSeisCuartos(), 100)
-
-    print("Prueba del entorno con un agente reactivo con modelo")
-    entornos_o.simulador(DosCuartos(), AgenteReactivoModeloDosCuartos(), 100)
     entornos_o.simulador(DosCuartosEstocastico(),
                          AgenteAleatorio(['ir_A', 'ir_B', 'limpiar', 'nada']),
                          100)
-    """
-    print("Prueba del entorno con un agente reactivo con modelo")
-    entornos_o.simulador(DosCuartosEstocastico(), AgenteReactivoModeloDosCuartos(), 100)
+    entornos_o.simulador(DosCuartosCiego(), AgenteReactivoModeloDosCuartosCiego(), 100)
+    entornos_o.simulador(DosCuartosCiego(), AgenteReactivoModeloDosCuartosCiego(), 100)
 
 if __name__ == "__main__":
     test()
+'''
+
+'''
