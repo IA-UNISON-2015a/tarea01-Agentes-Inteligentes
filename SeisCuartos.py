@@ -5,6 +5,7 @@
 #quedan limpios deja de perder rendimiento el agente. El agente aleatorio no se
 #preocupa por si los cuartos están limpios o están sucios, simplemente hace una
 #acción aleatoria sin importar como esté el estado.
+
 __author__ = "Roberto Salazar"
 
 import entornos_o

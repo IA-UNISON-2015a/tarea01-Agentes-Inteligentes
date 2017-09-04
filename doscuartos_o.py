@@ -16,6 +16,65 @@ from random import choice
 __author__ = 'juliowaissman'
 
 
+class DosCuartosCiego(object):
+    """Clase de los dos cuartos ciego"""
+    def __init__(self, x0=["A", "sucio", "sucio"]):
+        """
+        Por default inicialmente el robot está en A y los dos cuartos
+        están sucios
+
+        """
+        self.x = x0[:]
+        self.desempeño = 0
+
+    def acción_legal(self, acción):
+        return acción in ("ir_A", "ir_B", "limpiar", "nada")
+
+    def transición(self, acción):
+        if not self.acción_legal(acción):
+            raise ValueError("La acción no es legal para este estado")
+
+        robot, a, b = self.x
+        if acción is not "nada" or a is "sucio" or b is "sucio":
+            self.desempeño -= 1
+        if acción is "limpiar":
+            self.x[" AB".find(self.x[0])] = "limpio"
+        elif acción is "ir_A":
+            self.x[0] = "A"
+        elif acción is "ir_B":
+            self.x[0] = "B"
+
+    def percepción(self):
+        return self.x[0]
+
+class AgenteRacionalModeloCiego(object):
+    """Clase de agente racional pero que no puede saber su el cuarto está sucio"""
+    def __init__(self):
+        """
+        Inicializa el modelo interno en el peor de los casos
+
+        """
+        self.modelo = ['A', 'sucio', 'sucio']
+
+    def programa(self, percepción):
+        robot = percepción
+
+        # Actualiza el modelo interno
+        self.modelo[0] = robot
+        situación = self.modelo[' AB'.find(robot)]
+
+        # Decide sobre el modelo interno
+        a, b = self.modelo[1], self.modelo[2]
+        if a == b == 'limpio':
+            return 'nada'
+        elif situación == 'sucio':
+            self.modelo[' AB'.find(robot)] = 'limpio'
+            return 'limpiar'
+        elif robot == 'B':
+            return 'ir_A'
+        else:
+            return 'ir_B'
+
 class DosCuartos(entornos_o.Entorno):
     """
     Clase para un entorno de dos cuartos. Muy sencilla solo regrupa métodos.
@@ -121,16 +180,9 @@ def test():
                          100)
 
     print("Prueba del entorno con un agente reactivo")
-    entornos_o.simulador(DosCuartos(), AgenteReactivoDoscuartos(), 100)
-
-    print("Prueba del entorno con un agente reactivo con modelo")
-    entornos_o.simulador(DosCuartos(), AgenteReactivoModeloDosCuartos(), 100)
-
+    entornos_o.simulador(DosCuartosCiego(),
+                         AgenteRacionalModeloCiego(),
+                         100)
 
 if __name__ == "__main__":
     test()
-    e = DosCuartos()
-    e.transición('ir_B')
-    print(e.x)
-    e = DosCuartos()
-    print(e.x)
