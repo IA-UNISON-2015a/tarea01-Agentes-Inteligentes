@@ -284,5 +284,14 @@ def test():
 if __name__ == "__main__":
     test()
 '''
-
+1.- el desempeño que tiene el agente de modelo para el entorno de seis cuartos
+    al igual que el que es para dos cuartos es mucho mejor que el agente aleatorio
+    ambos llegan a limpiar los dos cuartos, pero el basado en modelos es mucho mas
+    veloz y eficaz, hay veces donde 100 iteraciones no bastan para limpiar todos
+    los cuartos del modelo con el agente aleatorio
+2.- el agente aleatorio se comporta igual para el ejemplo de los dos cuartos ciegos
+    el de modelo se asemeja mucho al de dos cuartos con la capacidad de Ver
+3.- el agente probabilistico de 20% de probabildiad de no limpiar no es tan diferente
+    al de original, ya que es muy baja la probabilidad de que no lo limpie, de igual manera
+    el que sea estocastico lo vuelve un tanto mas lento en algunas ocasiones
 '''
