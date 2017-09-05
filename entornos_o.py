@@ -10,6 +10,17 @@ Entornos y agentes desde una prespectiva OO
 
 __author__ = 'juliowaissman'
 
+"""
+Created on Thu Aug 31 13:48:52 
+
+entornos_o.py
+------------
+
+Entornos y agentes desde una prespectiva OO
+
+"""
+
+
 class Entorno:
     """
     Clase abstracta para entornos
@@ -19,14 +30,13 @@ class Entorno:
     """
 
     def __init__(self, x0=[]):
-        """
-        Inicializa la clase con el estado inicial como una lista
-
-        """
+        # Inicializa la clase con el estado inicial como una lista
         self.x = x0[:]
-        self.desempeño = 0
 
-    def acción_legal(self, acción):
+
+        self.desempeno = 0
+
+    def accion_legal(self, accion):
         """
         @param acción: Una accion en el entorno
 
@@ -37,7 +47,7 @@ class Entorno:
         """
         return True
 
-    def transición(self, acción):
+    def transicion(self, accion):
         """
         @param accion: Uno de los elementos de acciones_legales( estado)
 
@@ -46,7 +56,7 @@ class Entorno:
         """
         pass
 
-    def percepción(self):
+    def percepcion(self):
         """
         @return: Tupla con los valores que se perciben del entorno por
                  default el estado completo
@@ -86,16 +96,16 @@ def simulador(entorno, agente, pasos=10, verbose=True):
             largo de la simulación.
 
     """
-    historial_desempeño = [entorno.desempeño]
+    historial_desempeno = [entorno.desempeno]
     historial_estados = [entorno.x[:]]
     historial_acciones = []
 
     for paso in range(pasos):
-        p = entorno.percepción()
+        p = entorno.percepcion()
         a = agente.programa(p)
-        entorno.transición(a)
+        entorno.transicion(a)
 
-        historial_desempeño.append(entorno.desempeño)
+        historial_desempeno.append(entorno.desempeno)
         historial_estados.append(entorno.x[:])
         historial_acciones.append(a)
 
@@ -118,8 +128,8 @@ def simulador(entorno, agente, pasos=10, verbose=True):
             print(str(i).center(10) +
                   str(historial_estados[i]).center(40) +
                   str(historial_acciones[i]).center(25) +
-                  str(historial_desempeño[i]).rjust(12))
+                  str(historial_desempeno[i]).rjust(12))
 
         print('_' * (10 + 40 + 25 + 15) + '\n\n')
 
-    return historial_estados, historial_acciones, historial_desempeño
+    return historial_estados, historial_acciones, historial_desempeno

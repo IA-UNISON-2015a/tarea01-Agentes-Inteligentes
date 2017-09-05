@@ -34,7 +34,7 @@ Ejemplo de un entorno muy simple y agentes idem
 import entornos_o
 from random import choice
 
-__author__ = 'patriciaquiroz'
+__author__ = 'PatriciaQuiroz'
 
 import random
 
@@ -59,26 +59,26 @@ class DosCuartos(entornos_o.Entorno):
         están sucios
         """
         self.x = x0[:]
-        self.desempeño = 0
+        self.desempeno = 0
 
-    def acción_legal(self, acción):
-        return acción in ("ir_A", "ir_B", "limpiar", "nada")
+    def accion_legal(self, accion):
+        return accion in ("ir_A", "ir_B", "limpiar", "nada")
 
-    def transición(self, acción):
-        if not self.acción_legal(acción):
+    def transicion(self, accion):
+        if not self.accion_legal(accion):
             raise ValueError("La acción no es legal para este estado")
 
         robot, a, b = self.x
-        if acción is not "nada" or a is "sucio" or b is "sucio":
-            self.desempeño -= 1
-        if acción is "limpiar":
+        if accion is not "nada" or a is "sucio" or b is "sucio":
+            self.desempeno -= 1
+        if accion is "limpiar":
             self.x[" AB".find(self.x[0])] = "limpio"
-        elif acción is "ir_A":
+        elif accion is "ir_A":
             self.x[0] = "A"
-        elif acción is "ir_B":
+        elif accion is "ir_B":
             self.x[0] = "B"
 
-    def percepción(self):
+    def percepcion(self):
         return self.x[0], self.x[" AB".find(self.x[0])]
 
 
@@ -105,8 +105,8 @@ class AgenteDoscuartosCiegos(entornos_o.Agente):
         """
         self.modelo = ['A', 'sucio', 'sucio']
 
-    def programa(self, percepción):
-        robot, situación = percepción
+    def programa(self, percepcion):
+        robot, situacion = percepcion
 
         # Actualiza el modelo interno
         self.modelo[0] = robot
@@ -130,7 +130,7 @@ class AgenteDoscuartosCiegos(entornos_o.Agente):
                 aux='ir_A'
         return(aux)
 
-class AgenteDosCuartosEstocastico:
+class AgenteDosCuartosEstocastico(entornos_o.Agente):
     """
     El agente limpia el 80% de las veces, pero el 20% (aleatorio) deja sucio el cuarto.
     """
@@ -141,12 +141,12 @@ class AgenteDosCuartosEstocastico:
         """
         self.modelo = ['A', 'sucio', 'sucio']
 
-    def programa(self, percepción):
-        robot, situación = percepción
+    def programa(self, percepcion):
+        robot, situacion = percepcion
 
         # Actualiza el modelo interno
         self.modelo[0] = robot
-        self.modelo[' AB'.find(robot)] = situación
+        self.modelo[' AB'.find(robot)] = situacion
 
         # Decide sobre el modelo interno
         a, b = self.modelo[1], self.modelo[2]
