@@ -289,8 +289,7 @@ class DosCuartosEstocastico(entornos_o.Entorno):
         if acción is not "nada" or a is "sucio" or b is "sucio":
             self.desempeño -= 1
         if acción is "limpiar":
-            if np.random_integers(1, 100) <= 80:
-                self.x[" AB".find(self.x[0])] = "limpio"
+            self.x[" AB".find(self.x[0])] = "limpio"
         elif acción is "ir_A":
             self.x[0] = "A"
         elif acción is "ir_B":
@@ -321,10 +320,14 @@ class ARM_DosCuartosEstocastico(entornos_o.Agente):
 
         # Decide sobre el modelo interno
         a, b = self.modelo[1], self.modelo[2]
-        return ('nada' if a == b == 'limpio' else
-                'limpiar' if situación == 'sucio' else
-                'ir_A' if robot == 'B' else 'ir_B')
 
+
+        if situación=='sucio':
+            return('limpiar' if np.random_integers(1, 100) <= 80 else 'nada')
+        else:
+            return('nada' if a == b == 'limpio' else
+                'ir_A' if robot == 'B' else 'ir_B')
+            
 
 ###########################################    
 def test():
@@ -338,7 +341,7 @@ def test():
                         100)
 
 
-    print("Prueba del entorno con un agente reactivo con modelo")
+    print("ENTORNO: SEIS CUARTOS \n Prueba del entorno con un agente reactivo con modelo")
     entornos_o.simulador(SeisCuartos(), AgenteReactivoModeloSeisCuartos(), 100)
     
     ##############
@@ -349,7 +352,7 @@ def test():
                         100)
 
 
-    print("Prueba del entorno con un agente reactivo con modelo")
+    print("ENTORNO: DOS CUARTOS CIEGO \n Prueba del entorno con un agente reactivo con modelo")
     entornos_o.simulador(DosCuartosCiego(), AgenteReactivoModeloDosCuartosCiego(), 100)
     
     ###############
@@ -360,7 +363,7 @@ def test():
                         100)
 
 
-    print("Prueba del entorno con un agente reactivo con modelo")
+    print("ENTORNO: DOS CUARTOS ESTOCÁSTICO \n Prueba del entorno con un agente reactivo con modelo")
     entornos_o.simulador(DosCuartosEstocastico(), ARM_DosCuartosEstocastico(), 100)
     
 
