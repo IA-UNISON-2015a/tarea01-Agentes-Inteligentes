@@ -1,5 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
+__author__ = 'Patricia Quiroz'
+
+from random import choice
+
+import entornos_o
+
 """
 tarea_1.py
 ------------
@@ -51,13 +58,6 @@ Todos los incisos tienen un valor de 25 puntos sobre la calificación de
 la tarea.
 
 """
-__author__ = 'Patricia Quiroz'
-
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-from random import choice
-
-import entornos_o
 
 class SeisCuartos(entornos_o.Entorno):
     """
@@ -85,40 +85,40 @@ class SeisCuartos(entornos_o.Entorno):
 
         """
         self.x = x0[:]
-        self.desempeno = 0
+        self.desempeño = 0
 
-    def accion_legal(self, accion):
-        return accion in ("ir_Der", "ir_Izq", "subir", "bajar", "limpiar", "nada")
+    def acción_legal(self, acción):
+        return acción in ("ir_Der", "ir_Izq", "subir", "bajar", "limpiar", "nada")
 
-    def transicion(self, accion):
-        if not self.accion_legal(accion):
+    def transición(self, acción):
+        if not self.acción_legal(acción):
             raise ValueError("La acción no es legal para este estado")
 
         robot, a, b, c, d, e, f = self.x #Se asigna el lugar donde empezara el robot y las situaciones (sucio/limpio) de cada cuarto.
 
-        if accion != "nada" or a is "sucio" or b is "sucio" or c is"sucio" or d is "sucio" or e is "sucio" or f is "sucio":
-            if accion is "subir" or accion is "bajar":
-                self.desempeno -= 2
+        if acción != "nada" or a is "sucio" or b is "sucio" or c is"sucio" or d is "sucio" or e is "sucio" or f is "sucio":
+            if acción is "subir" or acción is "bajar":
+                self.desempeño -= 2
             else:
-                self.desempeno -= 1
+                self.desempeño -= 1
 
-        if accion is "limpiar":
+        if acción is "limpiar":
             self.x[" ABCDEF".find(self.x[0])] = "limpio"
         # Posibles formas en que el robot se puede mover dependiendo de el cuarto en donde se encuentre.
-        elif accion is "ir_Izq" and self.x[0] is "B" or accion is "bajar" and self.x[0] is "F":
+        elif acción is "ir_Izq" and self.x[0] is "B" or acción is "bajar" and self.x[0] is "F":
             self.x[0] = "A"
-        elif accion is "ir_Der" and self.x[0] is "A" or accion is "bajar" and self.x[0] is "E" or accion is "ir_Izq" and self.x[0] is "C":
+        elif acción is "ir_Der" and self.x[0] is "A" or acción is "bajar" and self.x[0] is "E" or acción is "ir_Izq" and self.x[0] is "C":
             self.x[0] = "B"
-        elif accion is "ir_Der" and self.x[0] is "B" or accion is "bajar" and self.x[0] is "D":
+        elif acción is "ir_Der" and self.x[0] is "B" or acción is "bajar" and self.x[0] is "D":
             self.x[0] = "C"
-        elif accion is "subir" and self.x[0] is "C" or accion is "ir_Der" and self.x[0] is "E":
+        elif acción is "subir" and self.x[0] is "C" or acción is "ir_Der" and self.x[0] is "E":
             self.x[0] = "D"
-        elif accion is "subir" and self.x[0] is "B" or accion is "ir_Izq" and self.x[0] is "D" or accion is "ir_Der" and self.x[0] is "F":
+        elif acción is "subir" and self.x[0] is "B" or acción is "ir_Izq" and self.x[0] is "D" or acción is "ir_Der" and self.x[0] is "F":
             self.x[0] = "E"
-        elif accion is "subir" and self.x[0] is "A" or accion is "ir_Izq" and self.x[0] is "E":
+        elif acción is "subir" and self.x[0] is "A" or acción is "ir_Izq" and self.x[0] is "E":
             self.x[0] = "F"
 
-    def percepcion(self):
+    def percepción(self):
         return self.x[0], self.x[" ABCDEF".find(self.x[0])]
 
 
@@ -143,26 +143,26 @@ class DosCuartos(entornos_o.Entorno):
         están sucios
         """
         self.x = x0[:]
-        self.desempeno = 0
+        self.desempeño = 0
 
-    def accion_legal(self, accion):
-        return accion in ("ir_A", "ir_B", "limpiar", "nada")
+    def acción_legal(self, acción):
+        return acción in ("ir_A", "ir_B", "limpiar", "nada")
 
-    def transicion(self, accion):
-        if not self.accion_legal(accion):
+    def transición(self, acción):
+        if not self.acción_legal(acción):
             raise ValueError("La acción no es legal para este estado")
 
         robot, a, b = self.x
-        if accion is not "nada" or a is "sucio" or b is "sucio":
-            self.desempeno -= 1
-        if accion is "limpiar":
+        if acción is not "nada" or a is "sucio" or b is "sucio":
+            self.desempeño -= 1
+        if acción is "limpiar":
             self.x[" AB".find(self.x[0])] = "limpio"
-        elif accion is "ir_A":
+        elif acción is "ir_A":
             self.x[0] = "A"
-        elif accion is "ir_B":
+        elif acción is "ir_B":
             self.x[0] = "B"
 
-    def percepcion(self):
+    def percepción(self):
         return self.x[0], self.x[" AB".find(self.x[0])]
 
 
@@ -175,7 +175,7 @@ class AgenteAleatorio(entornos_o.Agente):
     def __init__(self, acciones):
         self.acciones = acciones
 
-    def programa(self, percepcion):
+    def programa(self, percepción):
         return choice(self.acciones)
 
 
@@ -195,19 +195,19 @@ class AgenteReactivoModeloSeisCuartos(entornos_o.Agente):
         """
         self.modelo = ['A', 'sucio', 'limpio', 'sucio', 'limpio', 'sucio', 'sucio']
 
-    def programa(self, percepcion):
-        robot, situacion = percepcion
+    def programa(self, percepción):
+        robot, situación = percepción
 
         # Actualiza el modelo interno
         self.modelo[0] = robot
-        self.modelo[' ABCDEF'.find(robot)] = situacion #Sutuacion donde se encuentra el robot actualmente.
+        self.modelo[' ABCDEF'.find(robot)] = situación #Sutuacion donde se encuentra el robot actualmente.
 
         # Decide sobre el modelo interno
         a, b, c, d, e, f = self.modelo[1], self.modelo[2], self.modelo[3], self.modelo[4], self.modelo[5], self.modelo[6]
-        # Cambia dependiendo de situacion
+        # Cambia dependiendo de situación
         if a==b==c==d==e==f=='limpio':
             aux='nada'
-        elif situacion is 'sucio':
+        elif situación is 'sucio':
             aux='limpiar'
         elif robot == 'A' or robot == 'B':
             aux='ir_Der'
@@ -230,8 +230,8 @@ class AgenteDoscuartosCiegos(entornos_o.Agente):
         """
         self.modelo = ['A', 'sucio', 'sucio']
 
-    def programa(self, percepcion):
-        robot, situacion = percepcion
+    def programa(self, percepción):
+        robot, situación = percepción
 
         # Actualiza el modelo interno
         self.modelo[0] = robot
@@ -244,13 +244,13 @@ class AgenteDoscuartosCiegos(entornos_o.Agente):
         elif robot == 'A':
             if a=='sucio':
                 aux='limpiar'
-                self.modelo[1]='limpio' #Se actualiza la situacion del modelo para el cuarto A
+                self.modelo[1]='limpio' #Se actualiza la situación del modelo para el cuarto A
             else:
                 aux='ir_B'
         elif robot == 'B':
             if b=='sucio':
                 aux='limpiar'
-                self.modelo[2]='limpio' #Se actualiza la situacion del modelo para el cuarto B
+                self.modelo[2]='limpio' #Se actualiza la situación del modelo para el cuarto B
             else:
                 aux='ir_A'
         return(aux)
@@ -266,12 +266,12 @@ class AgenteDosCuartosEstocastico(entornos_o.Agente):
         """
         self.modelo = ['A', 'sucio', 'sucio']
 
-    def programa(self, percepcion):
-        robot, situacion = percepcion
+    def programa(self, percepción):
+        robot, situación = percepción
 
         # Actualiza el modelo interno
         self.modelo[0] = robot
-        self.modelo[' AB'.find(robot)] = situacion
+        self.modelo[' AB'.find(robot)] = situación
 
         # Decide sobre el modelo interno
         a, b = self.modelo[1], self.modelo[2]

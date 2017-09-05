@@ -34,9 +34,9 @@ class Entorno:
         self.x = x0[:]
 
 
-        self.desempeno = 0
+        self.desempeño = 0
 
-    def accion_legal(self, accion):
+    def acción_legal(self, acción):
         """
         @param acción: Una accion en el entorno
 
@@ -47,7 +47,7 @@ class Entorno:
         """
         return True
 
-    def transicion(self, accion):
+    def transición(self, acción):
         """
         @param accion: Uno de los elementos de acciones_legales( estado)
 
@@ -56,7 +56,7 @@ class Entorno:
         """
         pass
 
-    def percepcion(self):
+    def percepción(self):
         """
         @return: Tupla con los valores que se perciben del entorno por
                  default el estado completo
@@ -72,7 +72,7 @@ class Agente(object):
 
     """
 
-    def programa(self, percepcion):
+    def programa(self, percepción):
         """
         @param percepcion: Lista con los valores que se perciben de un entorno
 
@@ -96,16 +96,16 @@ def simulador(entorno, agente, pasos=10, verbose=True):
             largo de la simulación.
 
     """
-    historial_desempeno = [entorno.desempeno]
+    historial_desempeño = [entorno.desempeño]
     historial_estados = [entorno.x[:]]
     historial_acciones = []
 
     for paso in range(pasos):
-        p = entorno.percepcion()
+        p = entorno.percepción()
         a = agente.programa(p)
-        entorno.transicion(a)
+        entorno.transición(a)
 
-        historial_desempeno.append(entorno.desempeno)
+        historial_desempeño.append(entorno.desempeño)
         historial_estados.append(entorno.x[:])
         historial_acciones.append(a)
 
@@ -128,8 +128,8 @@ def simulador(entorno, agente, pasos=10, verbose=True):
             print(str(i).center(10) +
                   str(historial_estados[i]).center(40) +
                   str(historial_acciones[i]).center(25) +
-                  str(historial_desempeno[i]).rjust(12))
+                  str(historial_desempeño[i]).rjust(12))
 
         print('_' * (10 + 40 + 25 + 15) + '\n\n')
 
-    return historial_estados, historial_acciones, historial_desempeno
+    return historial_estados, historial_acciones, historial_desempeño
