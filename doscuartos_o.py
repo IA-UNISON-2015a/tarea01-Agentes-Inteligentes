@@ -98,7 +98,7 @@ class AgenteReactivoModeloDosCuartos(entornos_o.Agente):
 
     def programa(self, percepción):
         robot, situación = percepción
-
+        print(percepción)
         # Actualiza el modelo interno
         self.modelo[0] = robot
         self.modelo[' AB'.find(robot)] = situación
@@ -115,14 +115,14 @@ def test():
     Prueba del entorno y los agentes
 
     """
-    print("Prueba del entorno con un agente aleatorio")
+    '''    print("Prueba del entorno con un agente aleatorio")
     entornos_o.simulador(DosCuartos(),
                          AgenteAleatorio(['ir_A', 'ir_B', 'limpiar', 'nada']),
                          100)
 
     print("Prueba del entorno con un agente reactivo")
     entornos_o.simulador(DosCuartos(), AgenteReactivoDoscuartos(), 100)
-
+    '''
     print("Prueba del entorno con un agente reactivo con modelo")
     entornos_o.simulador(DosCuartos(), AgenteReactivoModeloDosCuartos(), 100)
 
