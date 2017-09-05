@@ -8,7 +8,7 @@ Entornos y agentes desde una prespectiva OO
 
 """
 
-__author__ = 'juliowaissman'
+__author__ = 'Carlos_Huguez'
 
 class Entorno:
     """
@@ -109,10 +109,10 @@ def simulador(entorno, agente, pasos=10, verbose=True):
 
         print('Paso'.center(10) +
               'Estado'.center(40) +
-              u'Acción'.center(25) +
-              u'Desempeño'.center(15))
+              'Acción'.center(25) +
+              'Desempeño'.center(15))
 
-        print('_' * (10 + 40 + 25 + 15))
+        print( '_' * ( 10 + 40 + 25 + 15 ) )
 
         for i in range(pasos):
             print(str(i).center(10) +
