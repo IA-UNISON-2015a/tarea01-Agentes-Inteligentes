@@ -354,7 +354,7 @@ def test():
 
     print("ENTORNO: DOS CUARTOS CIEGO \n Prueba del entorno con un agente reactivo con modelo")
     entornos_o.simulador(DosCuartosCiego(), AgenteReactivoModeloDosCuartosCiego(), 100)
-    
+   
     ###############
     
     print("ENTORNO: DOS CUARTOS ESTOCÁSTICO \n Prueba del entorno con un agente aleatorio")
@@ -370,3 +370,23 @@ def test():
 ###########################################
 if __name__ == "__main__":
     test()
+###########################################
+"""
+Conclusiones:
+    Para el entorno de SeisCuartos la diferencia promedio aproximada
+    entre los desempeños es de 95 unidades. La diferencia es bastante 
+    grande debido a la estrategia utilizada por cada agente (uno que piensa y el
+    otro que sólo escoge al azar una acción)
+    
+    Para el entorno DosCuartosCiego se mantiene una gran diferencia 
+    en el desempeño entre ambos agentes siendo que el aleatorio es aproximadamente
+    10 veces peor en promedio de las corridas.
+    
+    De igual forma se tiene mucha diferencia si hablamos del entorno 
+    DosCuartosEstocastico. El 80% de las veces que necesita limpiar el agente, 
+    éste actua de manera correcta. Se puede decir que se tiene una probabilidad
+    bastante alta de éxito a comparación del aleatorio. Sin embargo,
+    si la probabilidad de que el agente realice una acción correctamente bajara
+    en gran cantidad podría llegar a ser una peor opción que el agente
+    aleatorio.
+"""
