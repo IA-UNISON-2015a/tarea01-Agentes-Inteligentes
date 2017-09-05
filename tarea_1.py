@@ -124,10 +124,9 @@ class SeisCuartos(entornos_o.Entorno):
 
 class DosCuartos(entornos_o.Entorno):
     """
-    Clase para un entorno de dos cuartos. Muy sencilla solo regrupa métodos.
+    Clase para un entorno de dos cuartos.
 
-    El estado se define como (robot, A, B)
-    donde robot puede tener los valores "A", "B"
+    El estado se define como (robot, A, B) donde robot puede tener los valores "A", "B"
     A y B pueden tener los valores "limpio", "sucio"
 
     Las acciones válidas en el entorno son ("ir_A", "ir_B", "limpiar", "nada").
@@ -169,7 +168,6 @@ class DosCuartos(entornos_o.Entorno):
 class AgenteAleatorio(entornos_o.Agente):
     """
     Un agente que solo regresa una accion al azar entre las acciones legales
-
     """
 
     def __init__(self, acciones):
@@ -185,7 +183,6 @@ class AgenteReactivoModeloSeisCuartos(entornos_o.Agente):
         El modelo empieza desde A y sigue la siguiente forma:
             F <- E <- D
             A -> B -> C ↑
-
     """
 
     def __init__(self):
