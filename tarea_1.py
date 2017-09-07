@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import entornos_o
+from random import choice
+import numpy.random as np
 
 __author__ = 'Giovanni Lopez'
 """
@@ -40,7 +42,7 @@ En esta tarea realiza las siguiente acciones:
             self.desempeño = 0
 
         def legal_action(self,action):
-            return action in ("up","down","right","left","clean","nothing")
+            return action in ("up","down","right","left","clean_up","nothing")
 
         def transition(self,action):
             raise ValueError("This is not a legal action to take, please try again")
@@ -49,8 +51,8 @@ En esta tarea realiza las siguiente acciones:
             floor = "down"
             if action in not "nothing" or a is "dirty" or b is "dirty" or c is "dirty" or d is "dirty" or e is "dirty" or f is "dirty":
                 self.desempeño -= 1
-            if action is "clean":
-                self.x[" ABCDEF".find(self.x[0])] = "limpio"
+            if action is "clean_up":
+                self.x[" ABCDEF".find(self.x[0])] = "clean"
             elif action is "right":
                 if self.x[0] is "C" or self.x[0] is "F":
                     raise ValueError("This is not a legal action to take, please try again")
@@ -90,6 +92,61 @@ En esta tarea realiza las siguiente acciones:
 
     Diseña un agente racional para este problema, pruebalo y comparalo
     con el agente aleatorio.
+"""
+class TwoRoomsBlind(entornos_o.Entorno):
+    """
+    """
+    def __init__(self, x0=["A", "dirty", "dirty"]):
+        """
+        """
+        self.x = x0[:]
+        self.desempeño = 0
+
+    def legal_action(self, acción):
+        return acción in ("Go_A", "Go_B", "Clean_up", "nothing")
+
+    def transition(self, acción):
+        if not self.acción_legal(acción):
+            raise ValueError("This action is not available")
+
+        robot, a, b = self.x
+        if action is not "nothing" or a is "dirty" or b is "dirty":
+            self.desempeño -= 1
+        if acción is "Clean_up":
+            self.x[" AB".find(self.x[0])] = "clean"
+        elif acción is "Go_A":
+            self.x[0] = "A"
+        elif acción is "Go_B":
+            self.x[0] = "B"
+
+    def perception(self):
+        return self.x[0]
+
+class TwoRoomsBlindReactiveModelAgent(entornos_o.Agente):
+    """
+
+    """
+    def __init__(self):
+        """
+        """"
+        self.modelo = ['A', 'dirty', 'dirty']
+
+    def programa(self, perception):
+        self.flag= False
+        # Actualiza el modelo interno
+        self.modelo[0] = perception
+
+        # Decide sobre el modelo interno
+        a, b = self.modelo[1], self.modelo[2]
+
+        if self.modelo[" AB".find(self.modelo[0])] is 'dirty':
+           self.flag=True
+           self.modelo[" AB".find(self.modelo[0])] = 'clean'
+
+        return ('nothing' if a == b == 'clean' else
+                'Clean_up' if self.flag else
+                'Go_A' if percepción == 'B' else 'Go_B')
+"""
 
 4.- Reconsidera el problema original de los dos cuartos, pero ahora modificalo
     para que cuando el agente decida aspirar, el 80% de las veces limpie pero
@@ -97,14 +154,71 @@ En esta tarea realiza las siguiente acciones:
     para este problema, pruebalo y comparalo con el agente aleatorio.
 
     A este entorno llamalo DosCuartosEstocástico
+"""
+class TwoRoomsStochastic(entornos_o.Agente):
+    """
+    """
+    def __init__(self):
+        """
+
+        """
+        self.modelo = ['A', 'dirty', 'dirty']
+
+    def programa(self, perception):
+        robot, situation = perception
+
+        # Actualiza el modelo interno
+        self.modelo[0] = robot
+        self.modelo[' AB'.find(robot)] = situation
+
+        # Decide sobre el modelo interno
+        a, b = self.modelo[1], self.modelo[2]
+
+
+        if situation=='dirty':
+            return('Clean_up' if np.random_integers(1, 100) <= 80 else 'nothing')
+        else:
+            return('nothing' if a == b == 'clean' else
+                'Go_A' if robot == 'B' else 'Go_B')
+
+"""
 
 Todos los incisos tienen un valor de 25 puntos sobre la calificación de
 la tarea.
 
 """
-__author__ = 'escribe_tu_nombre'
+def test():
+    """
+    Prueba del entorno y los agentes
 
-import entorno_o
+    """
+    print("SixRooms:")
+    entornos_o.simulador(SixRooms(),
+                        AgenteAleatorio(['right', 'left', 'up', 'down', 'clean_up', 'nothing']),
+                        100)
+
+    ##############
+
+    print("TwoRoomsBlind:")
+    entornos_o.simulador(DosCuartosCiego(),
+                        AgenteAleatorio(['Go_A', 'Go_B', 'Clean_up', 'nothing']),
+                        100)
+
+
+    print("TwoRoomsBlindReactive:")
+    entornos_o.simulador(DosCuartosCiego(), AgenteReactivoModeloDosCuartosCiego(), 100)
+
+    ###############
+
+    print("TwoRoomsStochastic:")
+    entornos_o.simulador(DosCuartosEstocastico(),
+                        AgenteAleatorio(['Go_a', 'Go_B', 'Clean_up', 'nothing']),
+                        100)
+
+if __name__ == "__main__":
+    test()
+
+
 
 # Requiere el modulo entornos_o.py
 # Usa el modulo doscuartos_o.py para reutilizar código
