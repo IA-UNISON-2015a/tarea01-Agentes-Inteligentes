@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-doscuartos.py.py
+SeisCuartos.py.py
 ------------
 
 #probando de nuevo atte temoc
@@ -10,53 +10,109 @@ Ejemplo de un entorno muy simple y agentes idem
 
 """
 
-__author__ = 'juliowaissman'
+__author__ = 'Jose Cuauhtemoc Moyron Higuera'
 
 import entornos
 from random import choice
 
 
-class DosCuartos(entornos.Entorno):
+class SeisCuartos(entornos.Entorno):
     """
-    Clase para un entorno de dos cuartos. Muy sencilla solo regrupa métodos.
+    Empezare por definir la distribuicion de los cuartos 
+    
+                | D | | E | | F | 
+                | A | | B | | C |
 
-    El estado se define como 
-                (robot, A, B) 
-    donde robot puede tener los valores "A", "B"
-    A y B pueden tener los valores "limpio", "sucio"
+                
+    donde robot puede tener los valores "A","B","C","D","E","F"
+    A,B,C,D,E,F pueden tener los valores "limpio" o "sucio"
 
-    Las acciones válidas en el entorno son 
-            "irA", "irB", "limpiar" y "noOp". 
-    Todas las acciones son válidas en todos los estados.
-
-    Los sensores es una tupla 
-                (robot, limpio?) 
-    con la ubicación del robot y el estado de limieza
+    Las acciones válidas en el entorno son :
+            "irDerecha","irIzquierda" "subir" "bajar" "limpiar" y "noOp". 
+    Casi todas las acciones son válidas, sabemos que en todos los cuartos podemos limpiar o no limpiar,
+    pero al trasladarnos hay movimientos permitidos y no permitidos (ejemplo: los cuartos A,B,C son los de
+    la planta baja, E,D,F son la planta alta, por ejemplo no se podra subir en los de la planta alta, ni se p
+    podra bajar en la planta baja)
 
     """
 
     def transicion(self, estado, accion):
         if not self.accion_legal(estado, accion):
             raise ValueError("La accion no es legal para este estado")
-
-        robot, A, B = estado
-
-        return (('A', A, B) if accion == 'irA' else
-                ('B', A, B) if accion == 'irB' else
-                (robot, A, B) if accion == 'noOp' else
-                ('A', 'limpio', B) if accion == 'limpiar' and robot == 'A' else
-                ('B', A, 'limpio'))
-
+  #  EN LA LINEA SIGUIENTE AGREGAMOS LAS HABITACIONES extras. 
+        robot, A, B, C, D, E, F = estado
+  # En esta linea creamos una lista que recibe como argumento lo que hay en estado      
+        nuevo = list(estado)
+        modelo = ('robot','A','B','C','D','E','F')
+        
+        
+        if accion == 'limpiar':
+            nuevo[modelo.index(nuevo[0])] = 'limpio'
+        elif accion == 'subir':
+            nuevo[0] = modelo[modelo.index(nuevo[0]) + 3]
+        elif accion == 'bajar':
+            nuevo[0] = modelo[modelo.index(nuevo[0]) - 3]
+        elif accion == 'irDerecha':
+            nuevo[0] = modelo[modelo.index(nuevo[0]) + 1]
+        elif accion == 'irIzquierda':
+            nuevo[0] = modelo[modelo.index(nuevo[0]) - 1]
+ 
+        return tuple(nuevo) #aqui regresamos una tupla con los datos de la lista nuevo 
+    
     def sensores(self, estado):
-        robot, A, B = estado
-        return robot, A if robot == 'A' else B
+        
+        modelo = ('robot', 'A', 'B', 'C', 'D', 'E', 'F')
+        return (estado[0], estado[modelo.index(estado[0])])
+        
+                
+                                    
 
     def accion_legal(self, estado, accion):
-        return accion in ('irA', 'irB', 'limpiar', 'noOp')
-
+ #       return accion in ('irDerecha', 'irIzquierda', 'subir', 'bajar', 'limpiar', 'noOp')
+    """En la siguiente declaracion tenemos la condicional de que si estamos en D o en A no podemos ir
+            a la izquierda 
+            |-D | | E | | F | 
+            |-A | | B | | C |
+    """
+         if (estado[0] == 'A' or estado[0] == 'D') and accion == 'irIzquierda'):
+            return False
+        
+        
+        """En la siguiente declaracion tenemos la condicional de que si estamos en C o en F no podemos ir
+            a la Derecha 
+            |D | | E | |-F | 
+            |A | | B | |-C |
+        """
+        if (estado[0] == 'C' or estado[0] == 'F') and accion == 'irDerecha'):
+            return False
+        
+        
+        """En la siguiente declaracion tenemos la condicional en la cual dice que si lo que esta en estado 
+           es menor o igual a D entonces quiere decir que estamos en el piso de abajo por lo tanto no 
+           podremos ir abajo 
+            | D | | E | | F | 
+            |-A | |-B | |-C |
+        """
+        if (estado[0] == <'D' and accion == 'bajar'):
+            return False
+        
+        
+        """En la siguiente declaracion tenemos la condicional en la cual dice que si lo que esta en estado 
+           es mayor o igual que D entonces quiere decir que estamos en el piso de arriba por lo tanto no 
+           podremos subir  
+            |-D | |-E | |-F | 
+            | A | | B | | C |
+        """
+        if (estado[0] == >'D' and accion == 'subir'):
+            return False
+        
     def desempeno_local(self, estado, accion):
-        robot, A, B = estado
-        return 0 if accion == 'noOp' and A == B == 'limpio' else -1
+        robot, A, B, C, D, E, F  = estado
+        if accion == 'subir' or accion == 'bajar' :
+            return -2 
+        if accion == 'noOp' and not 'sucio' in estado :
+            return 0
+        return -1 
 
 
 class AgenteAleatorio(entornos.Agente):
@@ -118,7 +174,7 @@ def test():
 
     """
     print "Prueba del entorno de dos cuartos con un agente aleatorio"
-    entornos.simulador(DosCuartos(),
+    entornos.simulador(SeisCuartos(),
                        AgenteAleatorio(['irA', 'irB', 'limpiar', 'noOp']),
                        ('A', 'sucio', 'sucio'), 100)
 
