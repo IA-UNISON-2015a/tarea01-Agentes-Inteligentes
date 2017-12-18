@@ -41,14 +41,14 @@ class DosCuartos(entornos_o.Entorno):
         self.desempeño = 0
 
     def acción_legal(self, acción):
-        return acción in ("ir_A", "ir_B", "limpiar", "nada")
+        return acción in ("ir_A", "ir_B", "limpiar", "No_op")
 
     def transición(self, acción):
         if not self.acción_legal(acción):
             raise ValueError("La acción no es legal para este estado")
 
         robot, a, b = self.x
-        if acción is not "nada" or a is "sucio" or b is "sucio":
+        if acción is not "No_op" or a is "sucio" or b is "sucio":
             self.desempeño -= 1
         if acción is "limpiar":
             self.x[" AB".find(self.x[0])] = "limpio"
@@ -105,7 +105,7 @@ class AgenteReactivoModeloDosCuartos(entornos_o.Agente):
 
         # Decide sobre el modelo interno
         a, b = self.modelo[1], self.modelo[2]
-        return ('nada' if a == b == 'limpio' else
+        return ('No_op' if a == b == 'limpio' else
                 'limpiar' if situación == 'sucio' else
                 'ir_A' if robot == 'B' else 'ir_B')
 
@@ -117,7 +117,7 @@ def test():
     """
     print("Prueba del entorno con un agente aleatorio")
     entornos_o.simulador(DosCuartos(),
-                         AgenteAleatorio(['ir_A', 'ir_B', 'limpiar', 'nada']),
+                         AgenteAleatorio(['ir_A', 'ir_B', 'limpiar', 'No_op']),
                          100)
 
     print("Prueba del entorno con un agente reactivo")
