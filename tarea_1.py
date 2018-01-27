@@ -60,6 +60,7 @@ la tarea.
 __author__ = 'IvanAlejandroMorenoSoto'
 
 import entornos_o
+from random import random
 from doscuartos_o import DosCuartos, AgenteReactivoModeloDosCuartos, AgenteAleatorio
 
 ##############################################################
@@ -127,5 +128,51 @@ def hacerPruebaEjercicio3(pasos):
 
 ##############################################################
 
+# Ejercicio 4.
+
+class DosCuartosEstocástico(DosCuartos):
+    """
+    Entorno en el cual el agente tiene un 80% de éxito al limpiar un
+    cuarto y un 90% al cambiarse de cuarto.
+    """
+
+    def transición(self, acción):
+        """
+        Implementa una transición estocástica del entorno.
+
+        @param acción Acción del agente.
+        """
+        if not self.acción_legal(acción):
+            raise ValueError("La acción no es legal para este estado.")
+
+        robot, a, b = self.x
+
+        if acción is not "nada" or a is "sucio" or b is "sucio":
+            self.desempeño -= 1
+
+        if acción is "limpiar" and random() <= 0.8:
+            self.x[" AB".find(self.x[0])] = "limpio"
+        elif acción is "ir_A" and random() <= 0.9:
+            self.x[0] = "A"
+        elif acción is "ir_B" and random() <= 0.9:
+            self.x[0] = "B"
+
+#class AgenteDosCuartosEstocástico():
+
+
+def hacerPruebaEjercicio4(pasos):
+    """
+    @param pasos: Número de pasos de la simulación.
+    """
+
+    print("Prueba en DosCuartosEstocástico con un agente aleatorio.")
+    entornos_o.simulador(DosCuartosEstocástico(), AgenteAleatorio(['ir_A', 'ir_B', 'limpiar', 'nada']), pasos)
+
+    #print("Prueba en DosCuartosEstocástico con un agente racional.")
+    #entornos_o.simulador(DosCuartosEstocástico(), AgenteDosCuartosEstocástico(), pasos)
+
+##############################################################
+
 if __name__ == "__main__":
-    hacerPruebaEjercicio3(100)
+    #hacerPruebaEjercicio3(100)
+    hacerPruebaEjercicio4(100)
