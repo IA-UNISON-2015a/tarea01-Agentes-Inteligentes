@@ -64,3 +64,80 @@ import entorno_o
 # Requiere el modulo entornos_o.py
 # Usa el modulo doscuartos_o.py para reutilizar codigo
 # Agrega los modulos que requieras de python
+
+def SeisCuartos(doscuartos_o.DosCuartos):
+    """
+    Clase para un entorno de seis cuartos. 
+
+    Hay 3 cuartos arriba y 3 cuartos abajo, enumerados como sigue:
+    1 2 3
+`   4 5 6
+
+    El estado se define como (robot, 1, 2, 3, 4, 5, 6)
+    donde robot puede tener los valores "1", "2", ..., "6"
+    1, 2, ..., 6 pueden tener los valores "limpio", "sucio"
+
+    Las acciones validas en el entorno son ["ir_Derecha", "ir_Izquierda", "subir", "bajar", "limpiar", "nada"]
+    Para ir al primer piso es necesario subir desde el cuarto 4 o 6 y para bajar es necesario hacerlo desde el
+    cuarto 2.
+    Si por ejemplo el agente se encuentra en 2, solo puede elegir ["ir_Derecha", "ir_Izquierda", "bajar", "limpiar", "nada"]
+
+    Los sensores es una tupla (robot, limpio?)
+    con la ubicacion del robot y el estado de limpieza
+
+    """
+    def __init__(self, x0=[1, "sucio", "sucio", "sucio", "sucio", "sucio", "sucio"]):
+        """
+        Por default inicialmente el robot esta en 1 y los seis cuartos
+        estan sucios
+
+        """
+        self.x = x0[:]
+        self.desempenio = 0
+
+    def accion_legal(self, accion):
+        if self.x[0] == 1:
+            return accion in ["ir_Derecha", "limpiar", "nada"]
+        if self.x[0] == 2:
+            return accion in ["ir_Derecha", "ir_Izquierda", "bajar", "limpiar", "nada"]
+        if self.x[0] == 3:
+            return accion in ["ir_Izquierda", "limpiar", "nada"]
+        if self.x[0] == 4:
+            return accion in ["ir_Derecha", "subir", "limpiar", "nada"]
+        if self.x[0] == 5:
+            return accion in ["ir_Derecha", "ir_Izquierda", "limpiar", "nada"]
+        if self.x[0] == 6:
+            return accion in ["ir_Izquierda", "subir", "limpiar", "nada"]
+
+    def costo(self, accion):
+        costoMin = 0.5
+        costoIzqDer = 2 * costoMin
+        costoSubirBajar = 2 * costoIzqDer
+        if accion is "limpiar" or \
+           (accion is "nada" and any(cuarto is "sucio" for cuarto in self.x[1:]):
+           self.desempenio -= costoMin
+        if accion is "ir_Derecha" or accion is "ir_Izquierda":
+            self.desempenio -= costoIzqDer
+        if accion is "subir" or accion is "bajar":
+            self.desempenio -= costoSubirBajar
+
+    def transicion(self, accion):
+        if not self.accion_legal(accion):
+            raise ValueError("La accion no es legal para este estado")
+
+        self.costo(accion)
+        if accion is "limpiar":
+            self.x[ self.x[0] ] = "limpio"
+        #Debido a nombre y acomodo de los cuartos se puede aplicar la siguiente aritmetica.
+        #Si aumenta el numero de cuartos o se cambia el acomodo, deja de funcionar
+        elif accion is "ir_Derecha":
+            self.x[0] += 1
+        elif accion is "ir_Izquierda":
+            self.x[0] -= 1
+        elif accion is "subir":
+            self.x[0] -= 3
+        elif accion is "bajar":
+            self.x[0] += 3
+
+    def percepcion(self):
+        return self.x[0], self.x[ self.x[0] ]
