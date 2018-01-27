@@ -61,6 +61,80 @@ __author__ = "Jordan Joel Urias Paramo"
 
 import entorno_o
 
+class SeisCuartos(entornos_o.Entorno):
+    """
+    Clase entorno definida en el inciso 1
+    """
+    def __init__(self, x0=["A", "sucio", "sucio","sucio", "sucio","sucio", "sucio"]):
+        """
+        Por default inicialmente el robot está en A y los cuartos
+        están sucios
+
+        """
+        self.x = x0[:]
+        self.desempeño = 0
+
+    def acción_legal(self, acción):
+        if accion is "nada":
+            return True
+        elif self.x[0] is "A" and accion in ("ir_Derecha","subir"):
+            return True
+        elif self.x[0] is "B" and accion in ("ir_Derecha","ir_Izquierda"):
+            return True
+        elif self.x[0] is "C" and accion in ("ir_Izquierda","subir"):
+            return True
+        elif self.x[0] is "D" and accion is "ir_Derecha":
+            return True
+        elif self.x[0] is "E" and accion in ("ir_Derecha","ir_Izquierda","bajar"):
+            return True
+        elif self.x[0] is "F" and accion is "ir_Izquierda":
+            return True
+        else return False
+
+    def transición(self, acción):
+        if not self.acción_legal(acción):
+            raise ValueError("La acción no es legal para este estado")
+
+        robot, a, b,c,d,e,f = self.x
+        if acción is not "nada" or a is "sucio" or b is "sucio" or c is "sucio"or d is "sucio" or e is "sucio"or f is "sucio":
+            if accion is "limpiar":
+                self.desempeño -= 1
+            elif accion in ("subir","bajar"):
+                self.desempeño -= 3
+            else:
+                self.desempeño -= 2
+            
+        if acción is "limpiar":
+            self.x[" ABCDEF".find(self.x[0])] = "limpio"
+        elif acción is "ir_Derecha":
+            if robot is "A":
+                self.x[0] = "B"
+            elif robot is "B":
+                self.x[0] = "C"
+            elif robot is "D":
+                self.x[0] = "E"
+            else:
+                self.x[0] = "E"
+        elif acción is "ir_Izquierda":
+            if robot is "C":
+                self.x[0] = "B"
+            elif robot is "B":
+                self.x[0] = "A"
+            elif robot is "F":
+                self.x[0] = "E"
+            else:
+                self.x[0] = "D"
+        elif acción is "subir":
+            if robot is "A":
+                self.x[0] = "D"
+            else:
+                self.x[0] = "F"
+        else:
+            self.x[0] = "B"
+
+    def percepción(self):
+        return self.x[0], self.x[" ABCDEF".find(self.x[0])]
+
 # Requiere el modulo entornos_o.py
 # Usa el modulo doscuartos_o.py para reutilizar código
 # Agrega los modulos que requieras de python
