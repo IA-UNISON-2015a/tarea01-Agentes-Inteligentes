@@ -24,29 +24,29 @@ class Entorno:
 
         """
         self.x = x0[:]
-        self.desempeño = 0
+        self.desempenio = 0
 
-    def acción_legal(self, acción):
+    def accion_legal(self, accion):
         """
-        @param acción: Una accion en el entorno
+        @param accion: Una accion en el entorno
 
         @return: True si accion es legal en estado, False en caso contrario
 
-        Por default acepta cualquier acción.
+        Por default acepta cualquier accion.
 
         """
         return True
 
-    def transición(self, acción):
+    def transicion(self, accion):
         """
         @param accion: Uno de los elementos de acciones_legales( estado)
 
-        Modifica self.estado y self.desempeño
+        Modifica self.estado y self.desempenio
 
         """
         pass
 
-    def percepción(self):
+    def percepcion(self):
         """
         @return: Tupla con los valores que se perciben del entorno por
                  default el estado completo
@@ -66,51 +66,51 @@ class Agente(object):
         """
         @param percepcion: Lista con los valores que se perciben de un entorno
 
-        @return: accion: Acción seleccionada por el agente.
+        @return: accion: Accion seleccionada por el agente.
 
         """
         pass
 
 
 def simulador(entorno, agente, pasos=10, verbose=True):
-    """Realiza la simulación de un agente actuando en un entorno de forma genérica
+    """Realiza la simulacion de un agente actuando en un entorno de forma generica
 
     @param entorno: Un objeto de la clase Entorno
     @param agente: Un objeto de la clase Agente
-    @param pasos: Un int con el número de pasos a simular
-    @param verbose: Si True, imprime el resultado de la simulación
+    @param pasos: Un int con el numero de pasos a simular
+    @param verbose: Si True, imprime el resultado de la simulacion
 
     @retrun (historial_estados, historial_acciones,
-            historial_desempeño) donde cada una es una lista con los
-            estados, acciones y medida de desempeño encontradas a lo
-            largo de la simulación.
+            historial_desempenio) donde cada una es una lista con los
+            estados, acciones y medida de desempenio encontradas a lo
+            largo de la simulacion.
 
     """
-    historial_desempeño = [entorno.desempeño]
+    historial_desempenio = [entorno.desempenio]
     historial_estados = [entorno.x[:]]
     historial_acciones = []
 
     for paso in range(pasos):
-        p = entorno.percepción()
+        p = entorno.percepcion()
         a = agente.programa(p)
-        entorno.transición(a)
+        entorno.transicion(a)
 
-        historial_desempeño.append(entorno.desempeño)
+        historial_desempenio.append(entorno.desempenio)
         historial_estados.append(entorno.x[:])
         historial_acciones.append(a)
 
     historial_acciones.append(None)
 
     if verbose:
-        print(u"\n\nSimulación de entorno tipo " +
+        print(u"\n\nSimulacion de entorno tipo " +
               str(type(entorno)) +
               " con el agente tipo " +
               str(type(agente)) + "\n")
 
         print('Paso'.center(10) +
               'Estado'.center(40) +
-              u'Acción'.center(25) +
-              u'Desempeño'.center(15))
+              u'Accion'.center(25) +
+              u'Desempenio'.center(15))
 
         print('_' * (10 + 40 + 25 + 15))
 
@@ -118,8 +118,8 @@ def simulador(entorno, agente, pasos=10, verbose=True):
             print(str(i).center(10) +
                   str(historial_estados[i]).center(40) +
                   str(historial_acciones[i]).center(25) +
-                  str(historial_desempeño[i]).rjust(12))
+                  str(historial_desempenio[i]).rjust(12))
 
         print('_' * (10 + 40 + 25 + 15) + '\n\n')
 
-    return historial_estados, historial_acciones, historial_desempeño
+    return historial_estados, historial_acciones, historial_desempenio
