@@ -270,7 +270,7 @@ class AgenteReactivoModeloDosCuartosCiego(doscuartos_o .AgenteReactivoModeloDosC
             else:
                 return 'ir_A'
 
-def test():
+def testEj3():
     """
     Prueba del entorno y los agentes
 
@@ -284,9 +284,40 @@ def test():
     print("Prueba del entorno CIEGO con un agente reactivo con modelo")
     entornos_o.simulador(DosCuartosCiego(), AgenteReactivoModeloDosCuartosCiego(), 100)
 ##########################################################################
+class DosCuartosEstocástico(doscuartos_o.DosCuartos):
+    def transición(self, acción):
+        if not self.acción_legal(acción):
+            raise ValueError("La acción no es legal para este estado")
+
+        robot, a, b = self.x
+        if acción is not "nada" or a is "sucio" or b is "sucio":
+            self.desempeño -= 1
+        if acción is "limpiar" and random.random() <= 0.8:
+            self.x[" AB".find(self.x[0])] = "limpio"
+        elif acción is "ir_A" and random.random() <= 0.9:
+            self.x[0] = "A"
+        elif acción is "ir_B"and random.random() <= 0.9:
+            self.x[0] = "B"
+def testEj4():
+    """
+    Prueba del entorno y los agentes
+
+    """
+    print("Prueba del entorno con un agente aleatorio")
+    entornos_o.simulador(doscuartos_o.DosCuartos(),
+                         doscuartos_o.AgenteAleatorio(['ir_A', 'ir_B', 'limpiar', 'nada']),
+                         100)
+
+    print("Prueba del entorno Estocástico con un agente reactivo")
+    entornos_o.simulador(DosCuartosEstocástico(), doscuartos_o.AgenteReactivoDoscuartos(), 100)
+
+    print("Prueba del entorno Estocástico con un agente reactivo con modelo")
+    entornos_o.simulador(DosCuartosEstocástico(), doscuartos_o.AgenteReactivoModeloDosCuartos(), 100)
+
+#########################################################################  
   
 if __name__ == "__main__":
-    test()
+    testEj4()
 
 # Requiere el modulo entornos_o.py
 # Usa el modulo doscuartos_o.py para reutilizar código
