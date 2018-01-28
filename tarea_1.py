@@ -59,12 +59,15 @@ la tarea.
 """
 __author__ = "Jordan Joel Urias Paramo"
 
-import entorno_o
-
+import entornos_o
+import random
+from collections import namedtuple
 class SeisCuartos(entornos_o.Entorno):
     """
     Clase entorno definida en el inciso 1
     """
+    acciones = {"ir_Derecha", "ir_Izquierda", "subir", "bajar", "limpiar", "nada"}
+    
     def __init__(self, x0=["A", "sucio", "sucio","sucio", "sucio","sucio", "sucio"]):
         """
         Por default inicialmente el robot está en A y los cuartos
@@ -75,7 +78,7 @@ class SeisCuartos(entornos_o.Entorno):
         self.desempeño = 0
 
     def acción_legal(self, acción):
-        if accion is "nada":
+        if acción is "nada" or "limpiar":
             return True
         elif self.x[0] is "A" and accion in ("ir_Derecha","subir"):
             return True
@@ -89,17 +92,34 @@ class SeisCuartos(entornos_o.Entorno):
             return True
         elif self.x[0] is "F" and accion is "ir_Izquierda":
             return True
-        else return False
+        else:
+            return False
 
+    def acciones_legales(self):
+        posición, _ = self.percepción()
+        if posición is "A" :
+            return ("ir_Derecha","subir","nada","limpiar")
+        elif posición is "B" :
+            return ("ir_Derecha","ir_Izquierda","nada","limpiar")
+        elif posición is "C":
+            return ("ir_Izquierda","subir","nada","limpiar")
+        elif posición is "D":
+            return ("ir_Derecha","nada","limpiar")
+        elif posición is "E" :
+            return ("ir_Derecha","ir_Izquierda","bajar","nada","limpiar")
+        else:
+            return ("ir_Izquierda","nada","limpiar")
+
+    
     def transición(self, acción):
         if not self.acción_legal(acción):
             raise ValueError("La acción no es legal para este estado")
 
         robot, a, b,c,d,e,f = self.x
         if acción is not "nada" or a is "sucio" or b is "sucio" or c is "sucio"or d is "sucio" or e is "sucio"or f is "sucio":
-            if accion is "limpiar":
+            if acción is "limpiar":
                 self.desempeño -= 1
-            elif accion in ("subir","bajar"):
+            elif acción in ("subir","bajar"):
                 self.desempeño -= 3
             else:
                 self.desempeño -= 2
@@ -134,6 +154,81 @@ class SeisCuartos(entornos_o.Entorno):
 
     def percepción(self):
         return self.x[0], self.x[" ABCDEF".find(self.x[0])]
+
+class AgenteReactivoModeloSeisCuartos(entornos_o.Agente):
+    """
+    Un agente reactivo basado en modelo
+
+    """
+    def __init__(self):
+        """
+        Inicializa el modelo interno en el peor de los casos
+
+        """
+        self.modelo = ["A", "sucio", "sucio","sucio", "sucio","sucio", "sucio"]
+
+    def programa(self, percepción):
+        robot, situación = percepción
+
+        # Actualiza el modelo interno
+        self.modelo[0] = robot
+        self.modelo[' ABCDEF'.find(robot)] = situación
+
+        # Decide sobre el modelo interno
+        a, b,c,d,e,f = self.modelo[1], self.modelo[2], self.modelo[3], self.modelo[4], self.modelo[5], self.modelo[6]
+        if a == b == c == d == e == f == 'limpio':
+            return 'nada'
+        elif situación == 'sucio':
+            return 'limpiar'
+        elif robot == 'A':
+            if b=='sucio' or c=='sucio':
+                return 'ir_Derecha'
+            else:
+                return 'subir'
+        elif robot == 'B':
+            if a=='sucio':
+                return 'ir_Izquierda'
+            else:
+                return 'ir_Derecha'
+        elif robot == 'C':
+            if a=='sucio' or b=='sucio':
+                return 'ir_Izquierda'
+            else:
+                return 'subir'
+        elif robot == 'D':
+                return 'ir_Izquierda'
+        elif robot == 'E':
+            if d=='sucio':
+                return 'ir_Izquierda'
+            elif f=='sucio':
+                return 'ir_Derecha'
+            else:
+                return 'bajar'
+        else:
+            return 'ir_Izquierda'
+
+class AgenteAleatorioGenerico(entornos_o.Agente):
+    def __init__(self, entorno):
+        self.entorno = entorno
+
+    def programa(self, _):
+        return random.choice(self.entorno.acciones_legales())
+
+def test():
+    """
+    Prueba del entorno y los agentes
+
+    """
+    print("Prueba del entorno con un agente aleatorio")
+    entorno = SeisCuartos()
+    entornos_o.simulador(entorno, AgenteAleatorioGenerico(entorno),100)
+
+    print("Prueba del entorno con un agente reactivo con modelo")
+    entornos_o.simulador(SeisCuartos(), AgenteReactivoModeloSeisCuartos(), 100)
+
+
+if __name__ == "__main__":
+    test()
 
 # Requiere el modulo entornos_o.py
 # Usa el modulo doscuartos_o.py para reutilizar código
