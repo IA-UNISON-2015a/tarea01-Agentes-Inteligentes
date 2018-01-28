@@ -60,8 +60,11 @@ la tarea.
 __author__ = "Jordan Joel Urias Paramo"
 
 import entornos_o
+import doscuartos_o 
+
 import random
 from collections import namedtuple
+
 class SeisCuartos(entornos_o.Entorno):
     """
     Clase entorno definida en el inciso 1
@@ -214,7 +217,7 @@ class AgenteAleatorioGenerico(entornos_o.Agente):
     def programa(self, _):
         return random.choice(self.entorno.acciones_legales())
 
-def test():
+def testEj2():
     """
     Prueba del entorno y los agentes
 
@@ -226,7 +229,62 @@ def test():
     print("Prueba del entorno con un agente reactivo con modelo")
     entornos_o.simulador(SeisCuartos(), AgenteReactivoModeloSeisCuartos(), 100)
 
+###############################################################################
 
+class DosCuartosCiego(doscuartos_o.DosCuartos):
+    def percepción(self):
+        return self.x[0]  
+
+class AgenteReactivoModeloDosCuartosCiego(doscuartos_o .AgenteReactivoModeloDosCuartos):
+    """
+    Un agente reactivo basado en modelo
+
+    """
+    def __init__(self):
+        """
+        Inicializa el modelo interno en el peor de los casos
+
+        """
+        self.modelo = ['A', 'sucio', 'sucio']
+
+    def programa(self, percepción):
+        robot = percepción
+
+        # Actualiza el modelo interno
+        self.modelo[0] = robot
+
+        # Decide sobre el modelo interno
+        a, b = self.modelo[1], self.modelo[2]
+        if a == b == 'limpio':
+            return 'nada'
+        elif robot=='A':
+            if a =='sucio':
+                self.modelo[1] = 'limpio'
+                return 'limpiar'
+            else:
+                return 'ir_B'
+        else:
+            if b =='sucio':
+                self.modelo[2] = 'limpio'
+                return 'limpiar'
+            else:
+                return 'ir_A'
+
+def test():
+    """
+    Prueba del entorno y los agentes
+
+    """
+    print("Prueba del entorno con un agente aleatorio")
+    entornos_o.simulador(doscuartos_o.DosCuartos(),
+                         doscuartos_o.AgenteAleatorio(['ir_A', 'ir_B', 'limpiar', 'nada']),
+                         100)
+
+
+    print("Prueba del entorno CIEGO con un agente reactivo con modelo")
+    entornos_o.simulador(DosCuartosCiego(), AgenteReactivoModeloDosCuartosCiego(), 100)
+##########################################################################
+  
 if __name__ == "__main__":
     test()
 
