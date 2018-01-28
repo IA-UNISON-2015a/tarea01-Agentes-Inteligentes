@@ -65,6 +65,137 @@ from doscuartos_o import DosCuartos, AgenteReactivoModeloDosCuartos, AgenteAleat
 
 ##############################################################
 
+# Ejercicio 1.
+
+class SeisCuartos(entornos_o.Entorno):
+    """
+    Entorno de una casa con seis cuartos: tres en la planta inferior y
+    tres en la superior.
+    
+    Análogamente a DosCuartos, el estado se define como:
+    estado := [posición, A, B, C, D, E, F]
+    
+    D E F
+    A B C
+    
+    Donde A, B, C, son los cuartos inferiores, D, E, F, los superiores,
+    y posición puede tomar como valor cualquiera de ellos. Cada cuarto
+    puede estar "limpio" o "sucio."
+    
+    Las acciones válidas son:
+    acciones = {"ir_Derecha", "ir_Izquierda", "subir", "bajar", "limpiar", "nada"}
+    Todas son legales en todos los cuartos excepto por "subir" que únicamente es
+    legal en B1 y B3, y "bajar" que sólo se puede realizar en A2.
+    
+    Los sensores son una tupla que contiene la posición del robot y el estado de
+    limpieza del cuarto.
+    """
+    
+    def __init__(self, x0=["A", "sucio", "sucio", "sucio", "sucio", "sucio", "sucio"]):
+        """
+        Define el estado inicial de este entorno.
+        De forma predeterminada el robot se encuentra en el cuarto inferior izquierdo
+        y toda la casa está sucia.
+        
+        @param x0: Vector con el estado inicial del entorno de la forma
+        [posiciónInicial, limpieza_A, limpieza_B, limpieza_C, limpieza_D, limpieza_E, limpieza_F].
+        """
+        self.x = x0[:]
+        self.desempeño = 0
+    
+    def acción_legal(self, acción):
+        """
+        Determina si una acción es legal en el estado actual.
+        
+        @param acción: Acción que será revisada.
+        
+        @return True si la acción es legal, False en caso contrario.
+        """
+        # Se separan los casos en: el robot quiere subir o quiere bajar o quiere hacer
+        # cualquier otra cosa.
+        if acción is "subir" and (self.x[0] is "A" or self.x[0] is "C"):
+            return True
+        if acción is "bajar" and self.x[0] is "E":
+            return True
+        
+        return acción in ("ir_Derecha", "ir_Izquierda", "limpiar", "nada")
+    
+    def transición(self, acción):
+        """
+        Transforma al entorno según la acción recibida.
+        
+        @param acción: Acción de entrada al entorno.
+        """
+        if not self.acción_legal(acción):
+            print("La acción no es legal para este estado")
+            self.desempeño -= 1
+            return
+            #raise ValueError("La acción no es legal para este estado")
+
+        posición = self.x[0]
+        
+        # Se determina el desempeño local.
+        if "sucio" in self.x or acción is "limpiar":
+            self.desempeño -= 1
+        elif acción is "ir_Derecha" or acción is "ir_Izquierda":
+            self.desempeño -= 2
+        elif acción is "subir" or acción is "bajar":
+            self.desempeño -= 3
+        
+        # Se modifica al entorno.
+        if acción is "limpiar":
+            self.x[" ABCDEF".find(posición)] = "limpio"
+        elif acción is "ir_Derecha":
+            if posición is "A":
+                self.x[0] = "B"
+            elif posición is "B":
+                self.x[0] = "C"
+            elif posición is "D":
+                self.x[0] = "E"
+            elif posición is "E":
+                self.x[0] = "F"
+        elif acción is "ir_Izquierda":
+            if posición is "B":
+                self.x[0] = "A"
+            elif posición is "C":
+                self.x[0] = "B"
+            elif posición is "E":
+                self.x[0] = "D"
+            elif posición is "F":
+                self.x[0] = "E"
+        elif acción is "subir":
+            if posición is "A":
+                self.x[0] = "D"
+            else:
+                self.x[0] = "F"
+        elif acción is "bajar":
+            self.x[0] = "B"
+    
+    def percepción(self):
+        """
+        Regresa la percepción del entorno en el estado actual.
+        
+        @return Una tupla (posición, limpio?)
+        """
+        return self.x[0], self.x[" ABCDEF".find(self.x[0])]
+
+##############################################################
+
+# Ejercicio 2
+
+def hacerPruebaEjercicio1_2(pasos):
+    """
+    @param pasos: Número de pasos de la simulación.
+    """
+
+    print("Prueba en SeisCuartos con un agente aleatorio.")
+    entornos_o.simulador(SeisCuartos(), AgenteAleatorio(['ir_Derecha', 'ir_Izquierda', 'subir', 'bajar', 'limpiar', 'nada']), pasos)
+
+    #print("Prueba en SeisCuartos con un agente reactivo basado en modelo.")
+    #entornos_o.simulador(SeisCuartos(), AgenteSeisCuartos(), pasos)
+
+##############################################################
+
 # Ejercicio 3.
 
 class DosCuartosCiego(DosCuartos):
@@ -89,6 +220,8 @@ class AgenteDosCuartosCiego(AgenteReactivoModeloDosCuartos):
         Aquí, el robot decide que acción realizará según su memoria de la
         situación del cuarto donde está.
 
+        @param percepción Percepción del entorno en el estado actual.
+        
         @return Una de cuatro acciones de ['ir_A', 'ir_B', 'limpiar', 'nada'].
         """
 
@@ -174,5 +307,6 @@ def hacerPruebaEjercicio4(pasos):
 ##############################################################
 
 if __name__ == "__main__":
+    hacerPruebaEjercicio1_2(100)
     #hacerPruebaEjercicio3(100)
-    hacerPruebaEjercicio4(100)
+    #hacerPruebaEjercicio4(100)
