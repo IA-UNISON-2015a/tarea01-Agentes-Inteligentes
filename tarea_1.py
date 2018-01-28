@@ -290,8 +290,39 @@ class DosCuartosEstocástico(DosCuartos):
         elif acción is "ir_B" and random() <= 0.9:
             self.x[0] = "B"
 
-#class AgenteDosCuartosEstocástico():
+class AgenteDosCuartosEstocástico(AgenteReactivoModeloDosCuartos):
+    """
+    Agente racional para el entorno DosCuartosEstocástico. Está
+    basado en un modelo.
+    """
+    
+    def programa(self, percepción):
+        """
+        Funciona igual que el agente reactivo basado en modelo usado
+        en DosCuartos, pero al momento de escoger una acción tiene en
+        cuenta que puede fallar.
+        
+        @param percepción: Percepción de DosCuartosEstocástico.
+        """
+        posición, situación = percepción
 
+        # Actualiza el modelo interno
+        self.modelo[0] = posición
+        self.modelo[' AB'.find(posición)] = situación
+
+        # Decide sobre el modelo interno y la posibilidad de fallo.
+        a, b = self.modelo[1], self.modelo[2]
+        éxito = random()
+        
+        # Si el robot 'siente' que puede fallar, mejor hace nada.
+        if (a == b == 'limpio') or éxito < 0.1:
+            return 'nada'
+        elif situación is 'sucio' and éxito >= 0.2:
+            return 'limpiar'
+        elif posición is 'A' and self.modelo[2] == 'sucio':
+            return 'ir_B'
+        elif posición is 'B' and self.modelo[1] == 'sucio':
+            return 'ir_A'
 
 def hacerPruebaEjercicio4(pasos):
     """
@@ -301,12 +332,12 @@ def hacerPruebaEjercicio4(pasos):
     print("Prueba en DosCuartosEstocástico con un agente aleatorio.")
     entornos_o.simulador(DosCuartosEstocástico(), AgenteAleatorio(['ir_A', 'ir_B', 'limpiar', 'nada']), pasos)
 
-    #print("Prueba en DosCuartosEstocástico con un agente racional.")
-    #entornos_o.simulador(DosCuartosEstocástico(), AgenteDosCuartosEstocástico(), pasos)
+    print("Prueba en DosCuartosEstocástico con un agente racional.")
+    entornos_o.simulador(DosCuartosEstocástico(), AgenteDosCuartosEstocástico(), pasos)
 
 ##############################################################
 
 if __name__ == "__main__":
-    hacerPruebaEjercicio1_2(100)
+    #hacerPruebaEjercicio1_2(100)
     #hacerPruebaEjercicio3(100)
-    #hacerPruebaEjercicio4(100)
+    hacerPruebaEjercicio4(100)
