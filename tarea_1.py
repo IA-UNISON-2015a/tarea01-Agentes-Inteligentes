@@ -141,3 +141,59 @@ def SeisCuartos(doscuartos_o.DosCuartos):
 
     def percepcion(self):
         return self.x[0], self.x[ self.x[0] ]
+
+class AgenteReactivoModeloSeisCuartos(entornos_o.Agente):
+    """
+    Un agente reactivo basado en modelo
+
+    """
+    def __init__(self):
+        """
+        Inicializa el modelo interno en el caso que todos los cuartos estan sucios
+
+        """
+        self.modelo = ['1', 'sucio', 'sucio', 'sucio', 'sucio', 'sucio', 'sucio']
+
+    def programa(self, percepcion):
+        lugar, situacion = percepcion
+
+        # Actualiza el modelo interno
+        self.modelo[0] = lugar
+        self.modelo[ self.modelo[0] ] = situacion
+
+        # Decide sobre el modelo interno
+        a, b = self.modelo[1], self.modelo[2]
+        #La estrategia general es limpiar todo un piso, y luego ir al siguiente piso
+            if all(cuarto is 'limpio' for cuarto in self.modelo[1:]):
+            return 'nada'
+
+            if situacion is 'sucio':
+                return 'limpio' 
+
+        if lugar is 1:
+            return 'ir_Derecha'
+        elif lugar is 2:
+            if self.modelo[1] is 'sucio':
+                return 'ir_Izquierda'
+            elif self.modelo[3] is 'sucio':
+                return 'ir_Derecha'
+            else:
+                return 'bajar'
+        elif lugar is 3:
+            return 'ir_Izquierda'
+        elif lugar is 4:
+            if self.modelo[5] is 'sucio' or self.modelo[6] is 'sucio':
+                return 'ir_Derecha'
+            else:
+                return 'subir'
+        elif lugar is 5:
+            if self.modelo[4] is 'sucio':
+                return 'ir_Izquierda'
+            else:
+                return 'ir_Derecha'
+        else:
+            if self.modelo[4] is 'sucio' or self.modelo[5] is 'sucio':
+                return 'ir_Izquierda'
+            else:
+                return 'subir'
+
