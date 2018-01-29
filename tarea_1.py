@@ -59,13 +59,14 @@ la tarea.
 """
 __author__ = 'escribe_tu_nombre'
 
-import entorno_o
+import entornos_o
+import doscuartos_o
 
 # Requiere el modulo entornos_o.py
 # Usa el modulo doscuartos_o.py para reutilizar codigo
 # Agrega los modulos que requieras de python
 
-def SeisCuartos(doscuartos_o.DosCuartos):
+class SeisCuartos(doscuartos_o.DosCuartos):
     """
     Clase para un entorno de seis cuartos. 
 
@@ -114,7 +115,7 @@ def SeisCuartos(doscuartos_o.DosCuartos):
         costoIzqDer = 2 * costoMin
         costoSubirBajar = 2 * costoIzqDer
         if accion is "limpiar" or \
-           (accion is "nada" and any(cuarto is "sucio" for cuarto in self.x[1:]):
+           (accion is "nada" and any(cuarto is "sucio" for cuarto in self.x[1:])):
            self.desempenio -= costoMin
         if accion is "ir_Derecha" or accion is "ir_Izquierda":
             self.desempenio -= costoIzqDer
@@ -147,12 +148,12 @@ class AgenteReactivoModeloSeisCuartos(entornos_o.Agente):
     Un agente reactivo basado en modelo
 
     """
-    def __init__(self):
+    def __init__(self, modelo = ['1', 'sucio', 'sucio', 'sucio', 'sucio', 'sucio', 'sucio']):
         """
         Inicializa el modelo interno en el caso que todos los cuartos estan sucios
 
         """
-        self.modelo = ['1', 'sucio', 'sucio', 'sucio', 'sucio', 'sucio', 'sucio']
+        self.modelo = modelo
 
     def programa(self, percepcion):
         lugar, situacion = percepcion
@@ -164,18 +165,18 @@ class AgenteReactivoModeloSeisCuartos(entornos_o.Agente):
         # Decide sobre el modelo interno
         a, b = self.modelo[1], self.modelo[2]
         #La estrategia general es limpiar todo un piso, y luego ir al siguiente piso
-            if all(cuarto is 'limpio' for cuarto in self.modelo[1:]):
+        if all(cuarto is 'limpio' for cuarto in self.modelo[1:]):
             return 'nada'
 
-            if situacion is 'sucio':
-                return 'limpio' 
+        if situacion is 'sucio':
+            return 'limpiar' 
 
         if lugar is 1:
             return 'ir_Derecha'
         elif lugar is 2:
             if self.modelo[1] is 'sucio':
                 return 'ir_Izquierda'
-            elif self.modelo[3] is 'sucio':
+            if self.modelo[3] is 'sucio':
                 return 'ir_Derecha'
             else:
                 return 'bajar'
