@@ -10,16 +10,16 @@ Tarea de desarrollo de entornos y agentes
 1. Desarrolla un entorno similar al de los dos cuartos (el cual se
    encuentra en el módulo doscuartos_o.py), pero con tres cuartos en
    el primer piso, y tres cuartos en el segundo piso.
-   
+
    El entorno se llamará `SeisCuartos`.
 
    Las acciones totales serán
-   
+
    ```
    ["ir_Derecha", "ir_Izquierda", "subir", "bajar", "limpiar", "nada"]
-   ``` 
-    
-   La acción de `"subir"` solo es legal en el piso de abajo, en los cuartos de los extremos, 
+   ```
+
+   La acción de `"subir"` solo es legal en el piso de abajo, en los cuartos de los extremos,
    mientras que la acción de `"bajar"` solo es legal en el piso de arriba y en el cuarto de el centro (dos
    escaleras para subir, una escalera para bajar).
 
@@ -45,7 +45,7 @@ Tarea de desarrollo de entornos y agentes
 
 4. Reconsidera el problema original de los dos cuartos, pero ahora
    modificalo para que cuando el agente decida aspirar, el 80% de las
-   veces limpie pero el 20% (aleatorio) deje sucio el cuarto. Igualmente, 
+   veces limpie pero el 20% (aleatorio) deje sucio el cuarto. Igualmente,
    cuando el agente decida cambiar de cuarto, se cambie correctamente de cuarto el 90% de la veces
    y el 10% se queda en su lugar. Diseña
    un agente racional para este problema, pruebalo y comparalo con el
@@ -57,10 +57,69 @@ Todos los incisos tienen un valor de 25 puntos sobre la calificación de
 la tarea.
 
 """
-__author__ = 'escribe_tu_nombre'
+__author__ = 'ricardoholguin'
 
 import entorno_o
 
+class SeisCuartos(entornos_o.Entorno):
+    """
+    Los nombres de las habitaciones son de la A a la F, donde A-C son las habitaciones
+    del primer piso y D-F son las habitaciones del segundo piso. Ejemplo: A, B, C, D,
+    E, F. Siendo A y C las habitaciones que tienen escaleras para subir, y E la
+    habitacion que tiene escaleras para bajar
+
+    Por default inicialmente el robot esta en A y todos los cuartos estan sucios
+    """
+    def __init__(self, x0=["A","sucio","sucio","sucio","sucio","sucio","sucio"]):
+        self.x = x0[:]
+        self.desempeño = 0
+
+    def acción_legal(self, acción):
+        if self.x[0] == "A":
+            esLegal = accion in ("ir_D", "ir_B", "limpiar", "nada")
+        elif self.x[0] == "B":
+            esLegal = accion in ("ir_A", "ir_C", "limpiar", "nada")
+        elif self.x[0] == "C":
+            esLegal = accion in ("ir_B", "ir_F", "limpiar", "nada")
+        elif self.x[0] == "D":
+            esLegal = accion in ("ir_E", "limpiar", "nada")
+        elif self.x[0] == "E":
+            esLegal = accion in ("ir_B", "ir_D", "ir_F", "limpiar", "nada")
+        else:   #Supones que el robot esta en F
+            esLegal = accion in ("ir_E", "limpiar", "nada")
+
+        return esLegal
+
+    def transición(self, acción):
+        if not self.acción_legal(acción):
+            raise ValueError("La acción no es legal para este estado")
+
+        robot, a, b = self.x
+        if acción is not "nada" or a is "sucio" or b is "sucio":
+            self.desempeño -= 1
+        if acción is "limpiar":
+            self.x[" ABCDEF".find(self.x[0])] = "limpio"
+        elif acción is "ir_A":
+            self.x[0] = "A"
+        elif: acción is "ir_B":
+            if self.x[0] == "E":
+                self.desempeño -= 2
+            self.x[0] = "B"
+        elif: acción is "ir_C":
+            self.x[0] = "C"
+        elif: acción is "ir_D":
+            if self.x[0] == "A":
+                self.desempeño -= 2
+            self.x[0] = "D"
+        elif: acción is "ir_E":
+            self.x[0] = "E"
+        elif: acción is "ir_F":
+            if self.x[0] == "C":
+                self.desempeño -= 2
+            self.x[0] = "F"
+
+    def percepción(self):
+        return self.x[0], self.x[" ABCDEF".find(self.x[0])]
 # Requiere el modulo entornos_o.py
 # Usa el modulo doscuartos_o.py para reutilizar código
 # Agrega los modulos que requieras de python
