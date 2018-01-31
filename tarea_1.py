@@ -61,6 +61,7 @@ __author__ = 'ricardoholguin'
 
 import entorno_o
 
+###1
 class SeisCuartos(entornos_o.Entorno):
     """
     Los nombres de las habitaciones son de la A a la F, donde A-C son las habitaciones
@@ -120,6 +121,52 @@ class SeisCuartos(entornos_o.Entorno):
 
     def percepción(self):
         return self.x[0], self.x[" ABCDEF".find(self.x[0])]
+
+###2
+class AgenteAleatorio(entornos_o.Agente):
+    """
+    Un agente que solo regresa una accion al azar entre las acciones legales
+
+    """
+    def __init__(self, acciones):
+        self.acciones = acciones
+
+    def programa(self, percepcion):
+        return choice(self.acciones)
+
+class AgenteReactivoModeloSeisCuartos(entornos_o.Agente):
+    """
+    Un agente reactivo basado en modelo
+
+    """
+    def __init__(self):
+        """
+        Inicializa el modelo interno en el peor de los casos
+
+        """
+        self.modelo = ['A', 'sucio', 'sucio', 'sucio', 'sucio', 'sucio', 'sucio']
+
+    def programa(self, percepción):
+        robot, situación = percepción
+
+        # Actualiza el modelo interno
+        self.modelo[0] = robot
+        self.modelo[' ABCDEF'.find(robot)] = situación
+
+        # Decide sobre el modelo interno
+        a, b = self.modelo[1], self.modelo[2]
+        c, d, e, f = self.modelo[3], self.modelo[4], self.modelo[5], self.modelo[6]
+
+        if a==b==c==d==e==f == 'limpio':
+            acción = 'nada'
+        elif situación == 'sucio':
+            acción = 'limpiar'
+
+        #return ('nada' if a == b == 'limpio' else
+        #        'limpiar' if situación == 'sucio' else
+        #        'ir_A' if robot == 'B' else 'ir_B')
+
+
 # Requiere el modulo entornos_o.py
 # Usa el modulo doscuartos_o.py para reutilizar código
 # Agrega los modulos que requieras de python
