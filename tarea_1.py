@@ -57,10 +57,15 @@ Todos los incisos tienen un valor de 25 puntos sobre la calificación de
 la tarea.
 
 """
+
+##############################################################
+
 __author__ = 'IvanAlejandroMorenoSoto'
 
+##############################################################
+
 import entornos_o
-from random import random
+from random import random, choice
 from doscuartos_o import DosCuartos, AgenteReactivoModeloDosCuartos, AgenteAleatorio
 
 ##############################################################
@@ -71,110 +76,107 @@ class SeisCuartos(entornos_o.Entorno):
     """
     Entorno de una casa con seis cuartos: tres en la planta inferior y
     tres en la superior.
-    
+
     Análogamente a DosCuartos, el estado se define como:
     estado := [posición, A, B, C, D, E, F]
-    
+
     D E F
     A B C
-    
+
     Donde A, B, C, son los cuartos inferiores, D, E, F, los superiores,
     y posición puede tomar como valor cualquiera de ellos. Cada cuarto
     puede estar "limpio" o "sucio."
-    
+
     Las acciones válidas son:
     acciones = {"ir_Derecha", "ir_Izquierda", "subir", "bajar", "limpiar", "nada"}
     Todas son legales en todos los cuartos excepto por "subir" que únicamente es
-    legal en B1 y B3, y "bajar" que sólo se puede realizar en A2.
-    
+    legal en A y C, y "bajar" que sólo se puede realizar en E.
+
     Los sensores son una tupla que contiene la posición del robot y el estado de
     limpieza del cuarto.
     """
-    
+
     def __init__(self, x0=["A", "sucio", "sucio", "sucio", "sucio", "sucio", "sucio"]):
         """
         Define el estado inicial de este entorno.
         De forma predeterminada el robot se encuentra en el cuarto inferior izquierdo
         y toda la casa está sucia.
-        
+
         @param x0: Vector con el estado inicial del entorno de la forma
         [posiciónInicial, limpieza_A, limpieza_B, limpieza_C, limpieza_D, limpieza_E, limpieza_F].
         """
         self.x = x0[:]
         self.desempeño = 0
-    
+
     def acción_legal(self, acción):
         """
         Determina si una acción es legal en el estado actual.
-        
+
         @param acción: Acción que será revisada.
-        
+
         @return True si la acción es legal, False en caso contrario.
         """
         # Se separan los casos en: el robot quiere subir o quiere bajar o quiere hacer
         # cualquier otra cosa.
-        if acción is "subir" and (self.x[0] is "A" or self.x[0] is "C"):
+        if acción == "subir" and (self.x[0] == "A" or self.x[0] == "C"):
             return True
-        if acción is "bajar" and self.x[0] is "E":
+        if acción == "bajar" and self.x[0] == "E":
             return True
-        
+
         return acción in ("ir_Derecha", "ir_Izquierda", "limpiar", "nada")
-    
+
     def transición(self, acción):
         """
         Transforma al entorno según la acción recibida.
-        
+
         @param acción: Acción de entrada al entorno.
         """
         if not self.acción_legal(acción):
-            print("La acción no es legal para este estado")
-            self.desempeño -= 1
-            return
-            #raise ValueError("La acción no es legal para este estado")
+            raise ValueError("La acción no es legal para este estado")
 
         posición = self.x[0]
-        
+
         # Se determina el desempeño local.
-        if "sucio" in self.x or acción is "limpiar":
+        if "sucio" in self.x or acción == "limpiar":
             self.desempeño -= 1
-        elif acción is "ir_Derecha" or acción is "ir_Izquierda":
+        if acción == "ir_Derecha" or acción == "ir_Izquierda":
             self.desempeño -= 2
-        elif acción is "subir" or acción is "bajar":
+        elif acción == "subir" or acción == "bajar":
             self.desempeño -= 3
-        
+
         # Se modifica al entorno.
-        if acción is "limpiar":
+        if acción == "limpiar":
             self.x[" ABCDEF".find(posición)] = "limpio"
-        elif acción is "ir_Derecha":
-            if posición is "A":
+        elif acción == "ir_Derecha":
+            if posición == "A":
                 self.x[0] = "B"
-            elif posición is "B":
+            elif posición == "B":
                 self.x[0] = "C"
-            elif posición is "D":
+            elif posición == "D":
                 self.x[0] = "E"
-            elif posición is "E":
+            elif posición == "E":
                 self.x[0] = "F"
-        elif acción is "ir_Izquierda":
-            if posición is "B":
+        elif acción == "ir_Izquierda":
+            if posición == "B":
                 self.x[0] = "A"
-            elif posición is "C":
+            elif posición == "C":
                 self.x[0] = "B"
-            elif posición is "E":
+            elif posición == "E":
                 self.x[0] = "D"
-            elif posición is "F":
+            elif posición == "F":
                 self.x[0] = "E"
-        elif acción is "subir":
-            if posición is "A":
+        elif acción == "subir":
+            if posición == "A":
                 self.x[0] = "D"
             else:
                 self.x[0] = "F"
-        elif acción is "bajar":
+        elif acción == "bajar":
             self.x[0] = "B"
-    
+
     def percepción(self):
         """
         Regresa la percepción del entorno en el estado actual.
-        
+
         @return Una tupla (posición, limpio?)
         """
         return self.x[0], self.x[" ABCDEF".find(self.x[0])]
@@ -183,16 +185,95 @@ class SeisCuartos(entornos_o.Entorno):
 
 # Ejercicio 2
 
+class AgenteAleatorioSeisCuartos(AgenteAleatorio):
+    """
+    Define un agente aleatorio que cambia su conjunto de
+    posibles acciones dependiendo de lo que sea legal.
+    """
+
+    def programa(self, percepción):
+        """
+        Escoge una acción legal al azar.
+
+        @param percepción: Percepción del entorno SeisCuartos.
+
+        @return Acción del agente.
+        """
+        return choice(self.calcular_acciones_legales(percepción[0]))
+
+    def calcular_acciones_legales(self, posición):
+        """
+        Devuelve una lista de acciones legales en la posición dada.
+
+        @param posición: Posición actual del agente.
+
+        @return Lista con acciones legales en la posición indicada.
+        """
+        acciones_legales = self.acciones[:]
+
+        # Se remueven las acciones ilegales.
+        if posición != "A" and posición != "C":
+            acciones_legales.remove("subir")
+        if posición != "E":
+            acciones_legales.remove("bajar")
+
+        return acciones_legales
+
+class AgenteRacionalSeisCuartos:
+    """
+    Agente reactivo basado en modelo para el entorno SeisCuartos.
+    Intenta minimizar el costo de sus acciones evitando subir y
+    bajar, y prefiriendo moverse a los lados.
+    """
+
+    def __init__(self):
+        """
+        Inicializa el modelo interno del agente.
+        """
+        self.modelo = ['A', 'sucio', 'sucio', 'sucio', 'sucio', 'sucio', 'sucio']
+
+    def programa(self, percepción):
+        """
+        @param percepción: Percepción del entorno SeisCuartos.
+
+        @return Acción del agente.
+        """
+        posición, situación = percepción
+
+        # Se actualiza el modelo del agente.
+        self.modelo[0] = posición
+        self.modelo[' ABCDEF'.find(posición)] = situación
+
+        if not 'sucio' in self.modelo:
+            return 'nada'
+        if situación == 'sucio':
+            return 'limpiar'
+
+        if posición in ('A', 'B', 'C'):
+            if not 'sucio' in self.modelo[1:4]:
+                return ('ir_Izquierda' if posición == 'B' else 'subir')
+            else:
+                return ('ir_Derecha' if posición == 'A' or (posición == 'B' and self.modelo[1] == 'limpio') else
+                        'ir_Izquierda')
+        else:
+            if not 'sucio' in self.modelo[4:]:
+                return ('ir_Izquierda' if posición == 'F' else
+                        'ir_Derecha' if posición == 'D' else
+                        'bajar')
+            else:
+                return ('ir_Derecha' if posición == 'D' or (posición == 'E' and self.modelo[4] == 'limpio') else
+                        'ir_Izquierda')
+
 def hacerPruebaEjercicio1_2(pasos):
     """
     @param pasos: Número de pasos de la simulación.
     """
 
     print("Prueba en SeisCuartos con un agente aleatorio.")
-    entornos_o.simulador(SeisCuartos(), AgenteAleatorio(['ir_Derecha', 'ir_Izquierda', 'subir', 'bajar', 'limpiar', 'nada']), pasos)
+    entornos_o.simulador(SeisCuartos(), AgenteAleatorioSeisCuartos(['ir_Derecha', 'ir_Izquierda', 'subir', 'bajar', 'limpiar', 'nada']), pasos)
 
-    #print("Prueba en SeisCuartos con un agente reactivo basado en modelo.")
-    #entornos_o.simulador(SeisCuartos(), AgenteSeisCuartos(), pasos)
+    print("Prueba en SeisCuartos con un agente reactivo basado en modelo.")
+    entornos_o.simulador(SeisCuartos(), AgenteRacionalSeisCuartos(), pasos)
 
 ##############################################################
 
@@ -221,7 +302,7 @@ class AgenteDosCuartosCiego(AgenteReactivoModeloDosCuartos):
         situación del cuarto donde está.
 
         @param percepción Percepción del entorno en el estado actual.
-        
+
         @return Una de cuatro acciones de ['ir_A', 'ir_B', 'limpiar', 'nada'].
         """
 
@@ -276,18 +357,19 @@ class DosCuartosEstocástico(DosCuartos):
         @param acción Acción del agente.
         """
         if not self.acción_legal(acción):
+            print(acción)
             raise ValueError("La acción no es legal para este estado.")
 
         robot, a, b = self.x
 
-        if acción is not "nada" or a is "sucio" or b is "sucio":
+        if acción != "nada" or a == "sucio" or b == "sucio":
             self.desempeño -= 1
 
-        if acción is "limpiar" and random() <= 0.8:
+        if acción == "limpiar" and random() <= 0.8:
             self.x[" AB".find(self.x[0])] = "limpio"
-        elif acción is "ir_A" and random() <= 0.9:
+        elif acción == "ir_A" and random() <= 0.9:
             self.x[0] = "A"
-        elif acción is "ir_B" and random() <= 0.9:
+        elif acción == "ir_B" and random() <= 0.9:
             self.x[0] = "B"
 
 class AgenteDosCuartosEstocástico(AgenteReactivoModeloDosCuartos):
@@ -295,13 +377,13 @@ class AgenteDosCuartosEstocástico(AgenteReactivoModeloDosCuartos):
     Agente racional para el entorno DosCuartosEstocástico. Está
     basado en un modelo.
     """
-    
+
     def programa(self, percepción):
         """
         Funciona igual que el agente reactivo basado en modelo usado
         en DosCuartos, pero al momento de escoger una acción tiene en
         cuenta que puede fallar.
-        
+
         @param percepción: Percepción de DosCuartosEstocástico.
         """
         posición, situación = percepción
@@ -313,19 +395,22 @@ class AgenteDosCuartosEstocástico(AgenteReactivoModeloDosCuartos):
         # Decide sobre el modelo interno y la posibilidad de fallo.
         a, b = self.modelo[1], self.modelo[2]
         éxito = random()
-        
+
         # Si el robot 'siente' que puede fallar, mejor hace nada.
         if (a == b == 'limpio') or éxito < 0.1:
             return 'nada'
-        elif situación is 'sucio' and éxito >= 0.2:
+        elif situación == 'sucio' and éxito >= 0.2:
             return 'limpiar'
-        elif posición is 'A' and self.modelo[2] == 'sucio':
+        elif posición == 'A':
             return 'ir_B'
-        elif posición is 'B' and self.modelo[1] == 'sucio':
+        else:
             return 'ir_A'
 
 def hacerPruebaEjercicio4(pasos):
     """
+    Realiza pruebas con un agente aleatorio y uno reactivo basado en
+    modelo en el entorno DosCuartosEstocástico.
+
     @param pasos: Número de pasos de la simulación.
     """
 
@@ -338,6 +423,6 @@ def hacerPruebaEjercicio4(pasos):
 ##############################################################
 
 if __name__ == "__main__":
-    #hacerPruebaEjercicio1_2(100)
-    #hacerPruebaEjercicio3(100)
+    hacerPruebaEjercicio1_2(100)
+    hacerPruebaEjercicio3(100)
     hacerPruebaEjercicio4(100)
