@@ -61,6 +61,7 @@ __author__ = 'escribe_tu_nombre'
 
 import entornos_o
 import doscuartos_o
+import random
 
 # Requiere el modulo entornos_o.py
 # Usa el modulo doscuartos_o.py para reutilizar codigo
@@ -98,17 +99,17 @@ class SeisCuartos(doscuartos_o.DosCuartos):
 
     def accion_legal(self, accion):
         if self.x[0] == 1:
-            return accion in ["ir_Derecha", "limpiar", "nada"]
-        if self.x[0] == 2:
-            return accion in ["ir_Derecha", "ir_Izquierda", "bajar", "limpiar", "nada"]
-        if self.x[0] == 3:
-            return accion in ["ir_Izquierda", "limpiar", "nada"]
-        if self.x[0] == 4:
-            return accion in ["ir_Derecha", "subir", "limpiar", "nada"]
-        if self.x[0] == 5:
-            return accion in ["ir_Derecha", "ir_Izquierda", "limpiar", "nada"]
-        if self.x[0] == 6:
-            return accion in ["ir_Izquierda", "subir", "limpiar", "nada"]
+            return accion in ("ir_Derecha", "limpiar", "nada")
+        if self.x(0) == 2:
+            return accion in ("ir_Derecha", "ir_Izquierda", "bajar", "limpiar", "nada")
+        if self.x(0) == 3:
+            return accion in ("ir_Izquierda", "limpiar", "nada")
+        if self.x(0) == 4:
+            return accion in ("ir_Derecha", "subir", "limpiar", "nada")
+        if self.x(0) == 5:
+            return accion in ("ir_Derecha", "ir_Izquierda", "limpiar", "nada")
+        if self.x(0) == 6:
+            return accion in ("ir_Izquierda", "subir", "limpiar", "nada")
 
     def costo(self, accion):
         costoMin = 0.5
@@ -148,7 +149,7 @@ class AgenteReactivoModeloSeisCuartos(entornos_o.Agente):
     Un agente reactivo basado en modelo
 
     """
-    def __init__(self, modelo = ['1', 'sucio', 'sucio', 'sucio', 'sucio', 'sucio', 'sucio']):
+    def __init__(self, modelo = [1, 'sucio', 'sucio', 'sucio', 'sucio', 'sucio', 'sucio']):
         """
         Inicializa el modelo interno en el caso que todos los cuartos estan sucios
 
@@ -162,8 +163,6 @@ class AgenteReactivoModeloSeisCuartos(entornos_o.Agente):
         self.modelo[0] = lugar
         self.modelo[ self.modelo[0] ] = situacion
 
-        # Decide sobre el modelo interno
-        a, b = self.modelo[1], self.modelo[2]
         #La estrategia general es limpiar todo un piso, y luego ir al siguiente piso
         if all(cuarto is 'limpio' for cuarto in self.modelo[1:]):
             return 'nada'
@@ -198,3 +197,113 @@ class AgenteReactivoModeloSeisCuartos(entornos_o.Agente):
             else:
                 return 'subir'
 
+class AgenteAleatorio(entornos_o.Agente):
+    """
+    Un agente que solo regresa una accion al azar entre las acciones legales
+
+    """
+    def acciones_legales(self, lugar):
+        if lugar == 1:
+            return ["ir_Derecha", "limpiar", "nada"]
+        if lugar == 2:
+            return ["ir_Derecha", "ir_Izquierda", "bajar", "limpiar", "nada"]
+        if lugar == 3:
+            return ["ir_Izquierda", "limpiar", "nada"]
+        if lugar == 4:
+            return ["ir_Derecha", "subir", "limpiar", "nada"]
+        if lugar == 5:
+            return ["ir_Derecha", "ir_Izquierda", "limpiar", "nada"]
+        if lugar == 6:
+            return ["ir_Izquierda", "subir", "limpiar", "nada"]
+
+    def programa(self, percepcion):
+        return random.choice(self.acciones_legales(percepcion[0]))
+
+    
+class DosCuartosCiego(entornos_o.Entorno):
+    """
+    Clase para un entorno de dos cuartos pero no se puede saber si los cuartos estan
+    limpios o sucios.
+
+    El estado se define unicamente como (lugar)
+    donde lugar puede tener 1 o 2
+
+    Las acciones validas en el entorno son ("ir_Derecha", "ir_Izquierda", "limpiar", "nada").
+    En el cuarto 1 no se puede elegir "ir_Izquierda" y en el cuarto 2 no se puede elegir
+    "ir_Derecha"
+
+    Los sensores es un unico valor (lugar)
+    que solo indica en que lugar se encuentra.
+
+    """
+    def __init__(self, x0=[1, 'sucio', 'sucio']):
+        """
+        Por default inicialmente el robot esta en 1
+
+        """
+        self.x = x0[:]
+        self.desempenio = 0
+
+    def accion_legal(self, accion):
+        return accion in ("ir_Derecha", "ir_Izquierda", "limpiar", "nada")
+
+    def transicion(self, accion):
+        if not self.accion_legal(accion):
+            raise ValueError("La accion no es legal para este estado")
+
+        #Para asegurar que los cuartos estan limpios, se agrega memoria al
+        #agente y se sigue el plan de accion: limpiar el cuarto actual, ir
+        #al otro cuarto, limpiarlo y despues no hacer nada durante todos los
+        #demas pasos
+
+        a, b = self.x[1], self.x[2]
+        if accion is not "nada" or a is "sucio" or b is "sucio":
+            self.desempenio -= 1
+        if accion is "limpiar":
+            self.x[ self.x[0] ] = "limpio"
+        elif accion is "ir_Derecha":
+            self.x[0] = 2
+        elif accion is "ir_Izquierda":
+            self.x[0] = 1
+
+
+    def percepcion(self):
+        return self.x[0]
+
+class AgenteReactivoDosCuartosCiego(entornos_o.Agente):
+    """
+    Un agente reactivo basado en modelo que no puede ver la situacion del lugar
+    en donde se encuentra.
+
+    """
+    def __init__(self, modelo = [1, 'sucio', 'sucio']):
+        """
+        Inicializa el modelo interno en el caso que todos los cuartos estan sucios
+
+        """
+        self.modelo = modelo
+
+    """
+    Ya que el agente solo puede percibir el lugar donde esta, asume que la accion que
+    realiza afecta al entorno (especificamente que si decide limpiar un cuarto, el cuarto
+    sera limpiado) y actualiza el modelo interno de manera acorde
+    """
+    def programa(self, percepcion):
+        lugar = percepcion
+        situacion = self.modelo[ lugar ]
+
+        if all(cuarto is 'limpio' for cuarto in self.modelo[1:]):
+            accion = 'nada'
+        elif situacion is 'sucio':
+            accion = 'limpiar' 
+        elif lugar is 1:
+            accion = 'ir_Derecha'
+        else:
+            accion = 'ir_Izquierda'
+
+        # Actualiza el modelo interno
+        self.modelo[0] = lugar
+        if accion is 'limpiar':
+            self.modelo[ lugar ] = 'limpio' 
+    
+        return accion
