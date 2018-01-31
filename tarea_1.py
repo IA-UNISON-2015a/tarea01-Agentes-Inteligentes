@@ -314,17 +314,14 @@ class AgenteDosCuartosCiego(AgenteReactivoModeloDosCuartos):
 
         a, b = self.modelo[1], self.modelo[2]
 
-        if a == b == 'limpio':
-            return 'nada'
-        elif situación == 'sucio':
+        if situación == 'sucio':
             # Antes de regresar la acción, se actualiza la memoria sobre
             # el cuarto actual.
             self.modelo[' AB'.find(percepción)] = 'limpio'
             return 'limpiar'
-        elif percepción == 'B':
-            return 'ir_A'
         else:
-            return 'ir_B'
+            return ('nada' if a == b == 'limpio' else
+                   'ir_A' if percepción == 'B' else 'ir_B')
 
 def hacerPruebaEjercicio3(pasos):
     """
@@ -357,7 +354,6 @@ class DosCuartosEstocástico(DosCuartos):
         @param acción Acción del agente.
         """
         if not self.acción_legal(acción):
-            print(acción)
             raise ValueError("La acción no es legal para este estado.")
 
         robot, a, b = self.x
@@ -397,14 +393,9 @@ class AgenteDosCuartosEstocástico(AgenteReactivoModeloDosCuartos):
         éxito = random()
 
         # Si el robot 'siente' que puede fallar, mejor hace nada.
-        if (a == b == 'limpio') or éxito < 0.1:
-            return 'nada'
-        elif situación == 'sucio' and éxito >= 0.2:
-            return 'limpiar'
-        elif posición == 'A':
-            return 'ir_B'
-        else:
-            return 'ir_A'
+        return ('nada' if a == b == 'limpio' or éxito < 0.2 else
+                'limpiar' if situación == 'sucio' else
+                'ir_B' if posición == 'A' else 'ir_A')
 
 def hacerPruebaEjercicio4(pasos):
     """
