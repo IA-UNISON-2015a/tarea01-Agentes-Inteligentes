@@ -59,7 +59,8 @@ la tarea.
 """
 __author__ = 'ricardoholguin'
 
-import entorno_o
+import entornos_o
+from random import choice
 
 ###1
 class SeisCuartos(entornos_o.Entorno):
@@ -77,17 +78,17 @@ class SeisCuartos(entornos_o.Entorno):
 
     def acción_legal(self, acción):
         if self.x[0] == "A":
-            esLegal = accion in ("ir_D", "ir_B", "limpiar", "nada")
+            esLegal = acción in ("subir", "ir_Derecha", "limpiar", "nada")
         elif self.x[0] == "B":
-            esLegal = accion in ("ir_A", "ir_C", "limpiar", "nada")
+            esLegal = acción in ("ir_Derecha", "ir_Izquierda", "limpiar", "nada")
         elif self.x[0] == "C":
-            esLegal = accion in ("ir_B", "ir_F", "limpiar", "nada")
+            esLegal = acción in ("ir_Izquierda", "subir", "limpiar", "nada")
         elif self.x[0] == "D":
-            esLegal = accion in ("ir_E", "limpiar", "nada")
+            esLegal = acción in ("ir_Derecha", "limpiar", "nada")
         elif self.x[0] == "E":
-            esLegal = accion in ("ir_B", "ir_D", "ir_F", "limpiar", "nada")
+            esLegal = acción in ("bajar", "ir_Derecha", "ir_Izquierda", "limpiar", "nada")
         else:   #Supones que el robot esta en F
-            esLegal = accion in ("ir_E", "limpiar", "nada")
+            esLegal = acción in ("ir_Izquierda", "limpiar", "nada")
 
         return esLegal
 
@@ -95,29 +96,40 @@ class SeisCuartos(entornos_o.Entorno):
         if not self.acción_legal(acción):
             raise ValueError("La acción no es legal para este estado")
 
-        robot, a, b = self.x
-        if acción is not "nada" or a is "sucio" or b is "sucio":
+        robot, a, b, c, d, e, f = self.x
+        if acción is not "nada" or a=="sucio" or b=="sucio" or c=="sucio" or d=="sucio" or e=="sucio" or f=="sucio":
             self.desempeño -= 1
         if acción is "limpiar":
             self.x[" ABCDEF".find(self.x[0])] = "limpio"
-        elif acción is "ir_A":
-            self.x[0] = "A"
-        elif: acción is "ir_B":
-            if self.x[0] == "E":
-                self.desempeño -= 2
-            self.x[0] = "B"
-        elif: acción is "ir_C":
-            self.x[0] = "C"
-        elif: acción is "ir_D":
+        elif acción is "ir_Derecha":
             if self.x[0] == "A":
+                self.x[0] = "B"
+            elif self.x[0] == "B":
+                self.x[0] = "C"
+            elif self.x[0] == "D":
+                self.x[0] = "E"
+            elif self.x[0] == "E":
+                self.x[0] = "F"
+        elif acción is "ir_Izquierda":
+            if self.x[0] == "B":
+                self.x[0] = "A"
+            elif self.x[0] == "C":
+                self.x[0] = "B"
+            elif self.x[0] == "E":
+                self.x[0] = "D"
+            elif self.x[0] == "F":
+                self.x[0] = "ES"
+        elif acción is "subir":
+            if self.x[0] == "A":
+                self.x[0] = "D"
                 self.desempeño -= 2
-            self.x[0] = "D"
-        elif: acción is "ir_E":
-            self.x[0] = "E"
-        elif: acción is "ir_F":
-            if self.x[0] == "C":
+            elif self.x[0] == "C":
+                self.x[0] = "F"
                 self.desempeño -= 2
-            self.x[0] = "F"
+        elif acción is "bajar":
+            if self.x[0] == "E":
+                self.x[0] = "B"
+                self.desempeño -= 2
 
     def percepción(self):
         return self.x[0], self.x[" ABCDEF".find(self.x[0])]
@@ -132,7 +144,19 @@ class AgenteAleatorio(entornos_o.Agente):
         self.acciones = acciones
 
     def programa(self, percepcion):
-        return choice(self.acciones)
+        if percepcion[0] == "A":
+            decisión = choice(["subir", "ir_Derecha", "limpiar", "nada"])
+        elif percepcion[0] == "B":
+            decisión = choice(["ir_Derecha", "ir_Izquierda", "limpiar", "nada"])
+        elif percepcion[0] == "C":
+            decisión = choice(["ir_Izquierda", "subir", "limpiar", "nada"])
+        elif percepcion[0] == "D":
+            decisión = choice(["ir_Derecha", "limpiar", "nada"])
+        elif percepcion[0] == "E":
+            decisión = choice(["bajar", "ir_Derecha", "ir_Izquierda", "limpiar", "nada"])
+        else:   #Supones que el robot esta en F
+            decisión = choice(["ir_Izquierda", "limpiar", "nada"])
+        return decisión
 
 class AgenteReactivoModeloSeisCuartos(entornos_o.Agente):
     """
@@ -161,12 +185,84 @@ class AgenteReactivoModeloSeisCuartos(entornos_o.Agente):
             acción = 'nada'
         elif situación == 'sucio':
             acción = 'limpiar'
+        elif robot == 'A':
+            acción = 'ir_Derecha'
+        elif robot == 'B':
+            acción = 'ir_Derecha'
+        elif robot == 'C':
+            acción = 'subir'
+        elif robot == 'F':
+            acción = 'ir_Izquierda'
+        elif robot == 'E':
+            if self.modelo[' ABCDEF'.find('D')] == 'sucio':
+                acción = 'ir_Izquierda'
+            else:
+                acción = 'bajar'
+
+        return acción
 
         #return ('nada' if a == b == 'limpio' else
         #        'limpiar' if situación == 'sucio' else
         #        'ir_A' if robot == 'B' else 'ir_B')
 
+###3
+class SeisCuartosCiego(SeisCuartos):
+    def transición(self, acción):
+        if not self.acción_legal(acción):
+            raise ValueError("La acción no es legal para este estado")
+
+        robot, a, b, c, d, e, f = self.x
+        if acción is not "nada" or a=="sucio" or b=="sucio" or c=="sucio" or d=="sucio" or e=="sucio" or f=="sucio":
+            self.desempeño -= 1
+        if acción is "limpiar":
+            self.x[" ABCDEF".find(self.x[0])] = "limpio"
+        elif acción is "ir_Derecha":
+            if self.x[0] == "A":
+                self.x[0] = "B"
+            elif self.x[0] == "B":
+                self.x[0] = "C"
+            elif self.x[0] == "D":
+                self.x[0] = "E"
+            elif self.x[0] == "E":
+                self.x[0] = "F"
+        elif acción is "ir_Izquierda":
+            if self.x[0] == "B":
+                self.x[0] = "A"
+            elif self.x[0] == "C":
+                self.x[0] = "B"
+            elif self.x[0] == "E":
+                self.x[0] = "D"
+            elif self.x[0] == "F":
+                self.x[0] = "ES"
+        elif acción is "subir":
+            if self.x[0] == "A":
+                self.x[0] = "D"
+                self.desempeño -= 2
+            elif self.x[0] == "C":
+                self.x[0] = "F"
+                self.desempeño -= 2
+        elif acción is "bajar":
+            if self.x[0] == "E":
+                self.x[0] = "B"
+                self.desempeño -= 2
 
 # Requiere el modulo entornos_o.py
 # Usa el modulo doscuartos_o.py para reutilizar código
 # Agrega los modulos que requieras de python
+
+###prueba
+cuarto = SeisCuartos()
+agenteA = AgenteAleatorio(["ir_Derecha", "ir_Izquierda", "subir", "bajar", "limpiar", "nada"])
+def test():
+    """
+    Prueba del entorno y los agentes
+
+    """
+    print("Prueba del entorno con un agente aleatorio")
+    SeisCuartosAcciones = ["ir_Derecha", "ir_Izquierda", "subir", "bajar", "limpiar", "nada"]
+    entornos_o.simulador(SeisCuartos(),
+                         AgenteAleatorio(SeisCuartosAcciones),
+                         20)
+
+    print("Prueba del entorno con un agente reactivo con modelo")
+    entornos_o.simulador(DosCuartos(), AgenteReactivoModeloSeisCuartos(), 20)
