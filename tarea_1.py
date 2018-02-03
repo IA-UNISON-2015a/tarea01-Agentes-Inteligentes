@@ -205,46 +205,54 @@ EJERCICIO 3
 
    A este nuevo entorno llamalo `DosCuartosCiego`.
 
-   Diseña un agente racional para este problema, pruebalo y comparalo
-   con el agente aleatorio.
-
 """
-class DosCuartosCiego(entornos_o.Entorno):
+class DosCuartosCiego(DosCuartos):
     """
-    Clase para un entorno de dos cuartos donde el agente es ciego?
+    Clase para un entorno de dos cuartos donde el agente solo sabe en que cuarto esta 
+    pero no si esta sucio o limpio
 
     """
-    def __init__(self, x0=["A", "sucio", "sucio"]):
-        """
-        Por default inicialmente el robot está en A y los dos cuartos
-        están sucios
-
-        """
-        self.x = x0[:]
-        self.desempeño = 0
-
-    def acción_legal(self, acción):
-        return acción in ("ir_A", "ir_B", "limpiar", "nada")
-
     def transición(self, acción):
         if not self.acción_legal(acción):
             raise ValueError("La acción no es legal para este estado")
 
-        robot, a, b = self.x
-        if acción is not "nada" or a == "sucio" or b == "sucio":
+        robot= self.x
+        if acción is not "nada":
             self.desempeño -= 1
-        if acción == "limpiar":
-            self.x[" AB".find(robot)] = "limpio"
-        elif acción == "ir_A":
+        if acción is "limpiar":
+            self.x[" AB".find(self.x[0])] = "limpio"
+        elif acción is "ir_A":
             self.x[0] = "A"
-        elif acción == "ir_B":
+        elif acción is "ir_B":
             self.x[0] = "B"
-
     def percepción(self):
       #solo sabe en que cuarto esta
         return self.x[0]
+"""
+Diseña un agente racional para este problema, pruebalo y comparalo
+   con el agente aleatorio.
+"""
+class AgenteReactivoDoscuartosCiego(entornos_o.Agente):
+    """
+    Un agente reactivo simple sin saber si esta limpio o sucio
 
-
+    """
+    def __init__(self):
+        self.accionAnterior = 'nada'
+    def programa(self, percepción):
+        robot= percepción
+        accionesA=['ir_B','limpiar', 'nada']
+        accionesB=['ir_A','limpiar',  'nada']
+        """if robot == 'A':
+          accion= choice(accionesA) if self.accionAnterior == 'limpiar' else 'limpiar'
+          self.accionAnterior=accion
+          return accion 
+        else:
+          accion= choice(accionesB) if self.accionAnterior == 'limpiar' else 'limpiar' 
+          self.accionAnterior=accion
+          return accion"""
+        return (choice(accionesA) if robot == 'A' else
+                choice(accionesB))
 """
 Funcion para probar
 """
@@ -253,12 +261,19 @@ def test():
     Prueba del entorno y los agentes
 
     """
+    """
     print("Prueba del entorno  SeisCuartos con un agente aleatorio")
     entornos_o.simulador(SeisCuartos(["A", "sucio", "sucio", "sucio", "sucio", "sucio", "sucio"]),
                          AgenteAleatorio(['ir_Derecha', 'ir_Izquierda', 'limpiar', 'nada','subir', 'bajar']),
                          100)
     print("Prueba del entorno con un agente reactivo con modelo para Seis cuartos")
     entornos_o.simulador(SeisCuartos(["A", "sucio", "sucio", "sucio", "sucio", "sucio", "sucio"]), AgenteReactivoModeloSeisCuartos(), 100)
-
+    """
+    print("Prueba del entorno  DosCuartosCiego con un agente aleatorio")
+    entornos_o.simulador(DosCuartosCiego(["A", "sucio", "sucio"]),
+                         AgenteAleatorio(['ir_A', 'ir_B', 'limpiar', 'nada']),
+                         100)
+    print("Prueba del entorno con un agente reactivo")
+    entornos_o.simulador(DosCuartosCiego(), AgenteReactivoDoscuartosCiego(), 100)
 if __name__ == "__main__":
     test()
