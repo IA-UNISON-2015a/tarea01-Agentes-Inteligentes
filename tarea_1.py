@@ -90,9 +90,9 @@ class SeisCuartos(entornos_o.Entorno):
       escaleras para subir, una escalera para bajar).
     """
     def acción_legal(self, acción):
-        if acción == "subir" and self.x[0] == "B":
+        if acción is "subir" and self.x[0] == "B":
           return False
-        if acción == "bajar" and self.x[0] != "E":
+        if acción is "bajar" and self.x[0] != "E":
           return False
         
         return acción in ("ir_Derecha", "ir_Izquierda", "limpiar", "nada","subir","bajar")
@@ -106,36 +106,36 @@ class SeisCuartos(entornos_o.Entorno):
 
         robot, a, b, c, d ,e ,f = self.x
         ##desempeño
-        if acción == "subir" or acción == "bajar":
+        if acción is "subir" or acción is "bajar":
           self.desempeño-=4
-        elif acción == "ir_Derecha" or acción == "ir_Izquierda":
+        elif acción is "ir_Derecha" or acción is "ir_Izquierda":
           self.desempeño-=2
-        elif acción == "limpiar" or a is "sucio" or b is "sucio" or c is "sucio" or d is "sucio" or e is "sucio" or f is "sucio":  
+        elif acción is "limpiar" or a is "sucio" or b is "sucio" or c is "sucio" or d is "sucio" or e is "sucio" or f is "sucio":  
           self.desempeño-=1
 
         #modificar
         if acción is "limpiar":
             self.x[" ABCDEF".find(robot)] = "limpio"
         elif acción is "ir_Derecha":
-          if robot == "A":
+          if robot is "A":
             self.x[0] = "B"
-          elif robot == "B":
+          elif robot is "B":
             self.x[0] = "C"
-          elif robot == "D":
+          elif robot is "D":
             self.x[0] = "E"
-          elif robot == "E":
+          elif robot is "E":
             self.x[0] = "F"
         elif acción is "ir_Izquierda":
-          if robot == "B":
+          if robot is "B":
             self.x[0] = "A"
-          elif robot == "C":
+          elif robot is "C":
             self.x[0] = "B"
-          elif robot == "E":
+          elif robot is "E":
             self.x[0] = "D"
-          elif robot == "F":
+          elif robot is "F":
             self.x[0] = "E"
         elif acción is "subir":
-          if robot == "A":
+          if robot is "A":
             self.x[0] = "D"
           else:
             self.x[0] = "F"
