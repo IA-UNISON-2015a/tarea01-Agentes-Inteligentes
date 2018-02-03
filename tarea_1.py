@@ -90,12 +90,12 @@ class SeisCuartos(entornos_o.Entorno):
       escaleras para subir, una escalera para bajar).
     """
     def acción_legal(self, acción):
-        if acción is "subir" and self.x[0] == "B":
-          return False
-        if acción is "bajar" and self.x[0] != "E":
-          return False
+        if acción == "subir" and (self.x[0] == "A" or self.x[0] == "C"):
+          return True
+        if acción == "bajar" and self.x[0] == "E":
+          return True
         
-        return acción in ("ir_Derecha", "ir_Izquierda", "limpiar", "nada","subir","bajar")
+        return acción in ("ir_Derecha", "ir_Izquierda", "limpiar", "nada")
 
     def transición(self, acción):
         ##ver si es legal
@@ -106,40 +106,40 @@ class SeisCuartos(entornos_o.Entorno):
 
         robot, a, b, c, d ,e ,f = self.x
         ##desempeño
-        if acción is "subir" or acción is "bajar":
+        if acción == "subir" or acción == "bajar":
           self.desempeño-=4
-        elif acción is "ir_Derecha" or acción is "ir_Izquierda":
+        elif acción == "ir_Derecha" or acción == "ir_Izquierda":
           self.desempeño-=2
-        elif acción is "limpiar" or a is "sucio" or b is "sucio" or c is "sucio" or d is "sucio" or e is "sucio" or f is "sucio":  
+        elif acción == "limpiar" or a == "sucio" or b == "sucio" or c == "sucio" or d == "sucio" or e == "sucio" or f == "sucio":  
           self.desempeño-=1
 
         #modificar
-        if acción is "limpiar":
+        if acción == "limpiar":
             self.x[" ABCDEF".find(robot)] = "limpio"
-        elif acción is "ir_Derecha":
-          if robot is "A":
+        elif acción == "ir_Derecha":
+          if robot == "A":
             self.x[0] = "B"
-          elif robot is "B":
+          elif robot == "B":
             self.x[0] = "C"
-          elif robot is "D":
+          elif robot == "D":
             self.x[0] = "E"
-          elif robot is "E":
+          elif robot == "E":
             self.x[0] = "F"
-        elif acción is "ir_Izquierda":
-          if robot is "B":
+        elif acción == "ir_Izquierda":
+          if robot == "B":
             self.x[0] = "A"
-          elif robot is "C":
+          elif robot == "C":
             self.x[0] = "B"
-          elif robot is "E":
+          elif robot == "E":
             self.x[0] = "D"
-          elif robot is "F":
+          elif robot == "F":
             self.x[0] = "E"
-        elif acción is "subir":
-          if robot is "A":
+        elif acción == "subir":
+          if robot == "A":
             self.x[0] = "D"
           else:
             self.x[0] = "F"
-        elif acción is "bajar":
+        elif acción == "bajar":
           self.x[0] = "B"
           
     def percepción(self):
@@ -175,11 +175,11 @@ class AgenteReactivoModeloSeisCuartos(entornos_o.Agente):
         # Decide sobre el modelo interno
         _, a, b, c, d ,e ,f = self.modelo
         return ('nada' if not 'sucio' in self.modelo else
-                'limpiar' if situación is 'sucio' else
-                'ir_Derecha' if robot is 'A' or robot is 'B' or robot is 'D' or robot is 'E' else 
-                'ir_Izquierda' if robot is 'B' or robot is 'C' or robot is 'E' or robot is 'F' else
-                'subir' if robot is 'A' or robot is 'C' else
-                'bajar' if robot is 'E' else 
+                'limpiar' if situación == 'sucio' else
+                'ir_Derecha' if robot == 'A' or robot == 'B' or robot == 'D' or robot == 'E' else 
+                'ir_Izquierda' if robot == 'B' or robot == 'C' or robot == 'E' or robot == 'F' else
+                'subir' if robot == 'A' or robot == 'C' else
+                'bajar' if robot == 'E' else 
                 'nada')
 """
 Funcion para probar
