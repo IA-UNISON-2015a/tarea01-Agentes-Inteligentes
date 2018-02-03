@@ -163,7 +163,7 @@ class AgenteReactivoModeloSeisCuartos(entornos_o.Agente):
         Inicializa el modelo interno en el peor de los casos
 
         """
-        self.modelo = ['D', 'sucio', 'sucio', 'sucio', 'sucio', 'sucio', 'sucio']
+        self.modelo = ['A', 'sucio', 'sucio', 'sucio', 'sucio', 'sucio', 'sucio']
 
     def programa(self, percepción):
         robot, situación = percepción
@@ -173,42 +173,28 @@ class AgenteReactivoModeloSeisCuartos(entornos_o.Agente):
         self.modelo[' ABCDEF'.find(robot)] = situación
 
         # Decide sobre el modelo interno
+        #SI esta limpio ya no hacer nada
         if not 'sucio' in self.modelo:
           return 'nada'
+        #SI puede limpiar que limpie  
         if situación == 'sucio':
           return 'limpiar'  
+        #si esta en el piso de abajo  
         if robot in ('A','B','C'):
-          if self.modelo[1] != 'sucio' and self.modelo[2] != 'sucio' and self.modelo[3] != 'sucio':
-            if robot == 'A' or robot == 'C':
-              return 'subir'
-            else:
-              return 'ir_Izquierda'
+          #si esta limpio el piso
+          if not 'sucio' in self.modelo[1:4]:
+            return 'subir' if robot == 'A' or robot == 'C' else 'ir_Izquierda'
+          #si no esta limpio el piso
           else:
-            if robot == 'A':
-              return 'ir_Derecha'
-            elif robot == 'C':
-              return 'ir_Izquierda'
-            else: 
-              if self.modelo[1] == 'sucio':
-                return 'ir_Izquierda'
-              else:
-                return 'ir_Derecha'
+            return 'ir_Derecha' if robot == 'A' or self.modelo[1] == 'limpio' else 'ir_Izquierda'    
+        #piso de arriba
         else:
-          if self.modelo[4] != 'sucio' and self.modelo[5] != 'sucio' and self.modelo[6] != 'sucio':
-            if robot == 'E':
-              return 'bajar'
-            elif robot == 'D':
-              return 'ir_Derecha'
-            else:
-              return 'ir_Izquierda'
+          #si el piso esta limpio
+          if not 'sucio' in self.modelo[4:]:
+            return 'bajar' if robot == 'E' else 'ir_Derecha' if robot == 'D' else 'ir_Izquierda'
+          #si hya algo sucio en el piso
           else:
-            if robot == 'D':
-              return 'ir_Derecha'
-            elif robot == 'F':
-              return 'ir_Izquierda'
-            else: 
-              return ('ir_Izquierda' if self.modelo[4] == 'sucio' else
-              'ir_Derecha')
+            return 'ir_derecha' if  robot == 'D' or self.modelo[4] == 'limpio' else 'ir_Izquierda'
         
 """
 Funcion para probar
@@ -219,11 +205,11 @@ def test():
 
     """
     print("Prueba del entorno  SeisCuartos con un agente aleatorio")
-    entornos_o.simulador(SeisCuartos(),
+    entornos_o.simulador(SeisCuartos(["A", "sucio", "sucio", "sucio", "sucio", "sucio", "sucio"]),
                          AgenteAleatorio(['ir_Derecha', 'ir_Izquierda', 'limpiar', 'nada','subir', 'bajar']),
                          100)
     print("Prueba del entorno con un agente reactivo con modelo para Seis cuartos")
-    entornos_o.simulador(SeisCuartos(), AgenteReactivoModeloSeisCuartos(), 100)
+    entornos_o.simulador(SeisCuartos(["A", "sucio", "sucio", "sucio", "sucio", "sucio", "sucio"]), AgenteReactivoModeloSeisCuartos(), 100)
 
 if __name__ == "__main__":
     test()
