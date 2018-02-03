@@ -118,7 +118,7 @@ class SeisCuartos(entornos_o.Entorno):
             elif self.x[0] == "E":
                 self.x[0] = "D"
             elif self.x[0] == "F":
-                self.x[0] = "ES"
+                self.x[0] = "E"
         elif acción is "subir":
             if self.x[0] == "A":
                 self.x[0] = "D"
@@ -185,25 +185,38 @@ class AgenteReactivoModeloSeisCuartos(entornos_o.Agente):
             acción = 'nada'
         elif situación == 'sucio':
             acción = 'limpiar'
-        elif robot == 'A':
-            acción = 'ir_Derecha'
-        elif robot == 'B':
-            acción = 'ir_Derecha'
-        elif robot == 'C':
-            acción = 'subir'
-        elif robot == 'F':
-            acción = 'ir_Izquierda'
-        elif robot == 'E':
-            if self.modelo[' ABCDEF'.find('D')] == 'sucio':
-                acción = 'ir_Izquierda'
-            else:
-                acción = 'bajar'
+        elif robot == 'A' or robot == 'B' or robot == 'C':
+            if robot == 'A':
+                if b == 'sucio' or c == 'sucio':
+                    acción = 'ir_Derecha'
+                else:
+                    acción = 'subir'
+            elif robot == 'B':
+                if c == 'sucio':
+                    acción = 'ir_Derecha'
+                else:
+                    acción = 'ir_Izquierda' #Si A esta sucio o no el robot se movera
+                                            #y asi pueda subir las escaleras.
+            else:   #Esta robot en C
+                if a == 'sucio' or b == 'sucio':
+                    acción = 'ir_Izquierda'
+                else:
+                    acción = 'subir'
+        else:   #Esta robot en D, E o F
+            if robot == 'D':
+                acción = 'ir_Derecha'
+            elif robot == 'E':
+                if d == 'sucio':
+                    acción = 'ir_Izquierda'
+                elif f == 'sucio':
+                    acción = 'ir_Derecha'
+                else:
+                    acción = 'bajar'
+            else:   #robot esta en F
+                if d == 'sucio' or e == 'sucio':
+                    acción = 'ir_Izquierda'
 
         return acción
-
-        #return ('nada' if a == b == 'limpio' else
-        #        'limpiar' if situación == 'sucio' else
-        #        'ir_A' if robot == 'B' else 'ir_B')
 
 ###3
 class SeisCuartosCiego(SeisCuartos):
@@ -233,7 +246,7 @@ class SeisCuartosCiego(SeisCuartos):
             elif self.x[0] == "E":
                 self.x[0] = "D"
             elif self.x[0] == "F":
-                self.x[0] = "ES"
+                self.x[0] = "E"
         elif acción is "subir":
             if self.x[0] == "A":
                 self.x[0] = "D"
@@ -253,6 +266,7 @@ class SeisCuartosCiego(SeisCuartos):
 ###prueba
 cuarto = SeisCuartos()
 agenteA = AgenteAleatorio(["ir_Derecha", "ir_Izquierda", "subir", "bajar", "limpiar", "nada"])
+agenteM = AgenteReactivoModeloSeisCuartos()
 def test():
     """
     Prueba del entorno y los agentes
@@ -262,7 +276,7 @@ def test():
     SeisCuartosAcciones = ["ir_Derecha", "ir_Izquierda", "subir", "bajar", "limpiar", "nada"]
     entornos_o.simulador(SeisCuartos(),
                          AgenteAleatorio(SeisCuartosAcciones),
-                         20)
+                         40)
 
     print("Prueba del entorno con un agente reactivo con modelo")
-    entornos_o.simulador(DosCuartos(), AgenteReactivoModeloSeisCuartos(), 20)
+    entornos_o.simulador(SeisCuartos(), AgenteReactivoModeloSeisCuartos(), 40)
