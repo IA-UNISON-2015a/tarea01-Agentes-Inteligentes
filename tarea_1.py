@@ -163,7 +163,7 @@ class AgenteReactivoModeloSeisCuartos(entornos_o.Agente):
         Inicializa el modelo interno en el peor de los casos
 
         """
-        self.modelo = ['A', 'sucio', 'sucio', 'sucio', 'sucio', 'sucio', 'sucio']
+        self.modelo = ['D', 'sucio', 'sucio', 'sucio', 'sucio', 'sucio', 'sucio']
 
     def programa(self, percepción):
         robot, situación = percepción
@@ -173,14 +173,43 @@ class AgenteReactivoModeloSeisCuartos(entornos_o.Agente):
         self.modelo[' ABCDEF'.find(robot)] = situación
 
         # Decide sobre el modelo interno
-        _, a, b, c, d ,e ,f = self.modelo
-        return ('nada' if not 'sucio' in self.modelo else
-                'limpiar' if situación == 'sucio' else
-                'ir_Derecha' if robot == 'A' or robot == 'B' or robot == 'D' or robot == 'E' else 
-                'ir_Izquierda' if robot == 'B' or robot == 'C' or robot == 'E' or robot == 'F' else
-                'subir' if robot == 'A' or robot == 'C' else
-                'bajar' if robot == 'E' else 
-                'nada')
+        if not 'sucio' in self.modelo:
+          return 'nada'
+        if situación == 'sucio':
+          return 'limpiar'  
+        if robot in ('A','B','C'):
+          if self.modelo[1] != 'sucio' and self.modelo[2] != 'sucio' and self.modelo[3] != 'sucio':
+            if robot == 'A' or robot == 'C':
+              return 'subir'
+            else:
+              return 'ir_Izquierda'
+          else:
+            if robot == 'A':
+              return 'ir_Derecha'
+            elif robot == 'C':
+              return 'ir_Izquierda'
+            else: 
+              if self.modelo[1] == 'sucio':
+                return 'ir_Izquierda'
+              else:
+                return 'ir_Derecha'
+        else:
+          if self.modelo[4] != 'sucio' and self.modelo[5] != 'sucio' and self.modelo[6] != 'sucio':
+            if robot == 'E':
+              return 'bajar'
+            elif robot == 'D':
+              return 'ir_Derecha'
+            else:
+              return 'ir_Izquierda'
+          else:
+            if robot == 'D':
+              return 'ir_Derecha'
+            elif robot == 'F':
+              return 'ir_Izquierda'
+            else: 
+              return ('ir_Izquierda' if self.modelo[4] == 'sucio' else
+              'ir_Derecha')
+        
 """
 Funcion para probar
 """
