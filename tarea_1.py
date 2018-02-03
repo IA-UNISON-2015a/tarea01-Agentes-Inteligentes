@@ -294,7 +294,7 @@ class SeisCuartos(entornos_o.Entorno):
          return acción in ('limpiar', 'nada', 'ir_Izquierda')
 
    def función_costo(self, acción):
-      if acción is 'limpar':
+      if acción is 'limpiar':
          self.desempeño -= 1
       elif acción is 'ir_Izquierda' or acción is 'ir_Derecha':
          self.desempeño -= 2
@@ -361,8 +361,72 @@ class AgenteAleatorioSeisCuartos(entornos_o.Agente):
    def programa(self, percepcion):
       return self.elección(percepcion)
 
+class AgenteReactivoModeloSeisCuartos(entornos_o.Agente):
+   """
+   Un agente reactivo basado en modelo
+   """
+   def __init__(self):
+      """
+      Inicializa el modelo interno en el peor de los casos
+      """
+      self.modelo = ['A', 'sucio', 'sucio', 'sucio', 'sucio', 'sucio', 'sucio']
+
+   def programa(self, percepción):
+      robot, situación = percepción
+
+      # Actualiza el modelo interno
+      self.modelo[0] = robot
+      self.modelo[' ABCDEF'.find(robot)] = situación
+
+      # Decide sobre el modelo interno
+      a, b, c, d, e, f = self.modelo[1], self.modelo[2], self.modelo[3], self.modelo[4], self.modelo[5], self.modelo[6]
+      acción = 'nada'
+
+      primera_planta = [a,b,c]
+      segunda_planta = [d,e,f]
+
+      # Buscar la acción de acuerdo con el estado de las habitaciones continuas
+      if a == b == c == d == e == f == 'limpio':
+         acción = 'nada'
+      elif situación is 'sucio':
+         acción = 'limpiar'
+      elif self.modelo[0] is 'A':
+         if self.modelo[(' ABCDEF').find('B')] is 'limpio' and self.modelo[(' ABCDEF').find('C')] is 'limpio':
+            acción = 'subir'
+         else:
+            acción = 'ir_Derecha'
+      elif self.modelo[0] is 'B':
+         if self.modelo[(' ABCDEF').find('A')] is 'sucio':
+            acción = 'ir_Izquierda'
+         else:
+            acción = 'ir_Derecha'
+      elif self.modelo[0] is 'C':
+         if self.modelo[(' ABCDEF').find('A')] is 'limpio' and self.modelo[(' ABCDEF').find('B')] is 'limpio':
+            acción = 'subir'
+         else:
+            acción = 'ir_Izquierda'
+      elif self.modelo[0] is 'D':
+         if self.modelo[(' ABCDEF').find('E')] is 'sucio' or self.modelo[(' ABCDEF').find('F')] is 'sucio':
+            acción = 'ir_Derecha'
+         if any(cuarto is 'sucio' for cuarto in primera_planta):
+            acción = 'ir_Derecha'
+      elif self.modelo[0] is 'E':
+         if self.modelo[(' ABCDEF').find('D')] is 'sucio':
+            acción = 'ir_Izquierda'
+         elif self.modelo[(' ABCDEF').find('F')] is 'sucio':
+            acción = 'ir_Derecha'
+         else:
+            acción = 'bajar'
+      elif self.modelo[0] is 'F':
+         if self.modelo[(' ABCDEF').find('D')] is 'sucio' or self.modelo[(' ABCDEF').find('E')] is 'sucio':
+            acción = 'ir_Izquierda'
+         if any(cuarto is 'sucio' for cuarto in primera_planta):
+            acción = 'ir_Izquierda'
+      return acción
+
 def TestSeisCuartos():
    entornos_o.simulador(SeisCuartos(),AgenteAleatorioSeisCuartos(),100)
+   entornos_o.simulador(SeisCuartos(),AgenteReactivoModeloSeisCuartos(),100)
 
 if __name__ == "__main__":
    #TestEstocástico()
