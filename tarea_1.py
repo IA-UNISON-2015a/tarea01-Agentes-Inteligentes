@@ -195,7 +195,56 @@ class AgenteReactivoModeloSeisCuartos(entornos_o.Agente):
           #si hya algo sucio en el piso
           else:
             return 'ir_derecha' if  robot == 'D' or self.modelo[4] == 'limpio' else 'ir_Izquierda'
-        
+"""
+
+EJERCICIO 3
+
+   Al ejemplo original de los dos cuartos, modificalo de manera que el
+   agente solo pueda saber en que cuarto se encuentra pero no sabe si
+   está limpio o sucio.
+
+   A este nuevo entorno llamalo `DosCuartosCiego`.
+
+   Diseña un agente racional para este problema, pruebalo y comparalo
+   con el agente aleatorio.
+
+"""
+class DosCuartosCiego(entornos_o.Entorno):
+    """
+    Clase para un entorno de dos cuartos donde el agente es ciego?
+
+    """
+    def __init__(self, x0=["A", "sucio", "sucio"]):
+        """
+        Por default inicialmente el robot está en A y los dos cuartos
+        están sucios
+
+        """
+        self.x = x0[:]
+        self.desempeño = 0
+
+    def acción_legal(self, acción):
+        return acción in ("ir_A", "ir_B", "limpiar", "nada")
+
+    def transición(self, acción):
+        if not self.acción_legal(acción):
+            raise ValueError("La acción no es legal para este estado")
+
+        robot, a, b = self.x
+        if acción is not "nada" or a == "sucio" or b == "sucio":
+            self.desempeño -= 1
+        if acción == "limpiar":
+            self.x[" AB".find(robot)] = "limpio"
+        elif acción == "ir_A":
+            self.x[0] = "A"
+        elif acción == "ir_B":
+            self.x[0] = "B"
+
+    def percepción(self):
+      #solo sabe en que cuarto esta
+        return self.x[0]
+
+
 """
 Funcion para probar
 """
