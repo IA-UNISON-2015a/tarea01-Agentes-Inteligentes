@@ -51,7 +51,7 @@ class DosCuartos(entornos_o.Entorno):
         if acción is not "nada" or a is "sucio" or b is "sucio":
             self.desempeño -= 1
         if acción is "limpiar":
-            self.x[" AB".find(self.x[0])] = "limpio"
+            self.x[" AB".find(robot)] = "limpio"
         elif acción is "ir_A":
             self.x[0] = "A"
         elif acción is "ir_B":
