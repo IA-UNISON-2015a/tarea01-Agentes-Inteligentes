@@ -325,8 +325,46 @@ class SeisCuartos(entornos_o.Entorno):
 
    def percepción(self):
       return self.x[0], self.x[" ABCDEF".find(self.x[0])]
+   
+   def percepción_para_aleatorio(self):
+      return self.x[0]
 
+class AgenteAleatorioSeisCuartos(entornos_o.Agente):
+   """
+   Un agente que solo regresa una accion al azar entre las acciones legales
+   """
+   def __init__(self):
+      self.acciones = []
+
+   def elección(self, percepcion):
+      # Nunca se usa la variable 'situación'
+      habitación, situación = percepcion
+
+      x = []
+      if habitación is 'A':
+         x = ['limpiar', 'nada', 'ir_Derecha', 'subir']
+      elif habitación is 'B':
+         x = ['limpiar', 'nada', 'ir_Derecha', 'ir_Izquierda']
+      elif habitación is 'C':
+         x = ['limpiar', 'nada', 'ir_Izquierda', 'subir']
+      elif habitación is 'D':
+         x = ['limpiar', 'nada', 'ir_Derecha']
+      elif habitación is 'E':
+         x = ['limpiar', 'nada', 'ir_Izquierda', 'ir_Derecha', 'bajar']
+      elif habitación is 'F':
+         x = ['limpiar', 'nada', 'ir_Izquierda']
+      random.shuffle(x)
+
+      acción = x[0]
+      return acción
+
+   def programa(self, percepcion):
+      return self.elección(percepcion)
+
+def TestSeisCuartos():
+   entornos_o.simulador(SeisCuartos(),AgenteAleatorioSeisCuartos(),100)
 
 if __name__ == "__main__":
    #TestEstocástico()
-   TestCiego()
+   #TestCiego()
+   TestSeisCuartos()
