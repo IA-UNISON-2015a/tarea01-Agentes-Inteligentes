@@ -99,8 +99,8 @@ class DosCuartosEstocástico(entornos_o.Entorno):
          raise ValueError("La acción no es legal para este estado")
       
       random.seed()
-      # Es durante la transición donde se evalua si se realizará la acción
-      # hay una probabilidad de que la acción no se realice
+      # Es durante la transición donde se evalua si se realizará la acción.
+      # Hay una probabilidad de que la acción no se realice dejando la situación como está pero elevando el costo
       robot, a, b = self.x
       if acción is not "nada" or a is "sucio" or b is "sucio":
          self.desempeño -= 1
@@ -159,5 +159,100 @@ def TestEstocástico():
    entornos_o.simulador(DosCuartosEstocástico(),AgenteAleatorioEstocástico(['ir_A', 'ir_B', 'limpiar', 'nada']),100)
    entornos_o.simulador(DosCuartosEstocástico(),AgenteReactivoModelDoscuartosEstocástico(),100)
 
+# # # -------------------------------------------------------------------------------------------------------------
+# # # PROBLEMA 3
+# # # -------------------------------------------------------------------------------------------------------------
+class DosCuartosCiego(entornos_o.Entorno):
+   """
+   Clase para un entorno de dos cuartos. Muy sencilla solo regrupa métodos.
+
+   El estado se define como (robot, A, B)
+   donde robot puede tener los valores "A", "B"
+   A y B pueden tener los valores "limpio", "sucio"
+
+   Las acciones válidas en el entorno son ("ir_A", "ir_B", "limpiar", "nada").
+   Todas las acciones son válidas en todos los estados.
+
+   Los sensores es una tupla (robot, limpio?)
+   con la ubicación del robot y el estado de limpieza
+
+   """
+   def __init__(self, x0=["A", "sucio", "sucio"]):
+      """
+      Por default inicialmente el robot está en A y los dos cuartos
+      están sucios
+      """
+      self.x = x0[:]
+      self.desempeño = 0
+
+   def acción_legal(self, acción):
+      return acción in ("ir_A", "ir_B", "limpiar", "nada")
+
+   def transición(self, acción):
+      if not self.acción_legal(acción):
+         raise ValueError("La acción no es legal para este estado")
+
+      robot, a, b = self.x
+      if acción is not "nada" or a is "sucio" or b is "sucio":
+         self.desempeño -= 1
+      if acción is "limpiar":
+         self.x[" AB".find(self.x[0])] = "limpio"
+      elif acción is "ir_A":
+         self.x[0] = "A"
+      elif acción is "ir_B":
+         self.x[0] = "B"
+
+   def percepción(self):
+      return self.x[0]
+
+class AgenteAleatorioCiego(entornos_o.Agente):
+   """
+   Un agente que solo regresa una accion al azar entre las acciones legales
+   """
+   def __init__(self, acciones):
+      self.acciones = acciones
+
+   def programa(self, percepcion):
+      return random.choice(self.acciones)
+
+class AgenteReactivoModeloDosCuartosCiego(entornos_o.Agente):
+   """
+   Un agente reactivo basado en modelo
+   """
+   def __init__(self):
+      """
+      Inicializa el modelo interno en el peor de los casos
+      """
+      self.modelo = ['A', 'sucio', 'sucio']
+
+   def programa(self, percepción):
+      robot = percepción
+
+      # Actualiza el modelo interno
+      self.modelo[0] = robot
+
+      # Decide sobre el modelo interno
+      a, b = self.modelo[1], self.modelo[2]
+      acción = 'nada'
+      
+      if a == b == 'limpio':
+         acción = 'nada'
+      elif self.modelo[' AB'.find(robot)] is 'sucio':
+         acción = 'limpiar'
+         # Actualiza el modelo interno y ahora asume que la habitación actual está limpia
+         self.modelo[' AB'.find(robot)] = 'limpio'
+      elif robot is 'B':
+         acción = 'ir_A'
+      else:
+         acción = 'ir_B'
+      
+      return acción
+
+def TestCiego():
+   entornos_o.simulador(DosCuartosCiego(),AgenteAleatorioCiego(['ir_A', 'ir_B', 'limpiar', 'nada']),100)
+   entornos_o.simulador(DosCuartosCiego(),AgenteReactivoModeloDosCuartosCiego(),100)
+
+
 if __name__ == "__main__":
-   TestEstocástico()
+   #TestEstocástico()
+   TestCiego()
