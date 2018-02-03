@@ -57,10 +57,12 @@ Todos los incisos tienen un valor de 25 puntos sobre la calificación de
 la tarea.
 
 """
-__author__ = 'Cesar Salazar'
+__author__ = 'CesarSalazar'
 
 import entorno_o
 
 # Requiere el modulo entornos_o.py
 # Usa el modulo doscuartos_o.py para reutilizar código
 # Agrega los modulos que requieras de python
+
+from doscuartos_oimport DosCuartos, AgenteAleatorio, AgenteReactivoDoscuartos, AgenteReactivoModeloDosCuartos
