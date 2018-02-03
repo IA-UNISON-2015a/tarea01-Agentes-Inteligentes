@@ -26,7 +26,7 @@ class Entorno:
         self.x = x0[:]
         self.desempeño = 0
 
-    def acción_legal(self, acción):
+    def accion_legal(self, acción):
         """
         @param acción: Una accion en el entorno
 
@@ -37,7 +37,7 @@ class Entorno:
         """
         return True
 
-    def transición(self, acción):
+    def transicion(self, acción):
         """
         @param accion: Uno de los elementos de acciones_legales( estado)
 
@@ -46,7 +46,7 @@ class Entorno:
         """
         pass
 
-    def percepción(self):
+    def percepcion(self):
         """
         @return: Tupla con los valores que se perciben del entorno por
                  default el estado completo
