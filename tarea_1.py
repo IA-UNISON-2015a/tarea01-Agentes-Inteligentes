@@ -145,15 +145,56 @@ class SeisCuartos(entornos_o.Entorno):
     def percepción(self):
         return self.x[0], self.x[" ABCDEF".find(self.x[0])]
 
+"""
+EJERCICIO 2
+
+  Diseña un Agente reactivo basado en modelo para este entorno y
+  compara su desempeño con un agente aleatorio despues de 100 pasos
+  de simulación.
+
+"""
+class AgenteReactivoModeloSeisCuartos(entornos_o.Agente):
+    """
+    Un agente reactivo basado en modelo
+
+    """
+    def __init__(self):
+        """
+        Inicializa el modelo interno en el peor de los casos
+
+        """
+        self.modelo = ['A', 'sucio', 'sucio', 'sucio', 'sucio', 'sucio', 'sucio']
+
+    def programa(self, percepción):
+        robot, situación = percepción
+
+        # Actualiza el modelo interno
+        self.modelo[0] = robot
+        self.modelo[' ABCDEF'.find(robot)] = situación
+
+        # Decide sobre el modelo interno
+        _, a, b, c, d ,e ,f = self.modelo
+        return ('nada' if not 'sucio' in self.modelo else
+                'limpiar' if situación is 'sucio' else
+                'ir_Derecha' if robot is 'A' or robot is 'B' or robot is 'D' or robot is 'E' else 
+                'ir_Izquierda' if robot is 'B' or robot is 'C' or robot is 'E' or robot is 'F' else
+                'subir' if robot is 'A' or robot is 'C' else
+                'bajar' if robot is 'E' else 
+                'nada')
+"""
+Funcion para probar
+"""
 def test():
     """
     Prueba del entorno y los agentes
 
     """
-    print("Prueba del entorno con un agente aleatorio")
+    print("Prueba del entorno  SeisCuartos con un agente aleatorio")
     entornos_o.simulador(SeisCuartos(),
                          AgenteAleatorio(['ir_Derecha', 'ir_Izquierda', 'limpiar', 'nada','subir', 'bajar']),
                          100)
+    print("Prueba del entorno con un agente reactivo con modelo para Seis cuartos")
+    entornos_o.simulador(SeisCuartos(), AgenteReactivoModeloSeisCuartos(), 100)
 
 if __name__ == "__main__":
     test()
