@@ -59,8 +59,92 @@ la tarea.
 """
 __author__ = 'Raúl Pérez'
 
-import entorno_o
+import doscuartos_o
 
 # Requiere el modulo entornos_o.py
 # Usa el modulo doscuartos_o.py para reutilizar código
 # Agrega los modulos que requieras de python
+
+class SeisCuartos(doscuartos_o.DosCuartos):
+    """
+    Clase para un entorno de seis cuartos.
+
+    El estado se define como (robot, A, B, C, D, E, F)
+    donde A, B y C son los pisos de abajo y D, E, y F son los de arriba,
+    robot puede tener los valores de "A", "B", "C", "D", "E", "F"
+    A, B, C, D, E y F pueden tener los valores "limpio" y "sucio"
+
+    Las acciones válidas en el entorno son ("ir_Derecha", "ir_Izquierda", "subir", "bajar", "limpiar", "nada").
+    La acción de "subir" solo es legal en el piso de abajo, en los cuartos de los extremos, 
+    mientras que la acción de "bajar" solo es legal en el piso de arriba y en el cuarto de el 
+    centro (dos escaleras para subir, una escalera para bajar).
+
+    Los sensores es una tupla (robot, limpio?)
+    con la ubicación del robot y el estado de limpieza
+    """  
+    def __init__(self, x0=["B", "sucio", "sucio", "sucio", "sucio", "sucio", "sucio"]):
+        """
+        Por default inicialmente el robot está en B y todos los cuartos
+        están sucios
+        """
+        self.x = x0[:]
+        self.desempeño = 0
+
+    def acción_legal(self, acción):
+        robot = self.x[0]
+
+        return True if (acción is "subir" and robot is "A" or "C")
+                    or (acción is "bajar" and robot is "E") 
+                    or (acción in ("ir_Derecha", "ir_Izquierda", "limpiar", "nada") )
+                    else False
+
+    def transición(self, acción):
+        if not self.acción_legal(acción):
+            raise ValueError("La acción no es legal para este estado")
+
+        robot, a, b, c, d, e, f = self.x
+
+        if acción is "subir":
+            self.desempeño -= 2
+            self.x[0] = "D" if robot is "A" else "F"
+        else accion is "bajar":
+            self.desempeño -= 2
+            self.x[0] = "B"
+        elif acción is not "limpiar" or "sucio" in (a, b, c, d, e, f):
+            self.desempeño -= 1
+        
+        if acción is "limpiar":
+            self.desempeño -= .5
+            self.x[" ABCDEF".find(self.x[0])] = "limpio"
+        elif acción is "ir_Derecha":
+            if robot is "A":
+                x[0] = "B"
+            elif robot is "B":
+                x[0] = "C"
+            elif robot is "D":
+                x[0] = "E"
+            elif robot is "E":
+                x[0] = "F"
+        elif acción is "ir_Izquierda":
+            if robot is "B":
+                x[0] = "A"
+            elif robot is "C":
+                x[0] = "B"
+            elif robot is "E":
+                x[0] = "D"
+            elif robot is "F":
+                x[0] = "E"
+
+    def percepción(self):
+        return self.x[0], self.x[" ABCDEF".find(self.x[0])]
+        
+            
+                
+            
+            
+
+        
+        
+
+
+        
