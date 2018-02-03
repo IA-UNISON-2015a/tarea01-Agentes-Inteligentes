@@ -252,6 +252,80 @@ def TestCiego():
    entornos_o.simulador(DosCuartosCiego(),AgenteAleatorioCiego(['ir_A', 'ir_B', 'limpiar', 'nada']),100)
    entornos_o.simulador(DosCuartosCiego(),AgenteReactivoModeloDosCuartosCiego(),100)
 
+# # # -------------------------------------------------------------------------------------------------------------
+# # # PROBLEMA 1
+# # # -------------------------------------------------------------------------------------------------------------
+class SeisCuartos(entornos_o.Entorno):
+   """
+   Clase para un entorno de seis cuartos. Muy sencilla solo regrupa métodos.
+
+   El estado se define como (robot, A, B,C,D,E,F)
+   donde robot puede tener los valores "A", "B", "C", "D", "E", "F"
+   A, B, C, D, E, F pueden tener los valores "limpio", "sucio"
+
+   Las acciones válidas en el entorno en general son 
+   ("ir_Derecha", "ir_Izquierda", "subir", "bajar", "limpiar", "nada")
+   pero dependiendo de la habitación hay acciones específicas realizables por el agente.
+
+   Los sensores es una tupla (robot, limpio?)
+   con la ubicación del robot y el estado de limpieza
+
+   """
+   def __init__(self, x0=["A","sucio","sucio","sucio","sucio","sucio","sucio"]):
+      """
+      Por default inicialmente el robot está en A y los seis cuartos
+      están sucios
+      """
+      self.x = x0[:]
+      self.desempeño = 0
+
+   def acción_legal(self, acción):
+      if self.x[0] is 'A':
+         return acción in ('limpiar', 'nada', 'ir_Derecha', 'subir')
+      elif self.x[0] is 'B':
+         return acción in ('limpiar', 'nada', 'ir_Derecha', 'ir_Izquierda')
+      elif self.x[0] is 'C':
+         return acción in ('limpiar', 'nada', 'ir_Izquierda', 'subir')
+      elif self.x[0] is 'D':
+         return acción in ('limpiar', 'nada', 'ir_Derecha')
+      elif self.x[0] is 'E':
+         return acción in ('limpiar', 'nada', 'ir_Izquierda', 'ir_Derecha', 'bajar')
+      elif self.x[0] is 'F':
+         return acción in ('limpiar', 'nada', 'ir_Izquierda')
+
+   def función_costo(self, acción):
+      if acción is 'limpar':
+         self.desempeño -= 1
+      elif acción is 'ir_Izquierda' or acción is 'ir_Derecha':
+         self.desempeño -= 2
+      elif acción is 'subir' or acción is 'bajar':
+         self.desempeño -= 3
+      # Remover este caso
+      else:
+         self.desempeño -= 0
+
+   def transición(self, acción):
+      if not self.acción_legal(acción):
+         raise ValueError("La acción no es legal para este estado")
+
+      robot, a, b, c, d, e, f = self.x
+      
+      if acción is "limpiar":
+         self.x[" ABCDEF".find(self.x[0])] = "limpio"
+      elif acción is "ir_Derecha":
+         self.x[0] = chr(ord(self.x[0]) + 1)
+      elif acción is "ir_Izquierda":
+         self.x[0] = chr(ord(self.x[0]) - 1)
+      elif acción is 'subir':
+         self.x[0] = chr(ord(self.x[0]) + 3)
+      elif acción is 'bajar':
+         self.x[0] = chr(ord(self.x[0]) - 3)
+
+      self.función_costo(acción)
+
+   def percepción(self):
+      return self.x[0], self.x[" ABCDEF".find(self.x[0])]
+
 
 if __name__ == "__main__":
    #TestEstocástico()
