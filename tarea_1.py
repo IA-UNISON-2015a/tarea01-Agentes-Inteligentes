@@ -361,6 +361,10 @@ class AgenteAleatorioSeisCuartos(entornos_o.Agente):
    def programa(self, percepcion):
       return self.elección(percepcion)
 
+# # # -------------------------------------------------------------------------------------------------------------
+# # # PROBLEMA 2
+# # # -------------------------------------------------------------------------------------------------------------
+
 class AgenteReactivoModeloSeisCuartos(entornos_o.Agente):
    """
    Un agente reactivo basado en modelo
