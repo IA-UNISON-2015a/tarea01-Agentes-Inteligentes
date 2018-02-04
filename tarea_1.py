@@ -60,6 +60,8 @@ la tarea.
 __author__ = 'Raúl Pérez'
 
 import doscuartos_o
+import entornos_o
+from random import choice
 
 # Requiere el modulo entornos_o.py
 # Usa el modulo doscuartos_o.py para reutilizar código
@@ -82,7 +84,7 @@ class SeisCuartos(doscuartos_o.DosCuartos):
     Los sensores es una tupla (robot, limpio?)
     con la ubicación del robot y el estado de limpieza
     """  
-    def __init__(self, x0=["B", "sucio", "sucio", "sucio", "sucio", "sucio", "sucio"]):
+    def __init__(self, x0=["F", "sucio", "sucio", "sucio", "sucio", "sucio", "sucio"]):
         """
         Por default inicialmente el robot está en B y todos los cuartos
         están sucios
@@ -93,10 +95,10 @@ class SeisCuartos(doscuartos_o.DosCuartos):
     def acción_legal(self, acción):
         robot = self.x[0]
 
-        return True if (acción is "subir" and robot is "A" or "C")
-                    or (acción is "bajar" and robot is "E") 
-                    or (acción in ("ir_Derecha", "ir_Izquierda", "limpiar", "nada") )
-                    else False
+        return (True if acción is "subir" and robot in ("A", "C") 
+            or acción is "bajar" and robot is "E"
+            or acción in ("ir_Derecha", "ir_Izquierda", "limpiar", "nada")
+            else False)
 
     def transición(self, acción):
         if not self.acción_legal(acción):
@@ -107,7 +109,7 @@ class SeisCuartos(doscuartos_o.DosCuartos):
         if acción is "subir":
             self.desempeño -= 2
             self.x[0] = "D" if robot is "A" else "F"
-        else accion is "bajar":
+        elif acción is "bajar":
             self.desempeño -= 2
             self.x[0] = "B"
         elif acción is not "limpiar" or "sucio" in (a, b, c, d, e, f):
@@ -117,34 +119,70 @@ class SeisCuartos(doscuartos_o.DosCuartos):
             self.desempeño -= .5
             self.x[" ABCDEF".find(self.x[0])] = "limpio"
         elif acción is "ir_Derecha":
-            if robot is "A":
-                x[0] = "B"
-            elif robot is "B":
-                x[0] = "C"
-            elif robot is "D":
-                x[0] = "E"
-            elif robot is "E":
-                x[0] = "F"
+            self.x[0] = ("B" if robot is "A"
+                   else "C" if robot is "B"
+                   else "E" if robot is "D"
+                   else "F" if robot is "E"
+                   else robot)
         elif acción is "ir_Izquierda":
-            if robot is "B":
-                x[0] = "A"
-            elif robot is "C":
-                x[0] = "B"
-            elif robot is "E":
-                x[0] = "D"
-            elif robot is "F":
-                x[0] = "E"
+            self.x[0] = ("A" if robot is "B"
+                   else "B" if robot is "C"
+                   else "D" if robot is "E"
+                   else "E" if robot is "F"
+                   else robot)
 
     def percepción(self):
         return self.x[0], self.x[" ABCDEF".find(self.x[0])]
         
-            
-                
-            
-            
+class AgenteReactivoModeloSeisCuartos():
+    """
+    Un agente reactivo basado en modelo para el entorno seis cuartos
+    """
+    def __init__(self, modelo=['F', 'sucio', 'sucio', 'sucio', 'sucio', 'sucio', 'sucio']):
+        """
+        Inicializa el modelo interno en el peor de los casos
 
-        
-        
+        """
+        self.modelo = modelo[:]    
+            
+    def programa(self, percepción):
+        robot, situación = percepción
 
+        # Actualiza el modelo interno
+        self.modelo[0] = robot
+        self.modelo[' ABCDEF'.find(robot)] = situación
+
+        _ ,a, b, c, d, e, f = self.modelo
+
+        return ('nada' if (a == b == c == d == e == f == 'limpio') 
+            else 'limpiar' if (situación == 'sucio')
+            else 'ir_Derecha' if (robot is "A") and ('sucio' in (b, c))
+            else 'ir_Derecha' if (robot is "B") and ((c is 'sucio') and (a is 'limpio'))
+            else 'ir_Izquierda' if (robot is "C") and ('sucio' in (a, b))
+            else 'ir_Izquierda' if (robot is "B") and ((a is 'sucio') and (c is 'limpio'))
+            else choice(['ir_Derecha', 'ir_Izquierda']) if (robot is "B") and ((a == c == 'sucio') or ('sucio' in (d, e, f)))
+            else 'subir' if (robot in ("A", "C")) and ('sucio' in (d, e, f))
+            else 'ir_Derecha' if (robot is "D") and (('sucio' in (e, f)) or ('sucio' in (a, b, c)))
+            else 'ir_Derecha' if (robot is "E") and ((f is 'sucio') and (d is 'limpio'))
+            else 'ir_Izquierda' if (robot is "F") and (('sucio' in (d, e)) or ('sucio' in (a, b, c)))
+            else 'ir_Izquierda' if (robot is "E") and ((d is 'sucio') and (f is 'limpio'))
+            else choice(['ir_Derecha', 'ir_Izquierda']) if (robot is "E") and (d == f == 'sucio')
+            else 'bajar' if (robot is "E") and ('sucio' in (a, b, c))
+            else 'nada')
+        
+class AgenteAleatorio(doscuartos_o.AgenteAleatorio):
+    
+
+
+def test():
+    """
+    Prueba del entorno y los agentes
+
+    """
+    print("Prueba del entorno seis cuartos con un agente basado en modelo")
+    entornos_o.simulador(SeisCuartos(), AgenteReactivoModeloSeisCuartos(), 100)
+
+if __name__ == "__main__":
+    test()
 
         
