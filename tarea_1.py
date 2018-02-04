@@ -101,7 +101,8 @@ class SeisCuartos(entornos_o.Entorno):
         ##ver si es legal
         if not self.acción_legal(acción):
             #raise ValueError("La acción no es legal para este estado")
-            self.desempeño-=5
+            #puse un costo a las acciones ilegales, solo tocaran cuando sea aleatorio
+            self.desempeño-=3
             return
 
         robot, a, b, c, d ,e ,f = self.x
@@ -275,7 +276,7 @@ class DosCuartosEstocástico(DosCuartos):
 class AgenteReactivoModeloDosCuartosEstocástico(AgenteReactivoModeloDosCuartos):
     """
     Un agente reactivo basado en modelo
-
+    asi como el cuarto tiene porcentajes igual el agente
     """
     def __init__(self):
         """
@@ -309,23 +310,20 @@ def test():
     Prueba del entorno y los agentes
 
     """
-    """
-    seis cuartos y agente reactivo basado en modelo
     print("Prueba del entorno  SeisCuartos con un agente aleatorio")
     entornos_o.simulador(SeisCuartos(["A", "sucio", "sucio", "sucio", "sucio", "sucio", "sucio"]),
                          AgenteAleatorio(['ir_Derecha', 'ir_Izquierda', 'limpiar', 'nada','subir', 'bajar']),
                          100)
     print("Prueba del entorno con un agente reactivo con modelo para Seis cuartos")
     entornos_o.simulador(SeisCuartos(["A", "sucio", "sucio", "sucio", "sucio", "sucio", "sucio"]), AgenteReactivoModeloSeisCuartos(), 100)
-    """
-    """
+  
     print("Prueba del entorno  DosCuartosCiego con un agente aleatorio")
     entornos_o.simulador(DosCuartosCiego(["A", "sucio", "sucio"]),
                          AgenteAleatorio(['ir_A', 'ir_B', 'limpiar', 'nada']),
                          100)
     print("Prueba del entorno con un agente reactivo")
     entornos_o.simulador(DosCuartosCiego(), AgenteReactivoModeloDoscuartosCiego(), 100)
-    """
+    
     print("Prueba del entorno  DosCuartosEstocastico con un agente aleatorio")
     entornos_o.simulador(DosCuartosEstocástico(["A", "sucio", "sucio"]),
                          AgenteAleatorio(['ir_A', 'ir_B', 'limpiar', 'nada']),
@@ -335,3 +333,24 @@ def test():
     
 if __name__ == "__main__":
     test()
+
+
+"""
+Conclusiones:
+    Para el entorno de SeisCuartos la diferencia promedio aproximada
+    entre los desempeños es de 95 unidades. La diferencia es bastante 
+    grande debido a la estrategia utilizada por cada agente (uno que piensa y el
+    otro que sólo escoge al azar una acción)
+    
+    Para el entorno DosCuartosCiego se mantiene una gran diferencia 
+    en el desempeño entre ambos agentes siendo que el aleatorio es aproximadamente
+    10 veces peor en promedio de las corridas.
+    
+    De igual forma se tiene mucha diferencia si hablamos del entorno 
+    DosCuartosEstocastico. El 80% de las veces que necesita limpiar el agente, 
+    éste actua de manera correcta. Se puede decir que se tiene una probabilidad
+    bastante alta de éxito a comparación del aleatorio. Sin embargo,
+    si la probabilidad de que el agente realice una acción correctamente bajara
+    en gran cantidad podría llegar a ser una peor opción que el agente
+    aleatorio.
+"""    
