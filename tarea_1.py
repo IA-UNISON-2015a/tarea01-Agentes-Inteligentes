@@ -67,6 +67,9 @@ from random import choice
 # Usa el modulo doscuartos_o.py para reutilizar código
 # Agrega los modulos que requieras de python
 
+"""
+Ejercicio 1
+"""
 class SeisCuartos(doscuartos_o.DosCuartos):
     """
     Clase para un entorno de seis cuartos.
@@ -133,7 +136,11 @@ class SeisCuartos(doscuartos_o.DosCuartos):
 
     def percepción(self):
         return self.x[0], self.x[" ABCDEF".find(self.x[0])]
-        
+
+"""
+Ejercicio 2
+"""
+
 class AgenteReactivoModeloSeisCuartos():
     """
     Un agente reactivo basado en modelo para el entorno seis cuartos
@@ -170,11 +177,6 @@ class AgenteReactivoModeloSeisCuartos():
             else 'bajar' if (robot is "E") and ('sucio' in (a, b, c))
             else 'nada')
         
-class AgenteAleatorio(doscuartos_o.AgenteAleatorio):
-    
-    def programa(self, percepción):
-        return choice(self.acciones)
-
 def test():
     """
     Prueba del entorno y los agentes
@@ -184,7 +186,7 @@ def test():
     #entornos_o.simulador(SeisCuartos(), AgenteReactivoModeloSeisCuartos(), 100)
 
     print("Prueba del entorno seis cuartos con un agente basado en modelo")
-    entornos_o.simulador(SeisCuartos(), AgenteAleatorio(["ir_Derecha", "ir_Izquierda", "subir", "bajar", "limpiar", "nada"]), 100)
+    entornos_o.simulador(SeisCuartos(), doscuartos_o.AgenteAleatorio(["ir_Derecha", "ir_Izquierda", "subir", "bajar", "limpiar", "nada"]), 100)
 
 if __name__ == "__main__":
     test()
