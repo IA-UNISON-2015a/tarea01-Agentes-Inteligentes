@@ -88,9 +88,13 @@ class SeisCuartos(entornos_o.Entorno):
         return acción in ("ir_Der", "ir_Izq", "subir", "bajar", "limpiar", "nada")
 
     def transición(self, acción):
-        if not self.acción_legal(acción):
-            raise ValueError("La acción no es legal para este estado")
-
+        try: 
+            if not self.acción_legal(acción):
+                raise ValueError("La acción '{}' no es legal para este estado".format(acción))
+        except ValueError as v:
+            print(v)
+            return
+        
         robot, a, b, c, d, e, f = self.x #Se asigna el lugar donde empezara el robot y las situaciones (sucio/limpio) de cada cuarto.
 
         if acción != "nada" or a is "sucio" or b is "sucio" or c is"sucio" or d is "sucio" or e is "sucio" or f is "sucio":
@@ -128,7 +132,17 @@ class AgenteAleatorio(entornos_o.Agente):
 
     def programa(self, percepción):
         return choice(self.acciones)
-    
+
+class AgenteReactivoSeiscuartos(entornos_o.Agente):
+    """
+    Un agente reactivo simple
+
+    """
+    def programa(self, percepción):
+        robot, situación = percepción
+        return ('limpiar' if situación == 'sucio' else
+                'ir_Der' if robot == 'A' else 'ir_Der' if robot == 'B' else 'subir' if robot == 'C' else 'ir_Izq' if robot == 'F' else 'ir_Izq' if robot == 'E' else 'bajar')
+
 def test():
     """
     Prueba del entorno y los agentes
@@ -137,6 +151,9 @@ def test():
     entornos_o.simulador(SeisCuartos(),
               AgenteAleatorio(('ir_Der', 'ir_Izq', 'subir', 'bajar', 'limpiar', 'nada')),
              100)
+    
+    print("Prueba del entorno con un agente reactivo")
+    entornos_o.simulador(SeisCuartos(), AgenteReactivoSeiscuartos(), 100)
 
 if __name__ == "__main__":
     test()
