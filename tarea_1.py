@@ -98,7 +98,7 @@ class SeisCuartos(entornos_o.Entorno):
         return acción in ("ir_Derecha", "ir_Izquierda", "limpiar", "nada")
 
     def transición(self, acción):
-        ##ver si es legal
+        #ver si es legal
         if not self.acción_legal(acción):
             #comente para que corriera bien el aleatorio
             #raise ValueError("La acción no es legal para este estado")
@@ -106,7 +106,7 @@ class SeisCuartos(entornos_o.Entorno):
             return
 
         robot, a, b, c, d ,e ,f = self.x
-        ##desempeño
+        #desempeño
         if acción == "subir" or acción == "bajar":
           self.desempeño-=4
         elif acción == "ir_Derecha" or acción == "ir_Izquierda":
