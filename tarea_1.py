@@ -172,15 +172,19 @@ class AgenteReactivoModeloSeisCuartos():
         
 class AgenteAleatorio(doscuartos_o.AgenteAleatorio):
     
-
+    def programa(self, percepción):
+        return choice(self.acciones)
 
 def test():
     """
     Prueba del entorno y los agentes
 
     """
+    #print("Prueba del entorno seis cuartos con un agente basado en modelo")
+    #entornos_o.simulador(SeisCuartos(), AgenteReactivoModeloSeisCuartos(), 100)
+
     print("Prueba del entorno seis cuartos con un agente basado en modelo")
-    entornos_o.simulador(SeisCuartos(), AgenteReactivoModeloSeisCuartos(), 100)
+    entornos_o.simulador(SeisCuartos(), AgenteAleatorio(["ir_Derecha", "ir_Izquierda", "subir", "bajar", "limpiar", "nada"]), 100)
 
 if __name__ == "__main__":
     test()
