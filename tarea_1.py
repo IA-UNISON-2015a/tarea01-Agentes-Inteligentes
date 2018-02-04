@@ -100,9 +100,9 @@ class SeisCuartos(entornos_o.Entorno):
     def transición(self, acción):
         ##ver si es legal
         if not self.acción_legal(acción):
+            #comente para que corriera bien el aleatorio
             #raise ValueError("La acción no es legal para este estado")
-            #puse un costo a las acciones ilegales, solo tocaran cuando sea aleatorio
-            self.desempeño-=3
+            #self.desempeño-=3
             return
 
         robot, a, b, c, d ,e ,f = self.x
@@ -337,20 +337,17 @@ if __name__ == "__main__":
 
 """
 Conclusiones:
-    Para el entorno de SeisCuartos la diferencia promedio aproximada
-    entre los desempeños es de 95 unidades. La diferencia es bastante 
-    grande debido a la estrategia utilizada por cada agente (uno que piensa y el
-    otro que sólo escoge al azar una acción)
+    Para el entorno de SeisCuartos la diferencia fue bastante. Es esperado ese resultado porque uno decide que haer dependiendo 
+    de lo que conoce y el otro decide aleatoriamente
+    -93
+    -18
     
-    Para el entorno DosCuartosCiego se mantiene una gran diferencia 
-    en el desempeño entre ambos agentes siendo que el aleatorio es aproximadamente
-    10 veces peor en promedio de las corridas.
+    Para el entorno DosCuartosCiego sigue siendo muy grande la difernecia.
+    -66
+    -3
     
-    De igual forma se tiene mucha diferencia si hablamos del entorno 
-    DosCuartosEstocastico. El 80% de las veces que necesita limpiar el agente, 
-    éste actua de manera correcta. Se puede decir que se tiene una probabilidad
-    bastante alta de éxito a comparación del aleatorio. Sin embargo,
-    si la probabilidad de que el agente realice una acción correctamente bajara
-    en gran cantidad podría llegar a ser una peor opción que el agente
-    aleatorio.
+    Én los DosCuartosEstocástico la diferencia es igual grande, el agente racional dio de -3 a -9 mientras 
+    que el aleatorio es mas grande aproximadamente 10 veces más.
+    -77
+    -5
 """    
