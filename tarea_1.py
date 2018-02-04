@@ -61,7 +61,7 @@ __author__ = 'Raúl Pérez'
 
 import doscuartos_o
 import entornos_o
-from random import choice
+from random import choice, random
 
 # Requiere el modulo entornos_o.py
 # Usa el modulo doscuartos_o.py para reutilizar código
@@ -213,6 +213,38 @@ class AgenteReactivoModeloDosCuartosCiego(doscuartos_o.AgenteReactivoModeloDosCu
                 else 'ir_A' if (robot is 'B') 
                 else 'ir_B')
 
+"""
+Ejercicio 4
+"""
+
+class DosCuartosEstocástico(doscuartos_o.DosCuartos):
+    """
+    Clase Entorno dos cuartos estocastico
+
+    El 80% de las veces limpia pero el otro 20% deja sucio el cuarto. 
+    Igualmente, cuando el agente decida cambiar de cuarto, se cambie correctamente 
+    de cuarto el 90% de la veces y el 10% se queda en su lugar.
+
+    """
+
+    def transición(self, acción):
+        if not self.acción_legal(acción):
+            raise ValueError("La acción no es legal para este estado")
+
+        _ , a, b = self.x
+        
+        if (acción is not "nada") or ((a is "sucio") or (b is "sucio")):
+            self.desempeño -= 1
+
+        if (acción is "limpiar") and random() <= 0.8:
+            self.x[" AB".find(self.x[0])] = "limpio"
+        elif (acción is "ir_A") and random() <= 0.9:
+            self.x[0] = "A"
+        elif (acción is "ir_B") and random() <= 0.9:
+            self.x[0] = "B"
+        else:
+            raise Exception("Siempre no...")
+
 def test():
     """
     Prueba del entorno y los agentes
@@ -230,6 +262,11 @@ def test():
     #print("Prueba del entorno dos cuartos ciego con un agente aleatorio")
     #entornos_o.simulador(DosCuartosCiego(), doscuartos_o.AgenteAleatorio(["ir_A", "ir_B", "limpiar", "nada"]), 100)
 
+    #print("Prueba del entorno dos cuartos estocastico con un agente basado en modelo")
+    #entornos_o.simulador(DosCuartosEstocástico(), doscuartos_o.AgenteReactivoModeloDosCuartos(), 100)
+
+    #print("Prueba del entorno dos cuartos estocastico con un agente aleatorio")
+    #entornos_o.simulador(DosCuartosEstocástico(), doscuartos_o.AgenteAleatorio(["ir_A", "ir_B", "limpiar", "nada"]), 100)    
 
 if __name__ == "__main__":
     test()

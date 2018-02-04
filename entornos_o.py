@@ -95,7 +95,7 @@ def simulador(entorno, agente, pasos=10, verbose=True):
         a = agente.programa(p)
         try:
             entorno.transición(a)
-        except ValueError as e:
+        except Exception as e:
             a = 'nada'
             print(e)
 
