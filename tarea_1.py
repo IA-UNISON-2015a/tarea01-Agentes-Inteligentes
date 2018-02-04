@@ -59,8 +59,8 @@ la tarea.
 """
 __author__ = 'Raúl Pérez'
 
-import doscuartos_o
-import entornos_o
+from doscuartos_o import DosCuartos, AgenteReactivoModeloDosCuartos, AgenteAleatorio
+from entornos_o import simulador
 from random import choice, random
 
 # Requiere el modulo entornos_o.py
@@ -70,7 +70,7 @@ from random import choice, random
 """
 Ejercicio 1
 """
-class SeisCuartos(doscuartos_o.DosCuartos):
+class SeisCuartos(DosCuartos):
     """
     Clase para un entorno de seis cuartos.
 
@@ -115,7 +115,7 @@ class SeisCuartos(doscuartos_o.DosCuartos):
         elif acción is "bajar":
             self.desempeño -= 2
             self.x[0] = "B"
-        elif acción is not "limpiar" or "sucio" in (a, b, c, d, e, f):
+        elif "sucio" in (a, b, c, d, e, f):
             self.desempeño -= 1
         
         if acción is "limpiar":
@@ -177,12 +177,11 @@ class AgenteReactivoModeloSeisCuartos():
             else 'bajar' if (robot is "E") and ('sucio' in (a, b, c))
             else 'nada')
 
-
 """
 Ejercicio 3
 """
 
-class DosCuartosCiego(doscuartos_o.DosCuartos):
+class DosCuartosCiego(DosCuartos):
     """
     Clase para un entorno de dos cuartos ciego.
 
@@ -193,10 +192,17 @@ class DosCuartosCiego(doscuartos_o.DosCuartos):
         """
         return self.x[0]
 
-class AgenteReactivoModeloDosCuartosCiego(doscuartos_o.AgenteReactivoModeloDosCuartos):
+class AgenteReactivoModeloDosCuartosCiego():
     """
         Un agente reactivo basado en modelo para el entorno dos cuartos ciego
     """
+    def __init__(self, modelo=['A', 'sucio', 'sucio']):
+        """
+        Inicializa el modelo interno en el peor de los casos
+
+        """
+        self.modelo = modelo[:]
+
     def programa(self, percepción):
         robot = percepción
         # Actualiza el modelo interno
@@ -217,7 +223,7 @@ class AgenteReactivoModeloDosCuartosCiego(doscuartos_o.AgenteReactivoModeloDosCu
 Ejercicio 4
 """
 
-class DosCuartosEstocástico(doscuartos_o.DosCuartos):
+class DosCuartosEstocástico(DosCuartos):
     """
     Clase Entorno dos cuartos estocastico
 
@@ -245,30 +251,123 @@ class DosCuartosEstocástico(doscuartos_o.DosCuartos):
         else:
             raise Exception("Siempre no...")
 
+class AgenteReactivoModeloDosCuartosEstocastico(AgenteReactivoModeloDosCuartos):
+    
+    def __init__(self, modelo=['A', 'sucio', 'sucio']):
+        """
+        Inicializa el modelo interno en el peor de los casos
+
+        """
+        self.modelo = modelo[:]
+
+"""
+Pruebas
+"""
+
+def test_seis_cuartos(cuarto_inicial='B'):
+    """
+    Prueba para el entorno seis cuartos
+
+    """
+    
+    estados = [cuarto_inicial, "sucio", "sucio", "sucio", "sucio", "sucio", "sucio"]
+    acciones = ["ir_Derecha", "ir_Izquierda", "subir", "bajar", "limpiar", "nada"]
+    entorno = SeisCuartos(estados[:])
+    agente_modelo = AgenteReactivoModeloSeisCuartos(entorno.x)
+    
+    print("Prueba del entorno seis cuartos con un agente basado en modelo")
+    simulador(entorno, agente_modelo, 100)
+
+    entorno = SeisCuartos(estados[:])
+    agente_aleatorio = AgenteAleatorio(acciones[:])
+
+    print("Prueba del entorno seis cuartos con un agente aleatorio")
+    simulador(entorno, agente_aleatorio, 100)
+
+def test_dos_cuartos_ciego(cuarto_inicial='A'):
+    """
+    Prueba entorno dos cuartos ciego
+
+    """
+    estados = [cuarto_inicial, "sucio", "sucio"]
+    acciones = ["ir_A", "ir_B", "limpiar", "nada"]
+    entorno  = DosCuartosCiego(estados[:])
+    agente_modelo = AgenteReactivoModeloDosCuartosCiego(entorno.x)
+
+    print("Prueba del entorno dos cuartos ciego con un agente basado en modelo")
+    simulador(entorno, agente_modelo, 100)
+
+    entorno = DosCuartosCiego(estados[:])
+    agente_aleatorio = AgenteAleatorio(acciones[:])
+
+    print("Prueba del entorno dos cuartos ciego con un agente aleatorio")
+    simulador(entorno, agente_aleatorio, 100)
+
+def test_dos_cuartos_estocastico(cuarto_inicial='A'):
+    """
+    Prueba entorno dos cuartos ciego
+    
+    """
+
+    estados = [cuarto_inicial, "sucio", "sucio"]
+    acciones = ["ir_A", "ir_B", "limpiar", "nada"]
+    entorno = DosCuartosEstocástico(estados[:])
+    agente_modelo = AgenteReactivoModeloDosCuartosEstocastico(entorno.x)
+
+    print("Prueba del entorno dos cuartos estocastico con un agente basado en modelo")
+    simulador(entorno, agente_modelo, 100)
+
+    entorno  = DosCuartosEstocástico(estados[:])
+    agente_aleatorio = AgenteAleatorio(acciones[:])
+
+    print("Prueba del entorno dos cuartos estocastico con un agente aleatorio")
+    simulador(entorno, agente_aleatorio, 100)    
+
 def test():
     """
     Prueba del entorno y los agentes
 
     """
-    #print("Prueba del entorno seis cuartos con un agente basado en modelo")
-    #entornos_o.simulador(SeisCuartos(), AgenteReactivoModeloSeisCuartos(), 100)
-
-    #print("Prueba del entorno seis cuartos con un agente aleatorio")
-    #entornos_o.simulador(SeisCuartos(), doscuartos_o.AgenteAleatorio(["ir_Derecha", "ir_Izquierda", "subir", "bajar", "limpiar", "nada"]), 100)
-
-    #print("Prueba del entorno dos cuartos ciego con un agente basado en modelo")
-    #entornos_o.simulador(DosCuartosCiego(), AgenteReactivoModeloDosCuartosCiego(), 100)
-
-    #print("Prueba del entorno dos cuartos ciego con un agente aleatorio")
-    #entornos_o.simulador(DosCuartosCiego(), doscuartos_o.AgenteAleatorio(["ir_A", "ir_B", "limpiar", "nada"]), 100)
-
-    #print("Prueba del entorno dos cuartos estocastico con un agente basado en modelo")
-    #entornos_o.simulador(DosCuartosEstocástico(), doscuartos_o.AgenteReactivoModeloDosCuartos(), 100)
-
-    #print("Prueba del entorno dos cuartos estocastico con un agente aleatorio")
-    #entornos_o.simulador(DosCuartosEstocástico(), doscuartos_o.AgenteAleatorio(["ir_A", "ir_B", "limpiar", "nada"]), 100)    
+    for cuarto in ('A', 'B', 'C', 'D', 'E', 'F'):
+        test_seis_cuartos(cuarto)
+    
+    for cuarto in ('A', 'B'):    
+        test_dos_cuartos_ciego(cuarto)
+    
+    for cuarto in ('A', 'B'):
+        test_dos_cuartos_estocastico(cuarto)
 
 if __name__ == "__main__":
     test()
 
+"""
+Observaciones
+
+Para el entorno de seis cuartos la diferencia es muy grande, esto se debe a que el
+agente basado en modelo decide que hacer dependiendo de lo que conoce y el otro es
+a lo que caiga.
+
+Cuarto inicial  | Agente basado en modelo  | Agente aleatorio
+        A       |         -15              |       -78.5
+        B       |         -16              |       -89.5
+        C       |         -15              |       -81.0
+        D       |         -17              |       -85.5  
+        E       |         -18              |       -90.5
+        F       |         -17              |       -77.0
+
+Para el entorno de dos cuartos ciego la diferencia es igual de grande,
+esto se debe igual a que el agente basado en modelo decide que hacer dependiendo de lo que conoce 
+y el otro es a lo que caiga.
+
+Cuarto inicial  | Agente basado en modelo  | Agente aleatorio
+        A       |          -3              |       -82.0
+        B       |          -3              |       -72.0
+
+Para el entorno de dos cuartos estocastico la diferencia es igual de grande...
+
+Cuarto inicial  | Agente basado en modelo  | Agente aleatorio
+        A       |          -8              |       -81.0
+        B       |          -4              |       -84.0
+
+"""
         
