@@ -176,7 +176,43 @@ class AgenteReactivoModeloSeisCuartos():
             else choice(['ir_Derecha', 'ir_Izquierda']) if (robot is "E") and (d == f == 'sucio')
             else 'bajar' if (robot is "E") and ('sucio' in (a, b, c))
             else 'nada')
-        
+
+
+"""
+Ejercicio 3
+"""
+
+class DosCuartosCiego(doscuartos_o.DosCuartos):
+    """
+    Clase para un entorno de dos cuartos ciego.
+
+    """
+    def percepción(self):
+        """
+        Solo percibe en que cuarto esta
+        """
+        return self.x[0]
+
+class AgenteReactivoModeloDosCuartosCiego(doscuartos_o.AgenteReactivoModeloDosCuartos):
+    """
+        Un agente reactivo basado en modelo para el entorno dos cuartos ciego
+    """
+    def programa(self, percepción):
+        robot = percepción
+        # Actualiza el modelo interno
+        self.modelo[0] = robot
+        # obtiene la situacion desde el modelo
+        situación = self.modelo[' AB'.find(robot)]
+        # Decide sobre el modelo interno
+        _, a, b = self.modelo
+        # si el cuarto en el que esta el robot esta 'sucio', entonces lo pone en 'limpio' sino lo deja en 'sucio'
+        self.modelo[' AB'.find(robot)] = 'limpio' if situación is 'sucio' else situación
+    
+        return ('nada' if (a == b == 'limpio') 
+                else 'limpiar' if (situación is 'sucio') 
+                else 'ir_A' if (robot is 'B') 
+                else 'ir_B')
+
 def test():
     """
     Prueba del entorno y los agentes
@@ -185,8 +221,15 @@ def test():
     #print("Prueba del entorno seis cuartos con un agente basado en modelo")
     #entornos_o.simulador(SeisCuartos(), AgenteReactivoModeloSeisCuartos(), 100)
 
-    print("Prueba del entorno seis cuartos con un agente basado en modelo")
-    entornos_o.simulador(SeisCuartos(), doscuartos_o.AgenteAleatorio(["ir_Derecha", "ir_Izquierda", "subir", "bajar", "limpiar", "nada"]), 100)
+    #print("Prueba del entorno seis cuartos con un agente aleatorio")
+    #entornos_o.simulador(SeisCuartos(), doscuartos_o.AgenteAleatorio(["ir_Derecha", "ir_Izquierda", "subir", "bajar", "limpiar", "nada"]), 100)
+
+    #print("Prueba del entorno dos cuartos ciego con un agente basado en modelo")
+    #entornos_o.simulador(DosCuartosCiego(), AgenteReactivoModeloDosCuartosCiego(), 100)
+
+    #print("Prueba del entorno dos cuartos ciego con un agente aleatorio")
+    #entornos_o.simulador(DosCuartosCiego(), doscuartos_o.AgenteAleatorio(["ir_A", "ir_B", "limpiar", "nada"]), 100)
+
 
 if __name__ == "__main__":
     test()
