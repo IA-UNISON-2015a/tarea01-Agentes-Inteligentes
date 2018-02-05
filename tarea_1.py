@@ -57,6 +57,10 @@ Todos los incisos tienen un valor de 25 puntos sobre la calificación de
 la tarea.
 
 """
+# Requiere el modulo entornos_o.py
+# Usa el modulo doscuartos_o.py para reutilizar código
+# Agrega los modulos que requieras de python
+
 __author__ = "Jordan Joel Urias Paramo"
 
 import entornos_o
@@ -64,6 +68,11 @@ import doscuartos_o
 
 import random
 from collections import namedtuple
+
+##NOTA: La tarea esta chila. Me parece que podria faltar 
+##enfasis en el papel de la funcion simulador, como el
+##entorno y el agente interactuan.
+
 
 class SeisCuartos(entornos_o.Entorno):
     """
@@ -160,7 +169,7 @@ class SeisCuartos(entornos_o.Entorno):
 
 class AgenteReactivoModeloSeisCuartos(entornos_o.Agente):
     """
-    Un agente reactivo basado en modelo
+    Un agente reactivo basado en modelo definido en el inciso 2.
 
     """
     def __init__(self):
@@ -199,7 +208,7 @@ class AgenteReactivoModeloSeisCuartos(entornos_o.Agente):
             else:
                 return 'subir'
         elif robot == 'D':
-                return 'ir_Izquierda'
+                return 'ir_Derecha'
         elif robot == 'E':
             if d=='sucio':
                 return 'ir_Izquierda'
@@ -211,6 +220,10 @@ class AgenteReactivoModeloSeisCuartos(entornos_o.Agente):
             return 'ir_Izquierda'
 
 class AgenteAleatorioGenerico(entornos_o.Agente):
+    """
+    Un agente que solo regresa una accion al azar entre las acciones legales
+
+    """
     def __init__(self, entorno):
         self.entorno = entorno
 
@@ -219,7 +232,7 @@ class AgenteAleatorioGenerico(entornos_o.Agente):
 
 def testEj2():
     """
-    Prueba del entorno y los agentes
+    Prueba del entorno y los agentes de los incisos 1 y 2
 
     """
     print("Prueba del entorno con un agente aleatorio")
@@ -232,21 +245,18 @@ def testEj2():
 ###############################################################################
 
 class DosCuartosCiego(doscuartos_o.DosCuartos):
+    """
+    Entorno definido en el inciso 3
+    """
     def percepción(self):
         return self.x[0]  
 
 class AgenteReactivoModeloDosCuartosCiego(doscuartos_o .AgenteReactivoModeloDosCuartos):
     """
-    Un agente reactivo basado en modelo
-
+    Un agente reactivo basado en modelo.
+    Agente racional definido para el entorno DosCuartosCiego.
+    Inciso 3
     """
-    def __init__(self):
-        """
-        Inicializa el modelo interno en el peor de los casos
-
-        """
-        self.modelo = ['A', 'sucio', 'sucio']
-
     def programa(self, percepción):
         robot = percepción
 
@@ -272,7 +282,7 @@ class AgenteReactivoModeloDosCuartosCiego(doscuartos_o .AgenteReactivoModeloDosC
 
 def testEj3():
     """
-    Prueba del entorno y los agentes
+    Prueba del entorno y los agentes del inciso 3
 
     """
     print("Prueba del entorno con un agente aleatorio")
@@ -285,6 +295,9 @@ def testEj3():
     entornos_o.simulador(DosCuartosCiego(), AgenteReactivoModeloDosCuartosCiego(), 100)
 ##########################################################################
 class DosCuartosEstocástico(doscuartos_o.DosCuartos):
+    """
+    Entorno definido en el inciso 4
+    """
     def transición(self, acción):
         if not self.acción_legal(acción):
             raise ValueError("La acción no es legal para este estado")
@@ -300,7 +313,7 @@ class DosCuartosEstocástico(doscuartos_o.DosCuartos):
             self.x[0] = "B"
 def testEj4():
     """
-    Prueba del entorno y los agentes
+    Prueba del entorno y los agentes del inciso 4
 
     """
     print("Prueba del entorno con un agente aleatorio")
@@ -310,15 +323,16 @@ def testEj4():
 
     print("Prueba del entorno Estocástico con un agente reactivo")
     entornos_o.simulador(DosCuartosEstocástico(), doscuartos_o.AgenteReactivoDoscuartos(), 100)
-
+    
     print("Prueba del entorno Estocástico con un agente reactivo con modelo")
     entornos_o.simulador(DosCuartosEstocástico(), doscuartos_o.AgenteReactivoModeloDosCuartos(), 100)
+    
 
 #########################################################################  
   
 if __name__ == "__main__":
+    testEj2()
+    testEj3()
     testEj4()
 
-# Requiere el modulo entornos_o.py
-# Usa el modulo doscuartos_o.py para reutilizar código
-# Agrega los modulos que requieras de python
+
