@@ -161,6 +161,7 @@ class AgenteReactivoSeiscuartos(entornos_o.Agente):
             return 'ir_Der'
         elif robot == 'F' and situación == 'limpio' or robot == 'E' and situación == 'limpio':
             return 'ir_Izq'
+
             
 def test():
     """
@@ -174,6 +175,8 @@ def test():
     print("Prueba del entorno con un agente reactivo")
     entornos_o.simulador(SeisCuartos(), AgenteReactivoSeiscuartos(), 100)
 
+    
+    
 if __name__ == "__main__":
     test()
     e = SeisCuartos()
