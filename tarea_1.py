@@ -180,7 +180,7 @@ class AgenteReactivo_Modelo_SeisCuartos(entornos_o.Agente):
         """
         Reaccion si el cuarto esta sucio, regresa la accion 'limpiar'
         Si el cuarto esta limpio revisa hacia donde moverse y regresa la dirreccion a cual moverse
-        El agente tiene una vision definida por el modelo en __init__
+
         """
         cuarto_actual, estado_actual = percepcion
 
@@ -253,7 +253,7 @@ class AgenteAleatorio_SeisCuartos(entornos_o.Agente):
 
         return random.choice(acciones)
 
-def test(pasos = 100):
+def test1(pasos = 100):
     """
     Simulacion del entorno seis caurtos
     """
@@ -265,14 +265,100 @@ def test(pasos = 100):
     entornos_o.simulador(SeisCuartos(), AgenteReactivo_Modelo_SeisCuartos(), pasos)
 
 # **********************************************************************************************
+#       Ejercicio 3
+class DosCuartosCiego(entornos_o.Entorno):
+    """
+    Entorno ciego, el robot no puede saber que estado tiene el cuarto
+    por lo cual siempre entrara a limpiar.
+    El robot tiene memoria "sabiendo" que cuarto fue limpiado, asume todo esta sucio
+    por default
+
+    Las acciones válidas en el entorno son ("ir_A", "ir_B", "limpiar", "nada").
+    Todas las acciones son válidas en todos los estados.
+
+    Los sensores es una tupla (robot, limpio?)
+    con la ubicación del robot y el estado de limpieza
+
+    """
+    def __init__(self, x0=["A", "sucio", "sucio"]):
+        """
+        Por default inicialmente el robot está en A y los dos cuartos
+        están sucios
+
+        """
+        self.x = x0[:]
+        self.desempeno = 0
+
+    def accion_legal(self, accion):
+        return accion in ("ir_A", "ir_B", "limpiar", "nada")
+
+    def transicion(self, accion):
+        if not self.accion_legal(accion):
+            raise ValueError("La acción no es legal para este estado")
+
+        robot, a, b = self.x
+        if accion is not "nada" or a is "sucio" or b is "sucio":
+            self.desempeno -= 1
+
+        if accion is "limpiar":
+            self.x[" AB".find(self.x[0])] = "limpio"
+        elif accion is "ir_A":
+            self.x[0] = "A"
+        elif accion is "ir_B":
+            self.x[0] = "B"
+
+        print("Accion en transicion:" +accion)
+    def percepcion(self):
+                        #no puedes saber si esta limpio
+        return self.x[0] #, self.x[" AB".find(self.x[0])]
+
+class AgenteReactivo_Modelo_DosCuartosCiego(entornos_o.Agente):
+    """
+    Un agente reactivo basado en modelo
+
+    """
+    def __init__(self):
+        """
+        Inicializa el modelo interno en el peor de los casos
+
+        """
+        self.modelo = ['A', 'sucio', 'sucio']
+
+    def programa(self, percepcion):
+        robot = percepcion #ubicacion robot
+
+        # Actualiza el modelo interno
+        self.modelo[0] = robot
+        # No sabes la situacion
+        situacion = self.modelo[' AB'.find(robot)]
+
+        if situacion is "sucio":
+            # le decimos a nuestro robot que esta limpio dado que no tenemos vision del entorno
+            self.modelo[' AB'.find(robot)] = "limpio"
+            return "limpiar"
+        if self.modelo[1] == self.modelo[2] == "limpio": return "nada"
+        if robot == "A": return "ir_B"
+        else: return "ir_A"
+
+
+def test2():
+    print("Prueba del entorno DosCuartosCiego con un agente aleatorio")
+    entornos_o.simulador(DosCuartosCiego(),
+                         doscuartos_o.AgenteAleatorio(['ir_A', 'ir_B', 'limpiar', 'nada']),
+                         100)
+
+    print("Prueba del entorno DosCuartosCiegocon un agente reactivo con modelo")
+    entornos_o.simulador(DosCuartosCiego(), AgenteReactivo_Modelo_DosCuartosCiego(), 100)
+
+# **********************************************************************************************
+#       Ejercicio 4
+
+# **********************************************************************************************
 if __name__ == "__main__":
-    test()
-
-# **********************************************************************************************
-
-
-
-# **********************************************************************************************
-
+    print("Probando Ejercicio 1 y 2")
+    # revisar agente reactivo ciclado, nunca entra a cuarto F
+    #test1() #testeando Ejercio 1 y 2
+    test2() # testeando Ejercicio 3
+    print("Hecho por Gilberto Espinoza")
 
 # **********************************************************************************************
