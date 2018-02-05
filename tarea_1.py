@@ -314,21 +314,23 @@ def test():
     entornos_o.simulador(SeisCuartos(["A", "sucio", "sucio", "sucio", "sucio", "sucio", "sucio"]),
                          AgenteAleatorio(['ir_Derecha', 'ir_Izquierda', 'limpiar', 'nada','subir', 'bajar']),
                          100)
-    print("Prueba del entorno con un agente reactivo con modelo para Seis cuartos")
+    print("Prueba del entorno SeisCuartos con un agente reactivo con modelo")
     entornos_o.simulador(SeisCuartos(["A", "sucio", "sucio", "sucio", "sucio", "sucio", "sucio"]), AgenteReactivoModeloSeisCuartos(), 100)
   
     print("Prueba del entorno  DosCuartosCiego con un agente aleatorio")
     entornos_o.simulador(DosCuartosCiego(["A", "sucio", "sucio"]),
                          AgenteAleatorio(['ir_A', 'ir_B', 'limpiar', 'nada']),
                          100)
-    print("Prueba del entorno con un agente reactivo")
+    print("Prueba del entorno DosCuartosCiego con un agente reactivo con modelo")
     entornos_o.simulador(DosCuartosCiego(), AgenteReactivoModeloDoscuartosCiego(), 100)
     
     print("Prueba del entorno  DosCuartosEstocastico con un agente aleatorio")
     entornos_o.simulador(DosCuartosEstocástico(["A", "sucio", "sucio"]),
                          AgenteAleatorio(['ir_A', 'ir_B', 'limpiar', 'nada']),
                          100)
-    print("Prueba del entorno  DosCuartosEstocasticocon un agente reactivo")
+    print("Prueba del entorno  DosCuartosEstocastico con un agente reactivo")
+    entornos_o.simulador(DosCuartosEstocástico(), AgenteReactivoModeloDosCuartosEstocástico(), 100)
+    print("Prueba del entorno  DosCuartosEstocastico con un agente reactivo con probabilidades")
     entornos_o.simulador(DosCuartosEstocástico(), AgenteReactivoModeloDosCuartosEstocástico(), 100)
     
 if __name__ == "__main__":
@@ -350,4 +352,6 @@ Conclusiones:
     que el aleatorio es mas grande aproximadamente 10 veces más.
     -77
     -5
+    En el caso de DosCuartosEstocástico al bajar la probabilidad a 50% el desempeño disminuia bastante 
+
 """    
