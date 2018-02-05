@@ -208,7 +208,7 @@ class AgenteReactivo_Modelo_SeisCuartos(entornos_o.Agente):
                 return "ir_Derecha"
             elif cuarto_actual is not 'A':
                 return "ir_Izquierda"
-        else: #cuarto in "DEF"
+        if cuarto_actual in "DEF": #cuarto in "DEF"
             #Estmos en el segundo piso
             if cuarto_actual is 'E' and "sucio" in [self.modelo[i] for i in "DEF"]:
                 #self.modelo['D'] == "limpio" and self.modelo['E'] == "limpio" and self.modelo['F'] == "limpio":
@@ -220,7 +220,7 @@ class AgenteReactivo_Modelo_SeisCuartos(entornos_o.Agente):
                 return "ir_Derecha"
             elif cuarto_actual is not 'D':
                 return "ir_Izquierda"
-        #En caso extraordinario, dile que haga nada
+
         return "nada"
 
 class AgenteAleatorio_SeisCuartos(entornos_o.Agente):
@@ -352,13 +352,85 @@ def test2():
 
 # **********************************************************************************************
 #       Ejercicio 4
+class DosCuartosEstocastico(entornos_o.Entorno):
+    """
+    Reconsidera el problema original de los dos cuartos, pero ahora modificalo para que cuando
+    el agente decida aspirar, el 80% de las veces limpie pero el 20% (aleatorio) deje sucio el
+    cuarto. Igualmente, cuando el agente decida cambiar de cuarto, se cambie correctamente de
+    cuarto el 90% de la veces y el 10% se queda en su lugar. Diseña un agente racional para este
+    problema, pruebalo y comparalo con el agente aleatorio.
+    """
+    def __init__(self, x0=["A", "sucio", "sucio"]):
+        """
+        Por default inicialmente el robot está en A y los dos cuartos
+        están sucios
 
+        """
+        self.x = x0[:]
+        self.desempeno = 0
+
+    def accion_legal(self, accion):
+        return accion in ("ir_A", "ir_B", "limpiar", "nada")
+
+    def transicion(self, accion):
+        if not self.accion_legal(accion):
+            raise ValueError("La acción no es legal para este estado")
+
+        robot, a, b = self.x
+        if accion is not "nada" or a is "sucio" or b is "sucio":
+            self.desempeno -= 1
+        if accion is "limpiar":
+            if random.random() <= 0.8:
+                self.x[" AB".find(self.x[0])] = "limpio"
+        elif accion is "ir_A":
+            if random.random() <= 0.9:
+                self.x[0] = "A"
+        elif accion is "ir_B":
+            if random.random() <= 0.9:
+                self.x[0] = "B"
+
+    def percepcion(self):
+        return self.x[0], self.x[" AB".find(self.x[0])]
+
+class AgenteReactivo_Modelo_DosCuartosEstocastico(entornos_o.Agente):
+    """
+    Un agente reactivo basado en modelo
+    Se definen las posibilidades de exito en el desarrollo del entorno
+    """
+    def __init__(self):
+        """
+        Inicializa el modelo interno en el peor de los casos
+
+        """
+        self.modelo = ['A', 'sucio', 'sucio']
+
+    def programa(self, percepcion):
+        robot, situacion = percepcion
+
+        # Actualiza el modelo interno
+        self.modelo[0] = robot
+        self.modelo[' AB'.find(robot)] = situacion
+
+        # Decide sobre el modelo interno
+        a, b = self.modelo[1], self.modelo[2]
+        return ('nada' if a == b == 'limpio' else
+                'limpiar' if situacion == 'sucio' else
+                'ir_A' if robot == 'B' else 'ir_B')
+def test3():
+    print("Prueba del entorno estocastico con un agente aleatorio")
+    entornos_o.simulador(DosCuartosEstocastico(),
+                         doscuartos_o.AgenteAleatorio(['ir_A', 'ir_B', 'limpiar', 'nada']),
+                         100)
+
+    print("Prueba del entorno estocastico con un agente reactivo con modelo")
+    entornos_o.simulador(DosCuartosEstocastico(), AgenteReactivo_Modelo_DosCuartosEstocastico(), 100)
 # **********************************************************************************************
 if __name__ == "__main__":
-    print("Probando Ejercicio 1 y 2")
+    print("Tests bloquedos con '#', desbloquee el cual desee evaluar.")
     # revisar agente reactivo ciclado, nunca entra a cuarto F
     #test1() #testeando Ejercio 1 y 2
-    test2() # testeando Ejercicio 3
+    #test2() # testeando Ejercicio 3
+    test3() #  testeando ejercicio 4
     print("Hecho por Gilberto Espinoza")
 
 # **********************************************************************************************
