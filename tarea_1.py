@@ -81,7 +81,7 @@ class SeisCuartos(entornos_o.Entorno):
             ["ir_Derecha", "ir_Izquierda", "subir", "bajar", "limpiar", "nada"]
 
     """
-    def __init__(self, x0 = ["F", "sucio", "sucio", "sucio", "sucio", "sucio", "sucio"]):
+    def __init__(self, x0 = ["A", "sucio", "sucio", "sucio", "sucio", "sucio", "sucio"]):
         """
         Por default empezamos en A y todos los cuartos estan sucios
         """
