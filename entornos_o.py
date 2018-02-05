@@ -80,7 +80,7 @@ def simulador(entorno, agente, pasos=10, verbose=True):
     @param pasos: Un int con el número de pasos a simular
     @param verbose: Si True, imprime el resultado de la simulación
 
-    @retrun (historial_estados, historial_acciones,
+    @return (historial_estados, historial_acciones,
             historial_desempeño) donde cada una es una lista con los
             estados, acciones y medida de desempeño encontradas a lo
             largo de la simulación.
@@ -93,7 +93,11 @@ def simulador(entorno, agente, pasos=10, verbose=True):
     for paso in range(pasos):
         p = entorno.percepción()
         a = agente.programa(p)
-        entorno.transición(a)
+        try:
+            entorno.transición(a)
+        except Exception as e:
+            a = 'nada'
+            print(e)
 
         historial_desempeño.append(entorno.desempeño)
         historial_estados.append(entorno.x[:])
