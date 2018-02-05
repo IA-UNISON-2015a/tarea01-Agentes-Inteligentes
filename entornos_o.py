@@ -24,9 +24,9 @@ class Entorno:
 
         """
         self.x = x0[:]
-        self.desempeño = 0
+        self.desempeno = 0
 
-    def acción_legal(self, acción):
+    def accion_legal(self, accion):
         """
         @param acción: Una accion en el entorno
 
@@ -37,16 +37,16 @@ class Entorno:
         """
         return True
 
-    def transición(self, acción):
+    def transicion(self, accion):
         """
         @param accion: Uno de los elementos de acciones_legales( estado)
 
-        Modifica self.estado y self.desempeño
+        Modifica self.estado y self.desempeno
 
         """
         pass
 
-    def percepción(self):
+    def percepcion(self):
         """
         @return: Tupla con los valores que se perciben del entorno por
                  default el estado completo
@@ -86,16 +86,16 @@ def simulador(entorno, agente, pasos=10, verbose=True):
             largo de la simulación.
 
     """
-    historial_desempeño = [entorno.desempeño]
+    historial_desempeno = [entorno.desempeno]
     historial_estados = [entorno.x[:]]
     historial_acciones = []
 
     for paso in range(pasos):
-        p = entorno.percepción()
+        p = entorno.percepcion()
         a = agente.programa(p)
-        entorno.transición(a)
+        entorno.transicion(a)
 
-        historial_desempeño.append(entorno.desempeño)
+        historial_desempeno.append(entorno.desempeno)
         historial_estados.append(entorno.x[:])
         historial_acciones.append(a)
 
@@ -118,8 +118,8 @@ def simulador(entorno, agente, pasos=10, verbose=True):
             print(str(i).center(10) +
                   str(historial_estados[i]).center(40) +
                   str(historial_acciones[i]).center(25) +
-                  str(historial_desempeño[i]).rjust(12))
+                  str(historial_desempeno[i]).rjust(12))
 
         print('_' * (10 + 40 + 25 + 15) + '\n\n')
 
-    return historial_estados, historial_acciones, historial_desempeño
+    return historial_estados, historial_acciones, historial_desempeno
