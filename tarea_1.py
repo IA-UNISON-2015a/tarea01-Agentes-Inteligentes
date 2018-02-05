@@ -81,7 +81,7 @@ class SeisCuartos(entornos_o.Entorno):
             ["ir_Derecha", "ir_Izquierda", "subir", "bajar", "limpiar", "nada"]
 
     """
-    def __init__(self, x0 = ["A", "sucio", "sucio", "sucio", "sucio", "sucio", "sucio"]):
+    def __init__(self, x0 = ["F", "sucio", "sucio", "sucio", "sucio", "sucio", "sucio"]):
         """
         Por default empezamos en A y todos los cuartos estan sucios
         """
@@ -202,9 +202,9 @@ class AgenteReactivo_Modelo_SeisCuartos(entornos_o.Agente):
                 #self.modelo['A'] == "limpio" and self.modelo['B'] == "limpio" and self.modelo['C'] == "limpio": primer aproximacion
                 # Revisamos el estado del piso en el modelo y si podemos subir, subimos
                 return "subir"
-            elif cuarto_actual in "AB" or self.modelo["A"] == "limpio":
+            elif cuarto_actual in "AB" and self.modelo["A"] == "limpio":
                 return "ir_Derecha"
-            elif cuarto_actual in "BC" or self.modelo["C"] == "limpio":
+            elif cuarto_actual in "BC":# or self.modelo["C"] == "limpio":
                 return "ir_Izquierda"
         if cuarto_actual in "DEF": #cuarto in "DEF"
             #Estmos en el segundo piso
@@ -213,9 +213,9 @@ class AgenteReactivo_Modelo_SeisCuartos(entornos_o.Agente):
                 # Revisamos el estado del piso en el modelo y si podemos subir, subimos
                 return "bajar"
             elif cuarto_actual in 'DE' and self.modelo["D"] == "limpio":
-                #checamos el estado del cuarto izq
+                #checamos el estado del cuarto der, si no esta limpio vete a el mientras limpias
                 return "ir_Derecha"
-            elif cuarto_actual in "EF" or self.modelo["F"] == "limpio":
+            elif cuarto_actual in "EF": # or self.modelo["F"] == "limpio":
                 return "ir_Izquierda"
 
         return "nada"
@@ -343,7 +343,7 @@ def test2():
                          doscuartos_o.AgenteAleatorio(['ir_A', 'ir_B', 'limpiar', 'nada']),
                          100)
 
-    print("Prueba del entorno DosCuartosCiegocon un agente reactivo con modelo")
+    print("Prueba del entorno DosCuartosCiego con un agente reactivo con modelo")
     entornos_o.simulador(DosCuartosCiego(), AgenteReactivo_Modelo_DosCuartosCiego(), 100)
 
 # **********************************************************************************************
@@ -425,8 +425,8 @@ if __name__ == "__main__":
     print("Tests bloquedos con '#', desbloquee el cual desee evaluar.")
     # revisar agente reactivo ciclado, nunca entra a cuarto F
     test1() #testeando Ejercio 1 y 2
-    test2() # testeando Ejercicio 3
-    test3() #  testeando ejercicio 4
+    #test2() # testeando Ejercicio 3
+    #test3() #  testeando ejercicio 4
     print("Hecho por Gilberto Espinoza")
 
 # **********************************************************************************************
