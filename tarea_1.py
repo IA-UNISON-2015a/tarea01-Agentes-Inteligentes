@@ -304,7 +304,6 @@ class DosCuartosCiego(entornos_o.Entorno):
         elif accion is "ir_B":
             self.x[0] = "B"
 
-        print("Accion en transicion:" +accion)
     def percepcion(self):
                         #no puedes saber si esta limpio
         return self.x[0] #, self.x[" AB".find(self.x[0])]
@@ -426,8 +425,8 @@ if __name__ == "__main__":
     print("Tests bloquedos con '#', desbloquee el cual desee evaluar.")
     # revisar agente reactivo ciclado, nunca entra a cuarto F
     test1() #testeando Ejercio 1 y 2
-    #test2() # testeando Ejercicio 3
-    #test3() #  testeando ejercicio 4
+    test2() # testeando Ejercicio 3
+    test3() #  testeando ejercicio 4
     print("Hecho por Gilberto Espinoza")
 
 # **********************************************************************************************
