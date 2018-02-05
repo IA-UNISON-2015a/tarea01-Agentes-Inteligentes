@@ -198,27 +198,24 @@ class AgenteReactivo_Modelo_SeisCuartos(entornos_o.Agente):
         # El cuarto esta limpio llegados a este punto
         if cuarto_actual in "ABC":
             #Estmos en el primer piso
-            if cuarto_actual in 'AC' and ("sucio" in [self.modelo[i] for i in "ABC"]):
+            if cuarto_actual in 'AC' and not("sucio" in [self.modelo[i] for i in "ABC"]):
                 #self.modelo['A'] == "limpio" and self.modelo['B'] == "limpio" and self.modelo['C'] == "limpio": primer aproximacion
                 # Revisamos el estado del piso en el modelo y si podemos subir, subimos
                 return "subir"
-            elif cuarto_actual is not 'C':
-                #Recorremos hacia derecha o izquierda hasta el tope, entonces cuando en el
-                # modelo, los cuartos inferiores esten limpios sube
+            elif cuarto_actual in "AB" or self.modelo["A"] == "limpio":
                 return "ir_Derecha"
-            elif cuarto_actual is not 'A':
+            elif cuarto_actual in "BC" or self.modelo["C"] == "limpio":
                 return "ir_Izquierda"
         if cuarto_actual in "DEF": #cuarto in "DEF"
             #Estmos en el segundo piso
-            if cuarto_actual is 'E' and "sucio" in [self.modelo[i] for i in "DEF"]:
+            if cuarto_actual is 'E' and not "sucio" in [self.modelo[i] for i in "DEF"]:
                 #self.modelo['D'] == "limpio" and self.modelo['E'] == "limpio" and self.modelo['F'] == "limpio":
                 # Revisamos el estado del piso en el modelo y si podemos subir, subimos
                 return "bajar"
-            elif cuarto_actual is not 'F':
-                #Recorremos hacia derecha o izquierda hasta el tope, entonces cuando en el
-                # modelo, los cuartos inferiores esten limpios sube
+            elif cuarto_actual in 'DE' and self.modelo["D"] == "limpio":
+                #checamos el estado del cuarto izq
                 return "ir_Derecha"
-            elif cuarto_actual is not 'D':
+            elif cuarto_actual in "EF" or self.modelo["F"] == "limpio":
                 return "ir_Izquierda"
 
         return "nada"
@@ -428,9 +425,9 @@ def test3():
 if __name__ == "__main__":
     print("Tests bloquedos con '#', desbloquee el cual desee evaluar.")
     # revisar agente reactivo ciclado, nunca entra a cuarto F
-    #test1() #testeando Ejercio 1 y 2
+    test1() #testeando Ejercio 1 y 2
     #test2() # testeando Ejercicio 3
-    test3() #  testeando ejercicio 4
+    #test3() #  testeando ejercicio 4
     print("Hecho por Gilberto Espinoza")
 
 # **********************************************************************************************
