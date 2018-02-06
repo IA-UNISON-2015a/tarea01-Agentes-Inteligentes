@@ -76,7 +76,7 @@ class Environment:
         return self.x
 
 class Agent(object):
-    def program(self, percept):
+    def program(self, percepts):
         pass
     
 def simulator(env, agent, steps=10, verbose=True):
@@ -85,7 +85,7 @@ def simulator(env, agent, steps=10, verbose=True):
     action_history = []
 
     for step in range(steps):
-        p = env.perception()
+        p = env.percepts()
         a = agent.program(p)
         env.transition(a)
 
@@ -96,15 +96,15 @@ def simulator(env, agent, steps=10, verbose=True):
     action_history.append(None)
 
     if verbose:
-        print(u"\n\nSimulacion de entorno tipo " +
+        print(u"\n\nEnvironment Simulation of type " +
                 str(type(env)) +
-                " con el agente tipo " +
+                " with an Agent of type " +
                 str(type(agent)) + "\n")
 
-        print('Paso'.center(10) +
-                'Estado'.center(40) +
-                u'Accion'.center(25) +
-                u'Desempeño'.center(15))
+        print('Step'.center(10) +
+                'State'.center(40) +
+                u'Action'.center(25) +
+                u'Performance'.center(15))
 
         print('_' * (10 + 40 + 25 + 15))
 
