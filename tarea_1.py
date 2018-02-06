@@ -100,15 +100,15 @@ class SeisCuartos(doscuartos_o.DosCuartos):
     def accion_legal(self, accion):
         if self.x[0] == 1:
             return accion in ("ir_Derecha", "limpiar", "nada")
-        if self.x(0) == 2:
+        if self.x[0] == 2:
             return accion in ("ir_Derecha", "ir_Izquierda", "bajar", "limpiar", "nada")
-        if self.x(0) == 3:
+        if self.x[0] == 3:
             return accion in ("ir_Izquierda", "limpiar", "nada")
-        if self.x(0) == 4:
+        if self.x[0] == 4:
             return accion in ("ir_Derecha", "subir", "limpiar", "nada")
-        if self.x(0) == 5:
+        if self.x[0] == 5:
             return accion in ("ir_Derecha", "ir_Izquierda", "limpiar", "nada")
-        if self.x(0) == 6:
+        if self.x[0] == 6:
             return accion in ("ir_Izquierda", "subir", "limpiar", "nada")
 
     def costo(self, accion):
