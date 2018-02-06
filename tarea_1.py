@@ -64,12 +64,22 @@ import entornos_o
 En este está la parte 1 y 2 de la tarea donde se pide desarrolar SeisCuartos y el agente
 reactivo basado en modelo
 """
-import parte_1_y_2
+from parte_1_y_2 import prueba
+prueba()
 
 """
 En este está la parte 3 de la tarea donde se pide desarrolar DosCuartosCiego y el agente racional
 """
-import parte_3
+from parte_3 import prueba
+prueba()
+
+"""
+En este está la parte 4 de la tarea donde se pide desarrolar DosCuartosEstocástico
+Nota: funciona pero si el robot decide no moverse simplemente no lo hace no hay nada
+que indique que no lo hizo. Lo puedes determinar por el estado solamente.
+"""
+from parte_4 import prueba
+prueba()
 
 
 # Requiere el modulo entornos_o.py
