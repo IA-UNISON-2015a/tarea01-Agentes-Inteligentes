@@ -10,16 +10,16 @@ Tarea de desarrollo de entornos y agentes
 1. Desarrolla un entorno similar al de los dos cuartos (el cual se
    encuentra en el modulo doscuartos_o.py), pero con tres cuartos en
    el primer piso, y tres cuartos en el segundo piso.
-   
+
    El entorno se llamara `SeisCuartos`.
 
    Las acciones totales seran
-   
+
    ```
    ["ir_Derecha", "ir_Izquierda", "subir", "bajar", "limpiar", "nada"]
-   ``` 
-    
-   La accion de `"subir"` solo es legal en el piso de abajo, en los cuartos de los extremos, 
+   ```
+
+   La accion de `"subir"` solo es legal en el piso de abajo, en los cuartos de los extremos,
    mientras que la accion de `"bajar"` solo es legal en el piso de arriba y en el cuarto de el centro (dos
    escaleras para subir, una escalera para bajar).
 
@@ -45,7 +45,7 @@ Tarea de desarrollo de entornos y agentes
 
 4. Reconsidera el problema original de los dos cuartos, pero ahora
    modificalo para que cuando el agente decida aspirar, el 80% de las
-   veces limpie pero el 20% (aleatorio) deje sucio el cuarto. Igualmente, 
+   veces limpie pero el 20% (aleatorio) deje sucio el cuarto. Igualmente,
    cuando el agente decida cambiar de cuarto, se cambie correctamente de cuarto el 90% de la veces
    y el 10% se queda en su lugar. Disenia
    un agente racional para este problema, pruebalo y comparalo con el
@@ -69,7 +69,7 @@ import random
 
 class SeisCuartos(doscuartos_o.DosCuartos):
     """
-    Clase para un entorno de seis cuartos. 
+    Clase para un entorno de seis cuartos.
 
     Hay 3 cuartos arriba y 3 cuartos abajo, enumerados como sigue:
     1 2 3
@@ -141,8 +141,8 @@ class SeisCuartos(doscuartos_o.DosCuartos):
         elif accion is "bajar":
             self.x[0] += 3
 
-    def percepcion(self):
-        return self.x[0], self.x[ self.x[0] ]
+    #def percepcion(self):
+        #return self.x[0], self.x[ self.x[0] ]
 
 class AgenteReactivoModeloSeisCuartos(entornos_o.Agente):
     """
@@ -168,7 +168,7 @@ class AgenteReactivoModeloSeisCuartos(entornos_o.Agente):
             return 'nada'
 
         if situacion is 'sucio':
-            return 'limpiar' 
+            return 'limpiar'
 
         if lugar is 1:
             return 'ir_Derecha'
@@ -197,7 +197,7 @@ class AgenteReactivoModeloSeisCuartos(entornos_o.Agente):
             else:
                 return 'subir'
 
-class AgenteAleatorio(entornos_o.Agente):
+class AgenteAleatorioRestriccion(entornos_o.Agente):
     """
     Un agente que solo regresa una accion al azar entre las acciones legales
 
@@ -263,7 +263,7 @@ class AgenteReactivoDosCuartosCiego(doscuartos_o.AgenteReactivoDoscuartos):
         if all(cuarto is 'limpio' for cuarto in self.modelo[1:]):
             accion = 'nada'
         elif situacion is 'sucio':
-            accion = 'limpiar' 
+            accion = 'limpiar'
         elif lugar is 1:
             accion = 'ir_Derecha'
         else:
@@ -272,6 +272,61 @@ class AgenteReactivoDosCuartosCiego(doscuartos_o.AgenteReactivoDoscuartos):
         # Actualiza el modelo interno
         self.modelo[0] = lugar
         if accion is 'limpiar':
-            self.modelo[ lugar ] = 'limpio' 
-    
+            self.modelo[ lugar ] = 'limpio'
+
         return accion
+
+class DosCuartosEstocastico(doscuartos_o.DosCuartos):
+    def transicion(self, accion):
+        if not self.accion_legal(accion):
+            raise ValueError("La accion no es legal para este estado")
+
+        if accion is not "nada" or self.x[1] is "sucio" or self.x[2] is "sucio":
+            self.desempenio -= 1
+        if accion is "limpiar" and random.random() < 0.8:
+            self.x[ self.x[0] ] = "limpio"
+        elif accion is "ir_Izquierda" and random.random() < 0.9:
+            self.x[0] = 1
+        elif accion is "ir_Derecha" and random.random() < 0.9:
+            self.x[0] = 2
+
+def test():
+    """
+    Pruebas de los puntos 1, 2, 3 y 4
+
+    """
+    print("Punto 1 y 2\n")
+    print("Agente reactivo con modelo 6 cuartos:")
+    entornos_o.simulador(SeisCuartos(),
+                         AgenteReactivoModeloSeisCuartos(),
+                         100)
+
+    print("Agente aleatorio seis cuartos:")
+    entornos_o.simulador(SeisCuartos(),
+                         AgenteAleatorioRestriccion(),
+                         100)
+
+    print("Punto 3\n")
+    print("Agente reactivo con modelo 2 cuartos ciego:")
+    entornos_o.simulador(DosCuartosCiego(),
+                         AgenteReactivoDosCuartosCiego(),
+                         100)
+
+    print("Agente aleatorio 2 cuartos ciego:")
+    entornos_o.simulador(DosCuartosCiego(),
+                         doscuartos_o.AgenteAleatorio(['ir_Derecha', 'ir_Izquierda',
+                                                       'limpiar', 'nada']),
+                         100)
+
+    print("Punto 4\n")
+    print("Agente reactivo con modelo 2 cuartos estocastico:")
+    entornos_o.simulador(DosCuartosEstocastico(),
+                         doscuartos_o.AgenteReactivoDoscuartos(),
+                         100)
+
+    print("Agente aleatorio 2 cuartos estocastico:")
+    entornos_o.simulador(DosCuartosEstocastico(),
+                         doscuartos_o.AgenteAleatorio(['ir_Derecha', 'ir_Izquierda',
+                                                       'limpiar', 'nada']),
+                         100)
+
