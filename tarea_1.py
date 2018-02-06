@@ -219,8 +219,7 @@ class AgenteAleatorio(entornos_o.Agente):
     def programa(self, percepcion):
         return random.choice(self.acciones_legales(percepcion[0]))
 
-    
-class DosCuartosCiego(entornos_o.Entorno):
+class DosCuartosCiego(doscuartos_o.DosCuartos):
     """
     Clase para un entorno de dos cuartos pero no se puede saber si los cuartos estan
     limpios o sucios.
@@ -236,41 +235,10 @@ class DosCuartosCiego(entornos_o.Entorno):
     que solo indica en que lugar se encuentra.
 
     """
-    def __init__(self, x0=[1, 'sucio', 'sucio']):
-        """
-        Por default inicialmente el robot esta en 1
-
-        """
-        self.x = x0[:]
-        self.desempenio = 0
-
-    def accion_legal(self, accion):
-        return accion in ("ir_Derecha", "ir_Izquierda", "limpiar", "nada")
-
-    def transicion(self, accion):
-        if not self.accion_legal(accion):
-            raise ValueError("La accion no es legal para este estado")
-
-        #Para asegurar que los cuartos estan limpios, se agrega memoria al
-        #agente y se sigue el plan de accion: limpiar el cuarto actual, ir
-        #al otro cuarto, limpiarlo y despues no hacer nada durante todos los
-        #demas pasos
-
-        a, b = self.x[1], self.x[2]
-        if accion is not "nada" or a is "sucio" or b is "sucio":
-            self.desempenio -= 1
-        if accion is "limpiar":
-            self.x[ self.x[0] ] = "limpio"
-        elif accion is "ir_Derecha":
-            self.x[0] = 2
-        elif accion is "ir_Izquierda":
-            self.x[0] = 1
-
-
     def percepcion(self):
         return self.x[0]
 
-class AgenteReactivoDosCuartosCiego(entornos_o.Agente):
+class AgenteReactivoDosCuartosCiego(doscuartos_o.AgenteReactivoDoscuartos):
     """
     Un agente reactivo basado en modelo que no puede ver la situacion del lugar
     en donde se encuentra.
