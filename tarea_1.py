@@ -59,7 +59,7 @@ la tarea.
 """
 __author__ = 'Rolando Velez'
 
-from random import choice
+from random import choice, random
 
 class Environment:
     def __init__(self, x0=[]):
@@ -351,6 +351,26 @@ class BlindTwoRoomsModelBasedReflexAgent(TwoRoomsModelBasedReflexAgent):
                 "go_B" if robot == "B" else "go_B")
 
 
+# Ex. 4
+class StochasticTwoRoomsEnvironment(TwoRoomsEnvironment):
+   
+    def transition(self, action):
+        if not self.legal_action(action):
+            raise ValueError("Action is illegal in the current state.", str(self.x[0]), str(action))
+
+        a, b = self.x[1], self.x[2]
+        
+        if action is not "noop" or a is "dirty" or b is "dirty":
+            self.performance -= 1
+        if action is "suck" and random() <= 0.8:
+            self.x[" AB".find(self.x[0])] = "clean"
+        elif action is "go_A" and random() <= 0.9:
+            self.x[0] = "A"
+        elif action is "go_B" and random() <= 0.9:
+            self.x[0] = "B"
+# Tests
+
+# Six Rooms Environment Tests
 def sre_test():
     print("Random Agent on the Six Rooms Environment")
     simulator(SixRooms(),
@@ -362,6 +382,7 @@ def sre_test():
             SixRoomsModelBasedReflexAgent(),
             100)
 
+# Blind Two Rooms Environment Tests
 def btre_test():
     print("Random Agent on the Blind Two Rooms Environment")
     simulator(BlindTwoRoomsEnvironment(),
@@ -373,8 +394,19 @@ def btre_test():
             BlindTwoRoomsModelBasedReflexAgent(),
             100)
 
-
+# Stochastic Two Rooms Environment Tests
+def stre_test():
+    print("Random Agent on the Stochastic Two Rooms Environment")
+    simulator(StochasticTwoRoomsEnvironment(),
+            TwoRoomsRandomAgent(["go_A", "go_B", "suck", "noop"]),
+            100) 
+    
+    print("Model-Based Reflex Agent on the Stochastic Two Rooms Environment")
+    simulator(StochasticTwoRoomsEnvironment(),
+            TwoRoomsModelBasedReflexAgent(),
+            100)  
 
 if __name__ == "__main__":
     sre_test()
     btre_test()
+    stre_test()
