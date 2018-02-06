@@ -153,9 +153,9 @@ class SixRooms(Environment):
         """
             First it checks if the action that we want to perform is legal in it's current state.
             Instructions say that the action of "suck" is the cheapest action there is, compared to all others.
-            So following that rule, we set the performance value to 1 if the robot decides to clean.
-            Since the action of going up/down is more costly than all the other actions we set it's performance value at 3.
-            Finally I set the performance value of going right/left to 2. (Cheaper than going up/down but higher than cleaning).
+            So following that rule, we set the performance value to 0.5 if the robot decides to clean.
+            Since the action of going up/down is more costly than all the other actions we set it's performance value at 2.
+            Finally I set the performance value of going right/left to 1. (Cheaper than going up/down but higher than cleaning).
             After that there's a lot of if's statements to check where the robot is going next after performing the given action.
         """
         
@@ -166,11 +166,11 @@ class SixRooms(Environment):
         if (action is not "noop" or a is "dirty" or b is "dirty" or c is "dirty" or
                 d is "dirty" or e is "dirty" or f is "dirty"):
             if action is "go_up" or action is "go_down":
-                self.performance -= 3
-            elif action is "suck":
-                self.performance -= 1
-            else:
                 self.performance -= 2
+            elif action is "suck":
+                self.performance -= 0.5
+            else:
+                self.performance -= 1
         if action is "suck":
             self.x[" ABCDEF".find(self.x[0])] = "clean"
         elif action is "go_right":
@@ -230,37 +230,37 @@ class SixRoomsModelBasedReflexAgent(Agent):
         self.model = ['A', 'dirty', 'dirty', 'dirty', 'dirty', 'dirty', 'dirty']
 
     def program(self, percepts):
-        robot, state = percepts
+        robot_pos, status = percepts
 
-        self.model[0] = robot
-        self.model[' ABCDEF'.find(robot)] = state
+        self.model[0] = robot_pos
+        self.model[' ABCDEF'.find(robot_pos)] = status
 
         a, b, c, d, e, f = self.model[1], self.model[2], self.model[3], \
                 self.model[4], self.model[5], self.model[6]
 
         if a == b == c == d == e == f == "clean":
             return "noop"
-        elif state == "dirty":
+        elif status == "dirty":
             return "suck"
-        elif robot == "A":
+        elif robot_pos == "A":
             if b == "dirty" or c == "dirty":
                 return "go_right"
             else:
                 return "go_up"
-        elif robot == "B":
+        elif robot_pos == "B":
             if a == "dirty":
                 return "go_left"
             else:
                 return "go_right"
-        elif robot == "C":
+        elif robot_pos == "C":
             if a == "dirty" or b == "dirty":
                 return "go_left"
             else:
                 return "go_up"
-        elif robot == "D":
+        elif robot_pos == "D":
             if a == "dirty" or b == "dirty" or c == "dirty" or e == "dirty" or f == "dirty":
                 return "go_right"
-        elif robot == "E":
+        elif robot_pos == "E":
             if d == "dirty":
                 return "go_left"
             elif f == "dirty":
@@ -272,18 +272,56 @@ class SixRoomsModelBasedReflexAgent(Agent):
                 return "go_left"
 
 
-        
-def test():
+# Ex. 3
+class TwoRoomsEnvironment(Environment):
+
+    def __init__(self, x0=["A", "dirty", "dirty"]):
+        self.x = x0[:]
+        self.performance = 0
+
+    def legal_action(self, action):
+        return action in ("go_A", "go_B", "suck", "noop")
+
+    def transition(self, action):
+        if not self.legal_action(action):
+            raise ValueError("Action is illegal in the current state.", str(self.x[0]), str(action))
+
+        robot, a, b = self.x
+        if action is not "noop" or a is "dirty" or b is "dirty":
+            self.performance -= 1
+        if action is "suck":
+            self.x[" AB".find(self.x[0])] = "clean"
+        elif action is "go_A":
+            self.x[0] = "A"
+        elif action is "go_B":
+            self.x[0] = "B"
+    
+    def percepts(self):
+        return self.x[0], self.x[" AB".find(self.x[0])]
+
+class BlindTwoRoomsEnvironment(TwoRoomsEnvironment):
+    """
+    Robot only knows the room he's in but not if it's clean or dirty.
+    """
+    def percepts(self):
+        return self.x[0]
+
+class TwoRoomsReflexAgent(Agent):
+    def program(self, percepts):
+        robot, status = percepts
+        return ("suck" if status == "dirty" else
+                "go_A" if robot == "B" else "go_B")
+
+def sre_test():
     print("Random Agent on the Six Rooms Environment")
     simulator(SixRooms(),
             SixRoomsRandomAgent(["go_right", "go_left", "go_up", "go_down", "suck", "noop"]),
             100) 
     
-    print("Model Based Reflex Agent on the Six Rooms Environment")
+    print("Model-Based Reflex Agent on the Six Rooms Environment")
     simulator(SixRooms(),
             SixRoomsModelBasedReflexAgent(),
             100)
 
-
 if __name__ == "__main__":
-    test()
+    sre_test()
