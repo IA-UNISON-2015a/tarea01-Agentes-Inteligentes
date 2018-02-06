@@ -57,7 +57,7 @@ Todos los incisos tienen un valor de 25 puntos sobre la calificacion de
 la tarea.
 
 """
-__author__ = 'escribe_tu_nombre'
+__author__ = 'luis fernando'
 
 import entornos_o
 import doscuartos_o
