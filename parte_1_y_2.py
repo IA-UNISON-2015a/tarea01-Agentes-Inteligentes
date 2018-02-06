@@ -18,7 +18,7 @@ parte_1_y_2.py
    cuarto), y la acción de `"bajar"` solo es legal en el piso de arriba.
    Las acciones de subir y bajar son mas costosas en término de
    energía que ir a la derecha y a la izquierda, por lo que la función
-   de desempeño debe de ser de tener limpios todos los cuartos, con el
+   de desempenio debe de ser de tener limpios todos los cuartos, con el
    menor numero de acciones posibles, y minimizando subir y bajar en
    relación a ir a los lados.
 """
@@ -44,7 +44,7 @@ class SeisCuartos(entornos_o.Entorno):
 
         self.estado_cuartos = [cuartos_abajo, cuartos_arriba]
         self.ubicacion = ubicacion[:]
-        self.desempeño = 0
+        self.desempenio = 0
         self.x = [self.ubicacion, self.estado_cuartos[self.ubicacion[0]][self.ubicacion[1]]]
 
         """
@@ -74,21 +74,21 @@ class SeisCuartos(entornos_o.Entorno):
         a, b = self.ubicacion
 
         if accion is "nada" and ("sucio" in self.estado_cuartos[0] or "sucio" in self.estado_cuartos[1]):
-            self.desempeño -= 1
+            self.desempenio -= 1
         if accion is "limpiar":
             self.estado_cuartos[a][b] = "limpio"
         elif accion is "ir_Derecha" and b<2 :
             self.ubicacion[1] += 1
-            self.desempeño -= 1
+            self.desempenio -= 1
         elif accion is "ir_Izquierda" and b>0:
             self.ubicacion[1] -= 1
-            self.desempeño -= 1
+            self.desempenio -= 1
         elif accion is "bajar":
             self.ubicacion[0] -= 1
-            self.desempeño -= 2
+            self.desempenio -= 2
         elif accion is "subir":
             self.ubicacion[0] += 1
-            self.desempeño -= 2
+            self.desempenio -= 2
 
         self.x = [[self.ubicacion[0],self.ubicacion[1]], self.estado_cuartos[self.ubicacion[0]][self.ubicacion[1]]]
 
@@ -164,7 +164,7 @@ def prueba():
     """
     Prueba del entorno y los agentes
     """
-    print("Prueba del entorno con un agente aleatorio")
+    print("\nPrueba del entorno con un agente aleatorio")
     entornos_o.simulador(SeisCuartos(),
                          AgenteAleatorio(["ir_Derecha", "ir_Izquierda", "subir", "bajar", "limpiar", "nada"]),
                          100)
