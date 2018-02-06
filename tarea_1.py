@@ -67,6 +67,9 @@ import random
 # Usa el modulo doscuartos_o.py para reutilizar codigo
 # Agrega los modulos que requieras de python
 
+def pausa():
+    x = input("Preisone <ENTER> para continuar")
+
 class SeisCuartos(doscuartos_o.DosCuartos):
     """
     Clase para un entorno de seis cuartos.
@@ -295,38 +298,51 @@ def test():
     Pruebas de los puntos 1, 2, 3 y 4
 
     """
+
+    print("En general, todos los cuartos comienzan sucios y el agente comienza en el cuarto de mas arriba e izquierda.")
+
     print("Punto 1 y 2\n")
     print("Agente reactivo con modelo 6 cuartos:")
     entornos_o.simulador(SeisCuartos(),
                          AgenteReactivoModeloSeisCuartos(),
-                         100)
+                         50)
+
+    pausa()
 
     print("Agente aleatorio seis cuartos:")
     entornos_o.simulador(SeisCuartos(),
                          AgenteAleatorioRestriccion(),
-                         100)
+                         50)
+    
+    pausa()
 
     print("Punto 3\n")
     print("Agente reactivo con modelo 2 cuartos ciego:")
     entornos_o.simulador(DosCuartosCiego(),
                          AgenteReactivoDosCuartosCiego(),
-                         100)
+                         50)
+
+    pausa()
 
     print("Agente aleatorio 2 cuartos ciego:")
     entornos_o.simulador(DosCuartosCiego(),
                          doscuartos_o.AgenteAleatorio(['ir_Derecha', 'ir_Izquierda',
                                                        'limpiar', 'nada']),
-                         100)
+                         50)
+
+    pausa()
 
     print("Punto 4\n")
     print("Agente reactivo con modelo 2 cuartos estocastico:")
     entornos_o.simulador(DosCuartosEstocastico(),
-                         doscuartos_o.AgenteReactivoDoscuartos(),
-                         100)
+                         doscuartos_o.AgenteReactivoModeloDosCuartos(),
+                         50)
+
+    pausa()
 
     print("Agente aleatorio 2 cuartos estocastico:")
     entornos_o.simulador(DosCuartosEstocastico(),
                          doscuartos_o.AgenteAleatorio(['ir_Derecha', 'ir_Izquierda',
                                                        'limpiar', 'nada']),
-                         100)
+                         50)
 
