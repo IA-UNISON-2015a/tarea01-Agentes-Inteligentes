@@ -60,7 +60,16 @@ la tarea.
 __author__ = 'Diego Eugenio Bustamante Rendon'
 
 import entornos_o
+"""
+En este está la parte 1 y 2 de la tarea donde se pide desarrolar SeisCuartos y el agente
+reactivo basado en modelo
+"""
 import parte_1_y_2
+
+"""
+En este está la parte 3 de la tarea donde se pide desarrolar DosCuartosCiego y el agente racional
+"""
+import parte_3
 
 
 # Requiere el modulo entornos_o.py

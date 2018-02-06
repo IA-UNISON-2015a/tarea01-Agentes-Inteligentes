@@ -4,9 +4,7 @@
 """
 doscuartos.py.py
 ------------
-
 Ejemplo de un entorno muy simple y agentes idem
-
 """
 
 import entornos_o
@@ -19,23 +17,18 @@ __author__ = 'juliowaissman'
 class DosCuartos(entornos_o.Entorno):
     """
     Clase para un entorno de dos cuartos. Muy sencilla solo regrupa métodos.
-
     El estado se define como (robot, A, B)
     donde robot puede tener los valores "A", "B"
     A y B pueden tener los valores "limpio", "sucio"
-
     Las acciones válidas en el entorno son ("ir_A", "ir_B", "limpiar", "nada").
     Todas las acciones son válidas en todos los estados.
-
     Los sensores es una tupla (robot, limpio?)
     con la ubicación del robot y el estado de limpieza
-
     """
     def __init__(self, x0=["A", "sucio", "sucio"]):
         """
         Por default inicialmente el robot está en A y los dos cuartos
         están sucios
-
         """
         self.x = x0[:]
         self.desempeño = 0
@@ -64,7 +57,6 @@ class DosCuartos(entornos_o.Entorno):
 class AgenteAleatorio(entornos_o.Agente):
     """
     Un agente que solo regresa una accion al azar entre las acciones legales
-
     """
     def __init__(self, acciones):
         self.acciones = acciones
@@ -76,7 +68,6 @@ class AgenteAleatorio(entornos_o.Agente):
 class AgenteReactivoDoscuartos(entornos_o.Agente):
     """
     Un agente reactivo simple
-
     """
     def programa(self, percepción):
         robot, situación = percepción
@@ -87,12 +78,10 @@ class AgenteReactivoDoscuartos(entornos_o.Agente):
 class AgenteReactivoModeloDosCuartos(entornos_o.Agente):
     """
     Un agente reactivo basado en modelo
-
     """
     def __init__(self):
         """
         Inicializa el modelo interno en el peor de los casos
-
         """
         self.modelo = ['A', 'sucio', 'sucio']
 
@@ -113,7 +102,6 @@ class AgenteReactivoModeloDosCuartos(entornos_o.Agente):
 def test():
     """
     Prueba del entorno y los agentes
-
     """
     print("Prueba del entorno con un agente aleatorio")
     entornos_o.simulador(DosCuartos(),

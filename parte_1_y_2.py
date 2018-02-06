@@ -121,6 +121,13 @@ class AgenteAleatorio(entornos_o.Agente):
             return choice(aux)
 
 
+    """
+    2. Diseña un Agente reactivo basado en modelo para este entorno y
+       compara su desempeño con un agente aleatorio despues de 100 pasos
+       de simulación.
+    """
+
+
 class AgenteReactivoModelo(entornos_o.Agente):
     """
     Un agente reactivo basado en modelo
