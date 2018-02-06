@@ -57,10 +57,146 @@ Todos los incisos tienen un valor de 25 puntos sobre la calificación de
 la tarea.
 
 """
-__author__ = 'escribe_tu_nombre'
+__author__ = 'Rolando Velez'
 
-import entorno_o
+from random import choice
 
-# Requiere el modulo entornos_o.py
-# Usa el modulo doscuartos_o.py para reutilizar código
-# Agrega los modulos que requieras de python
+class Environment:
+    def __init__(self, x0=[]):
+        self.x = x0[:]
+        self.performance = 0
+
+    def legal_action(self, action):
+        return True
+
+    def transition(self, action):
+        pass
+    
+    def percepts(self):
+        return self.x
+
+class Agent(object):
+    def program(self, percept):
+        pass
+    
+def simulator(env, agent, steps=10, verbose=True):
+    performance_history = [env.performance]
+    state_history = [env.x[:]]
+    action_history = []
+
+    for step in range(steps):
+        p = env.perception()
+        a = agent.program(p)
+        env.transition(a)
+
+        performance_history.append(env.performance)
+        state_history.append(env.x[:])
+        action_history.append(a)
+
+    action_history.append(None)
+
+    if verbose:
+        print(u"\n\nSimulacion de entorno tipo " +
+                str(type(env)) +
+                " con el agente tipo " +
+                str(type(agent)) + "\n")
+
+        print('Paso'.center(10) +
+                'Estado'.center(40) +
+                u'Accion'.center(25) +
+                u'Desempeño'.center(15))
+
+        print('_' * (10 + 40 + 25 + 15))
+
+        for i in range(steps):
+            print(str(i).center(10) +
+                    str(state_history[i]).center(40) +
+                    str(action_history[i]).center(25) +
+                    str(performance_history[i]).rjust(12))
+
+        print('_' * (10 + 40 + 25 + 15) + '\n\n')
+
+    return state_history, action_history, performance_history
+
+class SixRooms(Environment):
+    """
+        Six Rooms.                                  _____________
+        2 Floors, 3 rooms each floor.               | D | E | F |
+        Can only go up on room "A" or "C".          | A | B | C |
+        Can only go down on room "E".               -------------
+        Actions to perform can only be ["go_right", "go_left", "go_up", "go_down", "suck", "noop"]
+    """
+    def __init__(self, x0=["A", "dirty", "dirty", "dirty", "dirty", "dirty", "dirty"]):
+        
+        self.x = x0[:]
+        self.performance = 0
+
+    def legal_action(self, action):
+       """
+            Check if the action the robot wants to perform is legal in the current state.
+       """
+       if self.x[0] == "A":
+           return action in ("go_right", "go_up", "suck", "noop")
+       elif self.x[0] == "B":
+           return action in ("go_right", "go_left", "suck", "noop")
+       elif self.x[0] == "C":
+           return action in ("go_left", "go_up", "suck", "noop")
+       elif self.x[0] == "D":
+           return action in ("go_right", "suck", "noop")
+       elif self.x[0] == "E":
+           return action in ("go_right", "go_left", "go_down", "suck", "noop")
+       else:
+           return action in ("go_left", "suck", "noop")
+    
+    def transition(self, action):
+        """
+            First it checks if the action that we want to perform is legal in it's current state.
+            Instructions say that the action of "suck" is the cheapest action there is, compared to all others.
+            So following that rule, we set the performance value to 1 if the robot decides to clean.
+            Since the action of going up/down is more costly than all the other actions we set it's performance value at 3.
+            Finally I set the performance value of going right/left to 2. (Cheaper than going up/down but higher than cleaning).
+            After that there's a lot of if's statements to check where the robot is going next after performing the given action.
+        """
+        
+        if not self.legal_action(action):
+            raise ValueError("Action is illegal in the current state.")
+        
+        robot, a, b, c, d, e, f = self.x
+        if (action is not "noop" or a is "dirty" or b is "dirty" or c is "dirty" or
+                d is "dirty" or e is "dirty" or f is "dirty"):
+            if action is "go_up" or action is "go_down":
+                self.performance -= 3
+            elif action is "suck":
+                self.performance -= 1
+            else:
+                self.performance -= 2
+        if action is "suck":
+            self.x[" ABCDEF".find(self.x[0])] = "clean"
+        elif action is "go_right":
+            if self.x[0] == "A":
+                self.x[0] = "B"
+            elif self.x[0] == "B":
+                self.x[0] = "C"
+            elif self.x[0] == "D":
+                self.x[0] = "E"
+            elif self.x[0] == "E":
+                self.x[0] = "F"
+        elif action is "go_left":
+            if self.x[0] == "F":
+                self.x[0] = "E"
+            elif self.x[0] == "E":
+                self.x[0] = "D"
+            elif self.x[0] == "C":
+                self.x[0] = "B"
+            elif self.x[0] == "B":
+                self.x[0] = "A"
+        elif action == "go_up":
+            if self.x[0] == "A":
+                self.x[0] = "D"
+            else:
+                self.x[0] = "F"
+        elif action == "go_down":
+            self.x[0] = "B"
+    
+    def percepts(self):
+        return self.x[0], self.x[" ABCDEF".find(self.x[0])]
