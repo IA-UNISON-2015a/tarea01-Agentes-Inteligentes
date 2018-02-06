@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import random
 """
 tarea_1.py
 ------------
@@ -57,10 +58,118 @@ Todos los incisos tienen un valor de 25 puntos sobre la calificación de
 la tarea.
 
 """
-__author__ = 'escribe_tu_nombre'
+__author__ = 'Victor Ariel Noriega Ortiz' 
 
-import entorno_o
+import entornos_o
+
 
 # Requiere el modulo entornos_o.py
 # Usa el modulo doscuartos_o.py para reutilizar código
 # Agrega los modulos que requieras de python
+
+class SeisCuartos(entornos_o.Entorno):
+    """
+    
+
+    El estado se define como ((A,B,C,D,E,F),robot)
+    robot puede tener algun valor del vector (A,B,C,D,E,F) 
+    que indica en que cuarto esta
+    Cada elemento en el arreglo de los cuartos puede tener el valor de "Limpio" o "Sucio"
+
+    Los sensores es una tupla (robot, limpio?)
+    con la ubicación del robot y el estado de limpieza
+
+    """
+    def __init__(self, x0=[["sucio","sucio","sucio","sucio","sucio","sucio"],"A"]):
+        """
+        Por default inicialmente el robot está en el A, y todos los cuartos
+        están sucios
+
+        """
+        self.x = x0[:]
+        self.desempeño = 0
+
+    def acción_legal(self, acción):
+        if self.x[1] is "A":
+            return acción in ('limpiar', 'nada','ir_derecha','subir')
+        elif self.x[1] is 'B':
+            return acción in ('limpiar', 'nada', 'ir_derecha', 'ir_izquierda')
+        elif self.x[1] is 'C':
+            return acción in ('limpiar', 'nada', 'ir_izquerda', 'subir')
+        elif self.x[1] is 'D':
+            return acción in ('limpiar', 'nada', 'ir_derecha')
+        elif self.x[1] is 'E':
+            return acción in ('limpiar', 'nada', 'ir_derecha', 'ir_izquierda','bajar')
+        elif self.x[1] is 'F':
+            return acción in ('limpiar', 'nada', 'ir_izquierda')
+        
+
+    def transición(self, acción):
+        if not self.acción_legal(acción):
+            raise ValueError("La acción no es legal para este estado")
+        
+        if acción is "limpiar":
+            self.x[" ABCDEF".find(self.x[1])] = "limpio"
+            self.desempeño-=1
+        elif acción is "ir_derecha":
+            self.x[1] = chr(ord(self.x[1]) + 1)
+            self.desempeño-=2
+        elif acción is "ir_izquierda": 
+            self.x[1] = chr(ord(self.x[1]) -1)
+            self.desempeño-=2
+        elif acción is "subir":
+            self.x[1] = chr(ord(self.x[1]) + 3)
+            self.desempeño-=3
+        elif acción is 'bajar':
+            self.x[1] = chr(ord(self.x[1]) -3)
+            self.desempeño-=3
+
+    def percepción(self):
+        print(self.x[1])
+        return self.x[1], self.x[" ABCDEF".find(self.x[1])]
+
+
+class AgenteAleatorioSeisCuartos(entornos_o.Agente):
+    """
+    Un agente que solo regresa una accion al azar entre las acciones legales
+
+    """
+    def __init__(self, acciones):
+        self.acciones = acciones
+
+    def programa(self, percepcion):
+        x = []
+        cuarto, y = percepcion
+        ### la variable y contendria el estado en el que se encuentra el cuarto pero eso no nos importa ahora mismo
+        if cuarto is 'A':
+            x = ['limpiar', 'nada', 'ir_Derecha', 'subir']
+        elif cuarto is 'B':
+            x = ['limpiar', 'nada', 'ir_Derecha', 'ir_Izquierda']
+        elif cuarto is 'C':
+            x = ['limpiar', 'nada', 'ir_Izquierda', 'subir']
+        elif cuarto is 'D':
+            x = ['limpiar', 'nada', 'ir_Derecha']
+        elif cuarto is 'E':
+            x = ['limpiar', 'nada', 'ir_Izquierda', 'ir_Derecha', 'bajar']
+        elif cuarto is 'F':
+            x = ['limpiar', 'nada', 'ir_Izquierda']
+            
+        random.shuffle(x)            
+    
+        accion = x[0]
+        return accion
+
+
+def test():
+    """
+    Prueba del entorno y los agentes
+
+    """
+    print("Prueba del entorno con un agente aleatorio")
+    entornos_o.simulador(SeisCuartos(),
+                         AgenteAleatorioSeisCuartos(['ir_A', 'ir_B', 'limpiar', 'nada']),
+                         100)
+
+
+if __name__ == "__main__":
+    test()
