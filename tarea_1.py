@@ -60,7 +60,8 @@ la tarea.
 __author__ = 'Diego Eugenio Bustamante Rendon'
 
 import entornos_o
-print("hola")
+import parte_1_y_2
+
 
 # Requiere el modulo entornos_o.py
 # Usa el modulo doscuartos_o.py para reutilizar código
