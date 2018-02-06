@@ -206,10 +206,14 @@ class SixRooms(Environment):
 # Ex. 2
 
 class SixRoomsRandomAgent(Agent):
-    
+    """
+    Selects a random action to perform.
+    Really inefficient.
+    """
+
     def __init__(self, actions):
-        self.actions = actions
-    
+       self.actions = actions
+       
     def program(self, percepts):
         if percepts[0] == "A":
             return choice(["go_right", "go_up", "suck", "noop"])
@@ -225,7 +229,11 @@ class SixRoomsRandomAgent(Agent):
             return choice(["go_left", "suck", "noop"])
 
 class SixRoomsModelBasedReflexAgent(Agent):
-
+    """
+    Model-Based Agent.
+    In case all the rooms are clean, the agent stops and does nothing.
+    Cleans if dirty and moves if it needs to clean any other rooms.
+    """
     def __init__(self):
         self.model = ['A', 'dirty', 'dirty', 'dirty', 'dirty', 'dirty', 'dirty']
 
@@ -274,6 +282,7 @@ class SixRoomsModelBasedReflexAgent(Agent):
 
 # Ex. 3
 class TwoRoomsEnvironment(Environment):
+    # Just a translation of the same class found in doscuartos_o.py
 
     def __init__(self, x0=["A", "dirty", "dirty"]):
         self.x = x0[:]
@@ -300,17 +309,47 @@ class TwoRoomsEnvironment(Environment):
         return self.x[0], self.x[" AB".find(self.x[0])]
 
 class BlindTwoRoomsEnvironment(TwoRoomsEnvironment):
-    """
-    Robot only knows the room he's in but not if it's clean or dirty.
-    """
     def percepts(self):
         return self.x[0]
 
-class TwoRoomsReflexAgent(Agent):
+class TwoRoomsRandomAgent(Agent):
+    def __init__(self, actions):
+        self.actions = actions
+
+    def program(self, percepts):
+        return choice(self.actions)
+
+class TwoRoomsModelBasedReflexAgent(Agent):
+    
+    def __init__(self):
+        self.model = ["A", "dirty", "dirty"]
+
     def program(self, percepts):
         robot, status = percepts
-        return ("suck" if status == "dirty" else
+
+        self.model[0] = robot
+        self.model[' AB'.find(robot)] = status
+
+        a, b = self.model[1], self.model[2]
+        return ("noop" if a == b == "clean" else
+                "suck" if status == "dirty" else
                 "go_A" if robot == "B" else "go_B")
+
+class BlindTwoRoomsModelBasedReflexAgent(TwoRoomsModelBasedReflexAgent):
+
+    def program(self, percept):
+        robot = percept
+        status = self.model[" AB".find(robot)]
+        
+        self.model[0] = robot
+        
+        a, b = self.model[1], self.model[2]
+        self.model[" AB".find(robot)] = "clean" if status == "dirty" else status
+
+        return ("noop" if a == b == "clean" else
+                "suck" if status == "dirty" else
+                "go_B" if robot == "B" else "go_B")
+
 
 def sre_test():
     print("Random Agent on the Six Rooms Environment")
@@ -323,5 +362,19 @@ def sre_test():
             SixRoomsModelBasedReflexAgent(),
             100)
 
+def btre_test():
+    print("Random Agent on the Blind Two Rooms Environment")
+    simulator(BlindTwoRoomsEnvironment(),
+            TwoRoomsRandomAgent(["go_A", "go_B", "suck", "noop"]),
+            100) 
+    
+    print("Model-Based Reflex Agent on the Blind Two Rooms Environment")
+    simulator(BlindTwoRoomsEnvironment(),
+            BlindTwoRoomsModelBasedReflexAgent(),
+            100)
+
+
+
 if __name__ == "__main__":
     sre_test()
+    btre_test()
