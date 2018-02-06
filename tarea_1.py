@@ -224,11 +224,66 @@ class SixRoomsRandomAgent(Agent):
         else:
             return choice(["go_left", "suck", "noop"])
 
+class SixRoomsModelBasedReflexAgent(Agent):
+
+    def __init__(self):
+        self.model = ['A', 'dirty', 'dirty', 'dirty', 'dirty', 'dirty', 'dirty']
+
+    def program(self, percepts):
+        robot, state = percepts
+
+        self.model[0] = robot
+        self.model[' ABCDEF'.find(robot)] = state
+
+        a, b, c, d, e, f = self.model[1], self.model[2], self.model[3], \
+                self.model[4], self.model[5], self.model[6]
+
+        if a == b == c == d == e == f == "clean":
+            return "noop"
+        elif state == "dirty":
+            return "suck"
+        elif robot == "A":
+            if b == "dirty" or c == "dirty":
+                return "go_right"
+            else:
+                return "go_up"
+        elif robot == "B":
+            if a == "dirty":
+                return "go_left"
+            else:
+                return "go_right"
+        elif robot == "C":
+            if a == "dirty" or b == "dirty":
+                return "go_left"
+            else:
+                return "go_up"
+        elif robot == "D":
+            if a == "dirty" or b == "dirty" or c == "dirty" or e == "dirty" or f == "dirty":
+                return "go_right"
+        elif robot == "E":
+            if d == "dirty":
+                return "go_left"
+            elif f == "dirty":
+                return "go_right"
+            else:
+                return "go_down"
+        else:
+            if a == "dirty" or b == "dirty" or c == "dirty" or d == "dirty" or e == "dirty":
+                return "go_left"
+
+
+        
 def test():
     print("Random Agent on the Six Rooms Environment")
     simulator(SixRooms(),
             SixRoomsRandomAgent(["go_right", "go_left", "go_up", "go_down", "suck", "noop"]),
+            100) 
+    
+    print("Model Based Reflex Agent on the Six Rooms Environment")
+    simulator(SixRooms(),
+            SixRoomsModelBasedReflexAgent(),
             100)
+
 
 if __name__ == "__main__":
     test()
