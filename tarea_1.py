@@ -102,22 +102,23 @@ def simulator(env, agent, steps=10, verbose=True):
                 str(type(agent)) + "\n")
 
         print('Step'.center(10) +
-                'State'.center(40) +
+                'State'.center(60) +
                 u'Action'.center(25) +
                 u'Performance'.center(15))
 
-        print('_' * (10 + 40 + 25 + 15))
+        print('_' * (10 + 60 + 25 + 15))
 
         for i in range(steps):
             print(str(i).center(10) +
-                    str(state_history[i]).center(40) +
+                    str(state_history[i]).center(60) +
                     str(action_history[i]).center(25) +
                     str(performance_history[i]).rjust(12))
 
-        print('_' * (10 + 40 + 25 + 15) + '\n\n')
+        print('_' * (10 + 60 + 25 + 15) + '\n\n')
 
     return state_history, action_history, performance_history
 
+# Ex. 1
 class SixRooms(Environment):
     """
         Six Rooms.                                  _____________
@@ -136,7 +137,7 @@ class SixRooms(Environment):
             Check if the action the robot wants to perform is legal in the current state.
        """
        if self.x[0] == "A":
-           return action in ("go_right", "go_up", "suck", "noop")
+           return action in ("go_right", 'go_up', "suck", "noop")
        elif self.x[0] == "B":
            return action in ("go_right", "go_left", "suck", "noop")
        elif self.x[0] == "C":
@@ -159,7 +160,7 @@ class SixRooms(Environment):
         """
         
         if not self.legal_action(action):
-            raise ValueError("Action is illegal in the current state.")
+            raise ValueError("Action is illegal in the current state. ", str(self.x[0]), str(action))
         
         robot, a, b, c, d, e, f = self.x
         if (action is not "noop" or a is "dirty" or b is "dirty" or c is "dirty" or
@@ -200,3 +201,34 @@ class SixRooms(Environment):
     
     def percepts(self):
         return self.x[0], self.x[" ABCDEF".find(self.x[0])]
+
+
+# Ex. 2
+
+class SixRoomsRandomAgent(Agent):
+    
+    def __init__(self, actions):
+        self.actions = actions
+    
+    def program(self, percepts):
+        if percepts[0] == "A":
+            return choice(["go_right", "go_up", "suck", "noop"])
+        elif percepts[0] == "B":
+            return choice(["go_right", "go_left", "suck", "noop"])
+        elif percepts[0] == "C":
+            return choice(["go_left", "go_up", "suck", "noop"])
+        elif percepts[0] == "D":
+            return choice(["go_right", "suck", "noop"])
+        elif percepts[0] == "E":
+            return choice(["go_right", "go_left", "go_down", "suck", "noop"])
+        else:
+            return choice(["go_left", "suck", "noop"])
+
+def test():
+    print("Random Agent on the Six Rooms Environment")
+    simulator(SixRooms(),
+            SixRoomsRandomAgent(["go_right", "go_left", "go_up", "go_down", "suck", "noop"]),
+            100)
+
+if __name__ == "__main__":
+    test()
