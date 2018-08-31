@@ -71,11 +71,12 @@ class SeisCuartos(doscuartos_o.DosCuartos):
         """
         self.x = x0[:]
         self.desempeño = 0
+
     def percepción(self):
         return self.x[0], self.x[" ABCDEF".find(self.x[0])]
 
 
-    def acción_legal(self, acción, percepción):
+    def acción_legal(self, percepción):
         lugar, condicion = percepción
         if lugar is "A":
             return acción in ("ir_der", "subir", "nada")
@@ -140,6 +141,63 @@ class SeisCuartos(doscuartos_o.DosCuartos):
                 robot = "D"
         else:
             robot = "E"
+
+### Inciso 2: El agente reactivo basado en modelo
+
+class AgenteReactivoModeloSeisCuartos():
+
+    def __init__(self):
+        self.x = ["A","sucio","sucio",
+                                "sucio","sucio", "sucio", "sucio"]
+
+    """
+    La casa se deberia ver asi:
+
+
+    F  E  D
+    A  B  C
+
+    Las casas ABC estan en el primer piso.
+    x[1] es A, x[3] es C, x[4] es D y x[6] es F
+    """
+    def programa(self, percepción):
+        robot, situación = percepción
+
+        if situación is "sucio":
+            return "limpiar"
+        elif robot is "A" and self.x[6] is "sucio" and self.x[2] is "limpio" and self.x[3] is "limpio":
+            return "subir"
+        elif robot is "C" and self.x[4] is "sucio" and self.x[2] is "limpio" and self.x[1] is "limpio":
+            return "subir"
+        elif robot is "E" and self.x[6] is "limpio" and self.x[4] is "limpio" and self.x[2] is "sucio":
+            return "bajar"
+        elif robot is "B" and self.x[3] is "limpio" and self.x[4] is "sucio" :
+            return "ir_der"
+        elif robot is "B" and self.x[1] is "limpio" and self.x[6] is "sucio" :
+            return "ir_izq"
+        elif robot is "C" and self.x[2] is "limpio" and self.x[1] is "sucio":
+            return "ir_izq"
+        elif robot is "E" and self.x[6] is "sucio":
+            return "ir_izq"
+        elif robot is "E" and self.x[4] is "sucio":
+            return "ir_der"
+        elif robot is "E" and (self.x[1] is "sucio" or self.x[3] is "sucio"):
+            return "bajar"
+        elif robot is "A" and self.x[2] is "sucio":
+            return "ir_der"
+        elif robot is "C" and self.x[2] is "sucio":
+            return "ir_izq"
+        elif robot is "D" and self.x[5] is "sucio":
+            return "ir_izq"
+        elif robot is "F" and self.x[5] is "sucio":
+            return "ir_der"
+        else:
+            return "nada"
+
+class AgenteAleatorio():
+    def programa(self, percepcion):
+        return choice(SeisCuartos.acción_legal(percepcion))
+
 
 
 # Requiere el modulo entornos_o.py
