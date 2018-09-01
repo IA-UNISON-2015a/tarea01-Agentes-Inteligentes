@@ -194,9 +194,62 @@ class AgenteReactivoModeloSeisCuartos():
         else:
             return "nada"
 
-class AgenteAleatorio():
+class AgenteAleatorioSeisCuartos():
     def programa(self, percepcion):
-        return choice(SeisCuartos.acción_legal(percepcion))
+        return choice(SeisCuartos.acción_legal(percepcion()))
+
+
+class DosCuartosCiego(doscuartos_o.DosCuartos):
+    def percepción(self):
+        return self.x[0]
+
+class AgenteDosCuartosCiego(doscuartos_o.AgenteReactivoModeloDosCuartos):
+    def programa(self, percepción):
+        robot = percepción
+        # El robot no puede percibir la situacion del cuarto, pero si puede
+        # actualizar la situacion de los cuartos con sus acciones
+        # por lo que debera recurrir a lo que guarda del entorno y no a sus
+        #percepciones
+        a, b = self.modelo[1], self.modelo[2]
+        if all(cuarto is 'limpio' for cuarto in self.modelo[1:]):
+            accion = 'nada'
+        elif situacion is 'sucio':
+            accion = 'limpiar'
+        elif lugar is "A":
+            accion = 'ir_der'
+        else:
+            accion = 'ir_izq'
+
+        self.modelo[0] = robot
+        if accion is "limpiar":
+            self.modelo[" AB".find(robot)] = "limpio"
+        return accion
+
+
+class DosCuartosEstocástico(doscuartos_o.DosCuartos):
+    def transición(self, acción):
+        if not self.acción_legal(acción):
+            raise ValueError("La acción no es legal para este estado")
+
+        robot, a, b = self.x
+        # Voy a seguir castigando a mi agente antes de que haga la accion,
+        # ya que si tomo una accion pero no la completo, gasto la energia pero
+        #no hizo lo que tenia que hacer.
+        if acción is not "nada" or a is "sucio" or b is "sucio":
+            self.desempeño -= 1
+        if acción is "limpiar":
+            num_al = choice(range(1,10))
+            if num_al >8:
+                self.x[" AB".find(self.x[0])] = "limpio"
+        elif acción is "ir_A":
+            num_al = choice(range(1,10))
+            if num_al > 9:
+                self.x[0] = "A"
+        elif acción is "ir_B":
+            num_al = choice(range(1,10))
+            if num_al >9:
+                self.x[0] = "B"
+
 
 
 
