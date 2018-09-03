@@ -62,9 +62,9 @@ class Agente(object):
 
     """
 
-    def programa(self, percepcion):
+    def programa(self, percepción):
         """
-        @param percepcion: Lista con los valores que se perciben de un entorno
+        @param percepción: Lista con los valores que se perciben de un entorno
 
         @return: accion: Acción seleccionada por el agente.
 
