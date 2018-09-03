@@ -10,16 +10,16 @@ Tarea de desarrollo de entornos y agentes
 1. Desarrolla un entorno similar al de los dos cuartos (el cual se
    encuentra en el módulo doscuartos_o.py), pero con tres cuartos en
    el primer piso, y tres cuartos en el segundo piso.
-   
+
    El entorno se llamará `SeisCuartos`.
 
    Las acciones totales serán
-   
+
    ```
    ["ir_Derecha", "ir_Izquierda", "subir", "bajar", "limpiar", "nada"]
-   ``` 
-    
-   La acción de `"subir"` solo es legal en el piso de abajo, en los cuartos de los extremos, 
+   ```
+
+   La acción de `"subir"` solo es legal en el piso de abajo, en los cuartos de los extremos,
    mientras que la acción de `"bajar"` solo es legal en el piso de arriba y en el cuarto de el centro (dos
    escaleras para subir, una escalera para bajar).
 
@@ -45,7 +45,7 @@ Tarea de desarrollo de entornos y agentes
 
 4. Reconsidera el problema original de los dos cuartos, pero ahora
    modificalo para que cuando el agente decida aspirar, el 80% de las
-   veces limpie pero el 20% (aleatorio) deje sucio el cuarto. Igualmente, 
+   veces limpie pero el 20% (aleatorio) deje sucio el cuarto. Igualmente,
    cuando el agente decida cambiar de cuarto, se cambie correctamente de cuarto el 90% de la veces
    y el 10% se queda en su lugar. Diseña
    un agente racional para este problema, pruebalo y comparalo con el
@@ -57,10 +57,54 @@ Todos los incisos tienen un valor de 25 puntos sobre la calificación de
 la tarea.
 
 """
-__author__ = 'escribe_tu_nombre'
+__author__ = 'Gilberto Espinoza'
 
 import entorno_o
-
 # Requiere el modulo entornos_o.py
 # Usa el modulo doscuartos_o.py para reutilizar código
 # Agrega los modulos que requieras de python
+import doscuartos_o
+import random
+
+## Ejercicio 1
+class SeisCuartos(entornos_o.Entorno):
+    """
+        Clase para un entorno de seis cuartos, distribuidos
+        D E F
+        A B C
+        Para subir al piso de arriba se debe estar en D o F
+        Para bajar en el cuarto B
+        Las acciones validas en el entorno son:
+            ["ir_Derecha", "ir_Izquierda", "subir", "bajar", "limpiar", "nada"]
+    """
+    def __init__(self, x0 = ["A", "sucio", "sucio", "sucio","sucio","sucio","sucio"]):
+        """
+            Por efault empezamos en A y todos los cuartos estan sucios
+        """
+        self.x = x0[:]
+        # Hemos hecho un costo centro
+        self.desempeño = 0
+
+    def acción_legal(self, accion):
+        if accion in ("ir_Derecha", "ir_Izquierda", "subir", "bajar", "limpiar", "nada"):
+            # Validamos que la accion este dentro de las acciones posibles
+            if accion is "ir_Derecha":
+                # Para que esta accion sea legal debe estar en el A B D o # -*- coding: utf-8 -*-
+                return self.x[0] in "A", "B", "D", "E")
+            elif accion is "ir_Izquierda":
+                # Para que esta accion sea legal debes estar en el B  C E F
+                return self.x[0] in ("B", "C", "E", "F")
+            elif accion is "subir":
+                #Para que esta accion sea legal debes estar en el A y C
+                return self.x[0] in ("A", "C")
+            elif accion is "bajar":
+                #Para que esta accion sea legal debes estar en el B
+                return self.x[0] is "E"
+            else:
+                #Limpiar y nada son las acciones restantes, entonces siempre son legales
+                return True
+        else:
+            # La accion que quieren realizar no es parte del conjunto de acciones legales
+            return False
+
+    
