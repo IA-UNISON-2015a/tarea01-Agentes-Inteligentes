@@ -97,10 +97,11 @@ class SeisCuartos(doscuartos_o.DosCuartos):
         #Tentativo cambio a takewhile() si los tiempos siguen bien
         #si alguien leyo esto le pido una disculpa, la construccion no terminó
         alguno_cochino = False
-        for a in self.x[0:]:
+        for a in self.x[1:]:
             if a is "sucio":
                 alguno_cochino = True
                 break
+        #takewhile(lambda x: x is "sucio", self.x[1:])
 
         if acción is "nada" and alguno_cochino:
             self.desempeño-=2
@@ -119,7 +120,7 @@ class SeisCuartos(doscuartos_o.DosCuartos):
             raise ValueError("La acción no es legal para este estado")
 
         robot = self.x[0]
-        cond = self.x[0:]
+        cond = self.x[1:]
 
         self.calcular_desempeño(acción, cond)
 
