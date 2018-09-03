@@ -107,4 +107,152 @@ class SeisCuartos(entornos_o.Entorno):
             # La accion que quieren realizar no es parte del conjunto de acciones legales
             return False
 
-    
+    def transcion(self, accion):
+        if not self.acción_legal(accion):
+            raise ValueError("La acción no es legal para este estado")
+
+        # Asignando el lugar de nuestro agente (robot), y el estado de los DosCuartosCiego
+        cuarto_actual = self.x[0]
+
+        """
+        Intentando con diccionarios...  no salio..
+          etiq = ["A", "B", "C", "D", "E", "F"] #etiquetas de los cuartos
+        # ubicamos los cuartos por su etiqueta y estado definido en __init__
+        cuartos = {etiq[i]:self.x[i+1] for i in range(len(etiq))}
+        """
+          # Costos para el desempeno del agente
+        COSTO_LIMPIAR = 3
+        COSTO_MOVER = 1
+        COSTO_SUBIR_BAJAR = 2
+
+        if accion is "limpiar":
+            self.desempeno -= COSTO_LIMPIAR
+            self.x[" ABCDEF".find(self.x[0])] = "limpio"
+        if accion is "ir_Derecha":
+            self.desempeno -= COSTO_MOVER
+            if cuarto_actual is "A": self.x[0] = "B"
+            if cuarto_actual is "B": self.x[0] = "C"
+            if cuarto_actual is "D": self.x[0] = "E"
+            if cuarto_actual is "E": self.x[0] = "F"
+        if accion is "ir_Izquierda":
+            self.desempeno -= COSTO_MOVER
+            if cuarto_actual is "B": self.x[0] = "A"
+            if cuarto_actual is "C": self.x[0] = "B"
+            if cuarto_actual is "E": self.x[0] = "D"
+            if cuarto_actual is "F": self.x[0] = "E"
+        if accion is "subir":
+            self.desempeno -= COSTO_SUBIR_BAJAR
+            if cuarto_actual is "A": self.x[0] = "D"
+            if cuarto_actual is "C": self.x[0] = "F"
+        if accion is "bajar":
+            self.desempeno -= COSTO_SUBIR_BAJAR
+            if cuarto_actual is "E": self.x[0] = "B"
+
+ def percepcion(self):
+        """
+            Se encuentra el cuarto segun su posicion en la lista de estados de los cuartos
+            por eso el espacio en blanco inical
+
+            @return La posicion de nuestro agente en el entorno, y el estado de esa posicion (cuarto)
+        """
+        return self.x[0], self.x[" ABCDEF".find(self.x[0])]
+
+## Ejercicio 2
+
+class AgenteReactivo_Modelo_SeisCuartos(entornos_o.Agente):
+    """
+    Agente Reactivo para el entorno SeisCuartos
+    """
+    def __init__(self):
+        """
+        Inicializa el modelo interno en el peor de los casos, todos los cuartos sucios
+        Utilizamos un diccionario pues porque se me hizo mas facil para ubicar los cuartos a traves de
+        su llave
+        """
+        self.modelo = {"robot":"A", "A":"sucio", "B":"sucio", "C":"sucio", "D":"sucio", "E":"sucio", "F":"sucio"}
+        #self.modelo =  ["A", "sucio", "sucio", "sucio", "sucio", "sucio", "sucio"]
+
+    def programa(self,percepcion):
+        """
+        Reaccion si el cuarto esta sucio, regresa la accion 'limpiar'
+        Si el cuarto esta limpio revisa hacia donde moverse y regresa la dirreccion a cual moverse
+
+        """
+        cuarto_actual, estado_actual = percepcion
+
+        # Actualizamos
+        self.modelo["robot"] = cuarto_actuaxl
+        self.modelo[cuarto_actual] = estado_actual
+
+        # Dado que el cuarto esta sucio decimos que lo limpie
+        if estado_actual is "sucio":
+            return "limpiar"
+
+        #Si ningun piso esta sucio regresa nada
+        if not "sucio" in [self.modelo[i] for i in "ABCDEF"]: return "nada"
+        #Decidimos la accion a realizar dado el estados de los cuartos y la posicion
+        # El cuarto esta limpio llegados a este punto
+        if cuarto_actual in "ABC":
+            #Estmos en el primer piso
+            if cuarto_actual in 'AC' and not("sucio" in [self.modelo[i] for i in "ABC"]):
+                #self.modelo['A'] == "limpio" and self.modelo['B'] == "limpio" and self.modelo['C'] == "limpio": primer aproximacion
+                # Revisamos el estado del piso en el modelo y si podemos subir, subimos
+                return "subir"
+            elif cuarto_actual in "AB" and self.modelo["A"] == "limpio":
+                return "ir_Derecha"
+            elif cuarto_actual in "BC":# or self.modelo["C"] == "limpio":
+                return "ir_Izquierda"
+        if cuarto_actual in "DEF": #cuarto in "DEF"
+            #Estmos en el segundo piso
+            if cuarto_actual is 'E' and not "sucio" in [self.modelo[i] for i in "DEF"]:
+                #self.modelo['D'] == "limpio" and self.modelo['E'] == "limpio" and self.modelo['F'] == "limpio":
+                # Revisamos el estado del piso en el modelo y si podemos subir, subimos
+                return "bajar"
+            elif cuarto_actual in 'DE' and self.modelo["D"] == "limpio":
+                #checamos el estado del cuarto der, si no esta limpio vete a el mientras limpias
+                return "ir_Derecha"
+            elif cuarto_actual in "EF": # or self.modelo["F"] == "limpio":
+                return "ir_Izquierda"
+
+        return "nada"
+
+class AgenteAleatorio_SeisCuartos(entornos_o.Agente):
+    """
+    Dependiendo del cuarto tenemos derecho a ciertos movimientos,
+    define eso dado la percepcion.
+    """
+    def __init__(self,acciones):
+        """
+        Recibimos todos las acciones del agentes
+        """
+        self.acciones = acciones
+
+    def programa(self, percepcion):
+        cuarto_actual = percepcion[0]
+
+        # De la lista de acciones posibles, copiamos y no modificamos la lista del agente
+        acciones = self.acciones[:]
+
+        if cuarto_actual in "ABC":
+            acciones.remove("bajar")
+            if cuarto_actual is "B":    acciones.remove("subir")
+            elif cuarto_actual is "A":  acciones.remove("ir_Izquierda")
+            elif cuarto_actual is "C":  acciones.remove("ir_Derecha")
+        elif cuarto_actual in "DEF":
+            acciones.remove("subir")
+            if cuarto_actual in "DF":   acciones.remove("bajar")
+            if cuarto_actual is "D":  acciones.remove("ir_Izquierda")
+            if cuarto_actual is "F":  acciones.remove("ir_Derecha")
+
+        return random.choice(acciones)
+
+def test1(pasos = 100):
+    """
+    Simulacion del entorno seis caurtos
+    """
+
+    print("Prueba en SeisCuartos con un agente aleatorio.")
+    entornos_o.simulador(SeisCuartos(), AgenteAleatorio_SeisCuartos(['ir_Derecha', 'ir_Izquierda', 'subir', 'bajar', 'limpiar', 'nada']), pasos)
+
+    print("Prueba en SeisCuartos con un agente reactivo basado en modelo.")
+    entornos_o.simulador(SeisCuartos(), AgenteReactivo_Modelo_SeisCuartos(), pasos)
