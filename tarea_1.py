@@ -302,3 +302,40 @@ class DosCuartosCiego(entornos_o.Entorno):
     def percepcion(self):
                         #no puedes saber si esta limpio
         return self.x[0] #, self.x[" AB".find(self.x[0])]
+class AgenteReactivo_Modelo_DosCuartosCiego(entornos_o.Agente):
+    """
+    Un agente reactivo basado en modelo
+
+    """
+    def __init__(self):
+        """
+        Inicializa el modelo interno en el peor de los casos
+
+        """
+        self.modelo = ['A', 'sucio', 'sucio']
+
+    def programa(self, percepcion):
+        robot = percepcion #ubicacion robot
+
+        # Actualiza el modelo interno
+        self.modelo[0] = robot
+        # No sabes la situacion
+        situacion = self.modelo[' AB'.find(robot)]
+
+        if situacion is "sucio":
+            # le decimos a nuestro robot que esta limpio dado que no tenemos vision del entorno
+            self.modelo[' AB'.find(robot)] = "limpio"
+            return "limpiar"
+        if self.modelo[1] == self.modelo[2] == "limpio": return "nada"
+        if robot == "A": return "ir_B"
+        else: return "ir_A"
+
+
+def test2():
+    print("Prueba del entorno DosCuartosCiego con un agente aleatorio")
+    entornos_o.simulador(DosCuartosCiego(),
+                         doscuartos_o.AgenteAleatorio(['ir_A', 'ir_B', 'limpiar', 'nada']),
+                         100)
+
+    print("Prueba del entorno DosCuartosCiego con un agente reactivo con modelo")
+    entornos_o.simulador(DosCuartosCiego(), AgenteReactivo_Modelo_DosCuartosCiego(), 100)
