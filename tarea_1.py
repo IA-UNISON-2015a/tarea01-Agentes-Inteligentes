@@ -256,3 +256,49 @@ def test1(pasos = 100):
 
     print("Prueba en SeisCuartos con un agente reactivo basado en modelo.")
     entornos_o.simulador(SeisCuartos(), AgenteReactivo_Modelo_SeisCuartos(), pasos)
+
+# Ejercicio 3
+class DosCuartosCiego(entornos_o.Entorno):
+    """
+    Entorno ciego, el robot no puede saber que estado tiene el cuarto
+    por lo cual siempre entrara a limpiar.
+    El robot tiene memoria "sabiendo" que cuarto fue limpiado, asume todo esta sucio
+    por default
+
+    Las acciones válidas en el entorno son ("ir_A", "ir_B", "limpiar", "nada").
+    Todas las acciones son válidas en todos los estados.
+
+    Los sensores es una tupla (robot, limpio?)
+    con la ubicación del robot y el estado de limpieza
+
+    """
+    def __init__(self, x0=["A", "sucio", "sucio"]):
+        """
+        Por default inicialmente el robot está en A y los dos cuartos
+        están sucios
+
+        """
+        self.x = x0[:]
+        self.desempeno = 0
+
+    def accion_legal(self, accion):
+        return accion in ("ir_A", "ir_B", "limpiar", "nada")
+
+    def transicion(self, accion):
+        if not self.accion_legal(accion):
+            raise ValueError("La acción no es legal para este estado")
+
+        robot, a, b = self.x
+        if accion is not "nada" or a is "sucio" or b is "sucio":
+            self.desempeno -= 1
+
+        if accion is "limpiar":
+            self.x[" AB".find(self.x[0])] = "limpio"
+        elif accion is "ir_A":
+            self.x[0] = "A"
+        elif accion is "ir_B":
+            self.x[0] = "B"
+
+    def percepcion(self):
+                        #no puedes saber si esta limpio
+        return self.x[0] #, self.x[" AB".find(self.x[0])]
