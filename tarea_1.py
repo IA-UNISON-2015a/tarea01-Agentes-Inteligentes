@@ -90,7 +90,7 @@ class SeisCuartos(entornos_o.Entorno):
             # Validamos que la accion este dentro de las acciones posibles
             if accion is "ir_Derecha":
                 # Para que esta accion sea legal debe estar en el A B D o # -*- coding: utf-8 -*-
-                return self.x[0] in "A", "B", "D", "E")
+                return self.x[0] in ("A", "B", "D", "E")
             elif accion is "ir_Izquierda":
                 # Para que esta accion sea legal debes estar en el B  C E F
                 return self.x[0] in ("B", "C", "E", "F")
@@ -107,7 +107,7 @@ class SeisCuartos(entornos_o.Entorno):
             # La accion que quieren realizar no es parte del conjunto de acciones legales
             return False
 
-    def transcion(self, accion):
+    def transición(self, accion):
         if not self.acción_legal(accion):
             raise ValueError("La acción no es legal para este estado")
 
@@ -148,7 +148,7 @@ class SeisCuartos(entornos_o.Entorno):
             self.desempeno -= COSTO_SUBIR_BAJAR
             if cuarto_actual is "E": self.x[0] = "B"
 
- def percepcion(self):
+ def percepción(self):
         """
             Se encuentra el cuarto segun su posicion en la lista de estados de los cuartos
             por eso el espacio en blanco inical
@@ -172,13 +172,13 @@ class AgenteReactivo_Modelo_SeisCuartos(entornos_o.Agente):
         self.modelo = {"robot":"A", "A":"sucio", "B":"sucio", "C":"sucio", "D":"sucio", "E":"sucio", "F":"sucio"}
         #self.modelo =  ["A", "sucio", "sucio", "sucio", "sucio", "sucio", "sucio"]
 
-    def programa(self,percepcion):
+    def programa(self,percepción):
         """
         Reaccion si el cuarto esta sucio, regresa la accion 'limpiar'
         Si el cuarto esta limpio revisa hacia donde moverse y regresa la dirreccion a cual moverse
 
         """
-        cuarto_actual, estado_actual = percepcion
+        cuarto_actual, estado_actual = percepción
 
         # Actualizamos
         self.modelo["robot"] = cuarto_actuaxl
@@ -219,7 +219,7 @@ class AgenteReactivo_Modelo_SeisCuartos(entornos_o.Agente):
 class AgenteAleatorio_SeisCuartos(entornos_o.Agente):
     """
     Dependiendo del cuarto tenemos derecho a ciertos movimientos,
-    define eso dado la percepcion.
+    define eso dado la percepción.
     """
     def __init__(self,acciones):
         """
@@ -227,8 +227,8 @@ class AgenteAleatorio_SeisCuartos(entornos_o.Agente):
         """
         self.acciones = acciones
 
-    def programa(self, percepcion):
-        cuarto_actual = percepcion[0]
+    def programa(self, percepción):
+        cuarto_actual = percepción[0]
 
         # De la lista de acciones posibles, copiamos y no modificamos la lista del agente
         acciones = self.acciones[:]
@@ -281,11 +281,11 @@ class DosCuartosCiego(entornos_o.Entorno):
         self.x = x0[:]
         self.desempeno = 0
 
-    def accion_legal(self, accion):
+    def acción_legal(self, accion):
         return accion in ("ir_A", "ir_B", "limpiar", "nada")
 
-    def transicion(self, accion):
-        if not self.accion_legal(accion):
+    def transición(self, accion):
+        if not self.acción_legal(accion):
             raise ValueError("La acción no es legal para este estado")
 
         robot, a, b = self.x
@@ -299,7 +299,7 @@ class DosCuartosCiego(entornos_o.Entorno):
         elif accion is "ir_B":
             self.x[0] = "B"
 
-    def percepcion(self):
+    def percepción(self):
                         #no puedes saber si esta limpio
         return self.x[0] #, self.x[" AB".find(self.x[0])]
 class AgenteReactivo_Modelo_DosCuartosCiego(entornos_o.Agente):
@@ -314,8 +314,8 @@ class AgenteReactivo_Modelo_DosCuartosCiego(entornos_o.Agente):
         """
         self.modelo = ['A', 'sucio', 'sucio']
 
-    def programa(self, percepcion):
-        robot = percepcion #ubicacion robot
+    def programa(self, percepción):
+        robot = percepción #ubicacion robot
 
         # Actualiza el modelo interno
         self.modelo[0] = robot
@@ -339,3 +339,88 @@ def test2():
 
     print("Prueba del entorno DosCuartosCiego con un agente reactivo con modelo")
     entornos_o.simulador(DosCuartosCiego(), AgenteReactivo_Modelo_DosCuartosCiego(), 100)
+
+
+# Ejercicio 4
+
+class DosCuartosEstocastico(entornos_o.Entorno):
+    """
+    Reconsidera el problema original de los dos cuartos, pero ahora modificalo para que cuando
+    el agente decida aspirar, el 80% de las veces limpie pero el 20% (aleatorio) deje sucio el
+    cuarto. Igualmente, cuando el agente decida cambiar de cuarto, se cambie correctamente de
+    cuarto el 90% de la veces y el 10% se queda en su lugar. Diseña un agente racional para este
+    problema, pruebalo y comparalo con el agente aleatorio.
+    """
+    def __init__(self, x0=["A", "sucio", "sucio"]):
+        """
+        Por default inicialmente el robot está en A y los dos cuartos
+        están sucios
+
+        """
+        self.x = x0[:]
+        self.desempeno = 0
+
+    def acción_legal(self, accion):
+        return accion in ("ir_A", "ir_B", "limpiar", "nada")
+    def transición(self, accion):
+        if not self.acción_legal(accion):
+            raise ValueError("La acción no es legal para este estado")
+
+        robot, a, b = self.x
+        if accion is not "nada" or a is "sucio" or b is "sucio":
+            self.desempeno -= 1
+        if accion is "limpiar":
+            if random.random() <= 0.8:
+                self.x[" AB".find(self.x[0])] = "limpio"
+        elif accion is "ir_A":
+            if random.random() <= 0.9:
+                self.x[0] = "A"
+        elif accion is "ir_B":
+            if random.random() <= 0.9:
+                self.x[0] = "B"
+
+    def percepción(self):
+        return self.x[0], self.x[" AB".find(self.x[0])]
+
+class AgenteReactivo_Modelo_DosCuartosEstocastico(entornos_o.Agente):
+    """
+    Un agente reactivo basado en modelo
+    Se definen las posibilidades de exito en el desarrollo del entorno
+    """
+    def __init__(self):
+        """
+        Inicializa el modelo interno en el peor de los casos
+
+        """
+        self.modelo = ['A', 'sucio', 'sucio']
+
+    def programa(self, percepción):
+        robot, situacion = percepción
+
+        # Actualiza el modelo interno
+        self.modelo[0] = robot
+        self.modelo[' AB'.find(robot)] = situacion
+
+        # Decide sobre el modelo interno
+        a, b = self.modelo[1], self.modelo[2]
+        return ('nada' if a == b == 'limpio' else
+                'limpiar' if situacion == 'sucio' else
+                'ir_A' if robot == 'B' else 'ir_B')
+def test3():
+    print("Prueba del entorno estocastico con un agente aleatorio")
+    entornos_o.simulador(DosCuartosEstocastico(),
+                         doscuartos_o.AgenteAleatorio(['ir_A', 'ir_B', 'limpiar', 'nada']),
+                         100)
+
+    print("Prueba del entorno estocastico con un agente reactivo con modelo")
+    entornos_o.simulador(DosCuartosEstocastico(), AgenteReactivo_Modelo_DosCuartosEstocastico(), 100)
+# **********************************************************************************************
+if __name__ == "__main__":
+    print("Tests bloquedos con '#', desbloquee el cual desee evaluar.")
+    # revisar agente reactivo ciclado, nunca entra a cuarto F
+    test1() #testeando Ejercio 1 y 2
+    test2() # testeando Ejercicio 3
+    test3() #  testeando ejercicio 4
+    print("Hecho por Gilberto Espinoza")
+
+# **********************************************************************************************
