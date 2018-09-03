@@ -59,7 +59,7 @@ la tarea.
 """
 __author__ = 'Gilberto Espinoza'
 
-import entorno_o
+import entornos_o
 # Requiere el modulo entornos_o.py
 # Usa el modulo doscuartos_o.py para reutilizar código
 # Agrega los modulos que requieras de python
@@ -120,35 +120,35 @@ class SeisCuartos(entornos_o.Entorno):
         # ubicamos los cuartos por su etiqueta y estado definido en __init__
         cuartos = {etiq[i]:self.x[i+1] for i in range(len(etiq))}
         """
-          # Costos para el desempeno del agente
+          # Costos para el desempeño del agente
         COSTO_LIMPIAR = 3
         COSTO_MOVER = 1
         COSTO_SUBIR_BAJAR = 2
 
         if accion is "limpiar":
-            self.desempeno -= COSTO_LIMPIAR
+            self.desempeño -= COSTO_LIMPIAR
             self.x[" ABCDEF".find(self.x[0])] = "limpio"
         if accion is "ir_Derecha":
-            self.desempeno -= COSTO_MOVER
+            self.desempeño -= COSTO_MOVER
             if cuarto_actual is "A": self.x[0] = "B"
             if cuarto_actual is "B": self.x[0] = "C"
             if cuarto_actual is "D": self.x[0] = "E"
             if cuarto_actual is "E": self.x[0] = "F"
         if accion is "ir_Izquierda":
-            self.desempeno -= COSTO_MOVER
+            self.desempeño -= COSTO_MOVER
             if cuarto_actual is "B": self.x[0] = "A"
             if cuarto_actual is "C": self.x[0] = "B"
             if cuarto_actual is "E": self.x[0] = "D"
             if cuarto_actual is "F": self.x[0] = "E"
         if accion is "subir":
-            self.desempeno -= COSTO_SUBIR_BAJAR
+            self.desempeño -= COSTO_SUBIR_BAJAR
             if cuarto_actual is "A": self.x[0] = "D"
             if cuarto_actual is "C": self.x[0] = "F"
         if accion is "bajar":
-            self.desempeno -= COSTO_SUBIR_BAJAR
+            self.desempeño -= COSTO_SUBIR_BAJAR
             if cuarto_actual is "E": self.x[0] = "B"
 
- def percepción(self):
+    def percepción(self):
         """
             Se encuentra el cuarto segun su posicion en la lista de estados de los cuartos
             por eso el espacio en blanco inical
@@ -181,7 +181,7 @@ class AgenteReactivo_Modelo_SeisCuartos(entornos_o.Agente):
         cuarto_actual, estado_actual = percepción
 
         # Actualizamos
-        self.modelo["robot"] = cuarto_actuaxl
+        self.modelo["robot"] = cuarto_actual
         self.modelo[cuarto_actual] = estado_actual
 
         # Dado que el cuarto esta sucio decimos que lo limpie
@@ -279,7 +279,7 @@ class DosCuartosCiego(entornos_o.Entorno):
 
         """
         self.x = x0[:]
-        self.desempeno = 0
+        self.desempeño = 0
 
     def acción_legal(self, accion):
         return accion in ("ir_A", "ir_B", "limpiar", "nada")
@@ -290,7 +290,7 @@ class DosCuartosCiego(entornos_o.Entorno):
 
         robot, a, b = self.x
         if accion is not "nada" or a is "sucio" or b is "sucio":
-            self.desempeno -= 1
+            self.desempeño -= 1
 
         if accion is "limpiar":
             self.x[" AB".find(self.x[0])] = "limpio"
@@ -358,7 +358,7 @@ class DosCuartosEstocastico(entornos_o.Entorno):
 
         """
         self.x = x0[:]
-        self.desempeno = 0
+        self.desempeño = 0
 
     def acción_legal(self, accion):
         return accion in ("ir_A", "ir_B", "limpiar", "nada")
@@ -368,7 +368,7 @@ class DosCuartosEstocastico(entornos_o.Entorno):
 
         robot, a, b = self.x
         if accion is not "nada" or a is "sucio" or b is "sucio":
-            self.desempeno -= 1
+            self.desempeño -= 1
         if accion is "limpiar":
             if random.random() <= 0.8:
                 self.x[" AB".find(self.x[0])] = "limpio"

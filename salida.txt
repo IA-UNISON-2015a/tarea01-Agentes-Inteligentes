@@ -1,0 +1,662 @@
+Tests bloquedos con '#', desbloquee el cual desee evaluar.
+Prueba en SeisCuartos con un agente aleatorio.
+
+
+Simulación de entorno tipo <class '__main__.SeisCuartos'> con el agente tipo <class '__main__.AgenteAleatorio_SeisCuartos'>
+
+   Paso                    Estado                           Acción            Desempeño   
+__________________________________________________________________________________________
+    0     ['A', 'sucio', 'sucio', 'sucio', 'sucio', 'sucio', 'sucio']          subir                     0
+    1     ['D', 'sucio', 'sucio', 'sucio', 'sucio', 'sucio', 'sucio']           nada                    -2
+    2     ['D', 'sucio', 'sucio', 'sucio', 'sucio', 'sucio', 'sucio']         limpiar                   -2
+    3     ['D', 'sucio', 'sucio', 'sucio', 'limpio', 'sucio', 'sucio']         limpiar                   -5
+    4     ['D', 'sucio', 'sucio', 'sucio', 'limpio', 'sucio', 'sucio']           nada                    -8
+    5     ['D', 'sucio', 'sucio', 'sucio', 'limpio', 'sucio', 'sucio']        ir_Derecha                 -8
+    6     ['E', 'sucio', 'sucio', 'sucio', 'limpio', 'sucio', 'sucio']          bajar                    -9
+    7     ['B', 'sucio', 'sucio', 'sucio', 'limpio', 'sucio', 'sucio']        ir_Derecha                -11
+    8     ['C', 'sucio', 'sucio', 'sucio', 'limpio', 'sucio', 'sucio']           nada                   -12
+    9     ['C', 'sucio', 'sucio', 'sucio', 'limpio', 'sucio', 'sucio']           nada                   -12
+    10    ['C', 'sucio', 'sucio', 'sucio', 'limpio', 'sucio', 'sucio']          subir                   -12
+    11    ['F', 'sucio', 'sucio', 'sucio', 'limpio', 'sucio', 'sucio']         limpiar                  -14
+    12    ['F', 'sucio', 'sucio', 'sucio', 'limpio', 'sucio', 'limpio']           nada                   -17
+    13    ['F', 'sucio', 'sucio', 'sucio', 'limpio', 'sucio', 'limpio']         limpiar                  -17
+    14    ['F', 'sucio', 'sucio', 'sucio', 'limpio', 'sucio', 'limpio']           nada                   -20
+    15    ['F', 'sucio', 'sucio', 'sucio', 'limpio', 'sucio', 'limpio']         limpiar                  -20
+    16    ['F', 'sucio', 'sucio', 'sucio', 'limpio', 'sucio', 'limpio']       ir_Izquierda               -23
+    17    ['E', 'sucio', 'sucio', 'sucio', 'limpio', 'sucio', 'limpio']        ir_Derecha                -24
+    18    ['F', 'sucio', 'sucio', 'sucio', 'limpio', 'sucio', 'limpio']       ir_Izquierda               -25
+    19    ['E', 'sucio', 'sucio', 'sucio', 'limpio', 'sucio', 'limpio']         limpiar                  -26
+    20    ['E', 'sucio', 'sucio', 'sucio', 'limpio', 'limpio', 'limpio']          bajar                   -29
+    21    ['B', 'sucio', 'sucio', 'sucio', 'limpio', 'limpio', 'limpio']        ir_Derecha                -31
+    22    ['C', 'sucio', 'sucio', 'sucio', 'limpio', 'limpio', 'limpio']           nada                   -32
+    23    ['C', 'sucio', 'sucio', 'sucio', 'limpio', 'limpio', 'limpio']         limpiar                  -32
+    24    ['C', 'sucio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -35
+    25    ['C', 'sucio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']       ir_Izquierda               -35
+    26    ['B', 'sucio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']       ir_Izquierda               -36
+    27    ['A', 'sucio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']         limpiar                  -37
+    28    ['A', 'limpio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']        ir_Derecha                -40
+    29    ['B', 'limpio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']        ir_Derecha                -41
+    30    ['C', 'limpio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -42
+    31    ['C', 'limpio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']       ir_Izquierda               -42
+    32    ['B', 'limpio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -43
+    33    ['B', 'limpio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']       ir_Izquierda               -43
+    34    ['A', 'limpio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']        ir_Derecha                -44
+    35    ['B', 'limpio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']        ir_Derecha                -45
+    36    ['C', 'limpio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -46
+    37    ['C', 'limpio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']         limpiar                  -46
+    38    ['C', 'limpio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -49
+    39    ['C', 'limpio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -49
+    40    ['C', 'limpio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']          subir                   -49
+    41    ['F', 'limpio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -51
+    42    ['F', 'limpio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']         limpiar                  -51
+    43    ['F', 'limpio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']       ir_Izquierda               -54
+    44    ['E', 'limpio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']        ir_Derecha                -55
+    45    ['F', 'limpio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']         limpiar                  -56
+    46    ['F', 'limpio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -59
+    47    ['F', 'limpio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']         limpiar                  -59
+    48    ['F', 'limpio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']       ir_Izquierda               -62
+    49    ['E', 'limpio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']         limpiar                  -63
+    50    ['E', 'limpio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']         limpiar                  -66
+    51    ['E', 'limpio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']        ir_Derecha                -69
+    52    ['F', 'limpio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -70
+    53    ['F', 'limpio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -70
+    54    ['F', 'limpio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']         limpiar                  -70
+    55    ['F', 'limpio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']       ir_Izquierda               -73
+    56    ['E', 'limpio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']         limpiar                  -74
+    57    ['E', 'limpio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']        ir_Derecha                -77
+    58    ['F', 'limpio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']       ir_Izquierda               -78
+    59    ['E', 'limpio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']         limpiar                  -79
+    60    ['E', 'limpio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -82
+    61    ['E', 'limpio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']        ir_Derecha                -82
+    62    ['F', 'limpio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -83
+    63    ['F', 'limpio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']         limpiar                  -83
+    64    ['F', 'limpio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']         limpiar                  -86
+    65    ['F', 'limpio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -89
+    66    ['F', 'limpio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']         limpiar                  -89
+    67    ['F', 'limpio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']         limpiar                  -92
+    68    ['F', 'limpio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -95
+    69    ['F', 'limpio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']         limpiar                  -95
+    70    ['F', 'limpio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -98
+    71    ['F', 'limpio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -98
+    72    ['F', 'limpio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']         limpiar                  -98
+    73    ['F', 'limpio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']       ir_Izquierda              -101
+    74    ['E', 'limpio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                  -102
+    75    ['E', 'limpio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']       ir_Izquierda              -102
+    76    ['D', 'limpio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']        ir_Derecha               -103
+    77    ['E', 'limpio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                  -104
+    78    ['E', 'limpio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']       ir_Izquierda              -104
+    79    ['D', 'limpio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                  -105
+    80    ['D', 'limpio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']         limpiar                 -105
+    81    ['D', 'limpio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']         limpiar                 -108
+    82    ['D', 'limpio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                  -111
+    83    ['D', 'limpio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                  -111
+    84    ['D', 'limpio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                  -111
+    85    ['D', 'limpio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']        ir_Derecha               -111
+    86    ['E', 'limpio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']          bajar                  -112
+    87    ['B', 'limpio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']        ir_Derecha               -114
+    88    ['C', 'limpio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']          subir                  -115
+    89    ['F', 'limpio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                  -117
+    90    ['F', 'limpio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']       ir_Izquierda              -117
+    91    ['E', 'limpio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']          bajar                  -118
+    92    ['B', 'limpio', 'sucio', 'limpio', 'limpio', 'limpio', 'limpio']         limpiar                 -120
+    93    ['B', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']         limpiar                 -123
+    94    ['B', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']        ir_Derecha               -126
+    95    ['C', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']          subir                  -127
+    96    ['F', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']         limpiar                 -129
+    97    ['F', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']       ir_Izquierda              -132
+    98    ['E', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']        ir_Derecha               -133
+    99    ['F', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                  -134
+__________________________________________________________________________________________
+
+
+Prueba en SeisCuartos con un agente reactivo basado en modelo.
+
+
+Simulación de entorno tipo <class '__main__.SeisCuartos'> con el agente tipo <class '__main__.AgenteReactivo_Modelo_SeisCuartos'>
+
+   Paso                    Estado                           Acción            Desempeño   
+__________________________________________________________________________________________
+    0     ['A', 'sucio', 'sucio', 'sucio', 'sucio', 'sucio', 'sucio']         limpiar                    0
+    1     ['A', 'limpio', 'sucio', 'sucio', 'sucio', 'sucio', 'sucio']        ir_Derecha                 -3
+    2     ['B', 'limpio', 'sucio', 'sucio', 'sucio', 'sucio', 'sucio']         limpiar                   -4
+    3     ['B', 'limpio', 'limpio', 'sucio', 'sucio', 'sucio', 'sucio']        ir_Derecha                 -7
+    4     ['C', 'limpio', 'limpio', 'sucio', 'sucio', 'sucio', 'sucio']         limpiar                   -8
+    5     ['C', 'limpio', 'limpio', 'limpio', 'sucio', 'sucio', 'sucio']          subir                   -11
+    6     ['F', 'limpio', 'limpio', 'limpio', 'sucio', 'sucio', 'sucio']         limpiar                  -13
+    7     ['F', 'limpio', 'limpio', 'limpio', 'sucio', 'sucio', 'limpio']       ir_Izquierda               -16
+    8     ['E', 'limpio', 'limpio', 'limpio', 'sucio', 'sucio', 'limpio']         limpiar                  -17
+    9     ['E', 'limpio', 'limpio', 'limpio', 'sucio', 'limpio', 'limpio']       ir_Izquierda               -20
+    10    ['D', 'limpio', 'limpio', 'limpio', 'sucio', 'limpio', 'limpio']         limpiar                  -21
+    11    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    12    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    13    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    14    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    15    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    16    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    17    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    18    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    19    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    20    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    21    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    22    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    23    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    24    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    25    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    26    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    27    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    28    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    29    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    30    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    31    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    32    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    33    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    34    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    35    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    36    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    37    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    38    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    39    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    40    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    41    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    42    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    43    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    44    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    45    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    46    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    47    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    48    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    49    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    50    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    51    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    52    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    53    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    54    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    55    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    56    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    57    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    58    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    59    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    60    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    61    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    62    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    63    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    64    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    65    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    66    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    67    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    68    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    69    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    70    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    71    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    72    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    73    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    74    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    75    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    76    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    77    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    78    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    79    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    80    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    81    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    82    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    83    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    84    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    85    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    86    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    87    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    88    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    89    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    90    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    91    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    92    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    93    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    94    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    95    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    96    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    97    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    98    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+    99    ['D', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio', 'limpio']           nada                   -24
+__________________________________________________________________________________________
+
+
+Prueba del entorno DosCuartosCiego con un agente aleatorio
+
+
+Simulación de entorno tipo <class '__main__.DosCuartosCiego'> con el agente tipo <class 'doscuartos_o.AgenteAleatorio'>
+
+   Paso                    Estado                           Acción            Desempeño   
+__________________________________________________________________________________________
+    0             ['A', 'sucio', 'sucio']                    ir_B                     0
+    1             ['B', 'sucio', 'sucio']                    nada                    -1
+    2             ['B', 'sucio', 'sucio']                    nada                    -2
+    3             ['B', 'sucio', 'sucio']                    nada                    -3
+    4             ['B', 'sucio', 'sucio']                    nada                    -4
+    5             ['B', 'sucio', 'sucio']                    nada                    -5
+    6             ['B', 'sucio', 'sucio']                    ir_B                    -6
+    7             ['B', 'sucio', 'sucio']                  limpiar                   -7
+    8             ['B', 'sucio', 'limpio']                   ir_B                    -8
+    9             ['B', 'sucio', 'limpio']                   nada                    -9
+    10            ['B', 'sucio', 'limpio']                   nada                   -10
+    11            ['B', 'sucio', 'limpio']                   nada                   -11
+    12            ['B', 'sucio', 'limpio']                   ir_B                   -12
+    13            ['B', 'sucio', 'limpio']                   nada                   -13
+    14            ['B', 'sucio', 'limpio']                   ir_A                   -14
+    15            ['A', 'sucio', 'limpio']                   ir_B                   -15
+    16            ['B', 'sucio', 'limpio']                 limpiar                  -16
+    17            ['B', 'sucio', 'limpio']                 limpiar                  -17
+    18            ['B', 'sucio', 'limpio']                   nada                   -18
+    19            ['B', 'sucio', 'limpio']                 limpiar                  -19
+    20            ['B', 'sucio', 'limpio']                   ir_B                   -20
+    21            ['B', 'sucio', 'limpio']                   ir_B                   -21
+    22            ['B', 'sucio', 'limpio']                 limpiar                  -22
+    23            ['B', 'sucio', 'limpio']                 limpiar                  -23
+    24            ['B', 'sucio', 'limpio']                   ir_B                   -24
+    25            ['B', 'sucio', 'limpio']                   ir_A                   -25
+    26            ['A', 'sucio', 'limpio']                 limpiar                  -26
+    27           ['A', 'limpio', 'limpio']                 limpiar                  -27
+    28           ['A', 'limpio', 'limpio']                   ir_A                   -28
+    29           ['A', 'limpio', 'limpio']                 limpiar                  -29
+    30           ['A', 'limpio', 'limpio']                   nada                   -30
+    31           ['A', 'limpio', 'limpio']                   nada                   -30
+    32           ['A', 'limpio', 'limpio']                   nada                   -30
+    33           ['A', 'limpio', 'limpio']                   ir_B                   -30
+    34           ['B', 'limpio', 'limpio']                 limpiar                  -31
+    35           ['B', 'limpio', 'limpio']                 limpiar                  -32
+    36           ['B', 'limpio', 'limpio']                   ir_A                   -33
+    37           ['A', 'limpio', 'limpio']                   ir_B                   -34
+    38           ['B', 'limpio', 'limpio']                   ir_B                   -35
+    39           ['B', 'limpio', 'limpio']                 limpiar                  -36
+    40           ['B', 'limpio', 'limpio']                 limpiar                  -37
+    41           ['B', 'limpio', 'limpio']                   ir_A                   -38
+    42           ['A', 'limpio', 'limpio']                   ir_B                   -39
+    43           ['B', 'limpio', 'limpio']                   ir_B                   -40
+    44           ['B', 'limpio', 'limpio']                 limpiar                  -41
+    45           ['B', 'limpio', 'limpio']                   nada                   -42
+    46           ['B', 'limpio', 'limpio']                   nada                   -42
+    47           ['B', 'limpio', 'limpio']                   nada                   -42
+    48           ['B', 'limpio', 'limpio']                   ir_A                   -42
+    49           ['A', 'limpio', 'limpio']                   ir_B                   -43
+    50           ['B', 'limpio', 'limpio']                   ir_A                   -44
+    51           ['A', 'limpio', 'limpio']                   ir_A                   -45
+    52           ['A', 'limpio', 'limpio']                   ir_B                   -46
+    53           ['B', 'limpio', 'limpio']                   ir_A                   -47
+    54           ['A', 'limpio', 'limpio']                   nada                   -48
+    55           ['A', 'limpio', 'limpio']                   ir_B                   -48
+    56           ['B', 'limpio', 'limpio']                   ir_B                   -49
+    57           ['B', 'limpio', 'limpio']                   ir_A                   -50
+    58           ['A', 'limpio', 'limpio']                 limpiar                  -51
+    59           ['A', 'limpio', 'limpio']                   ir_A                   -52
+    60           ['A', 'limpio', 'limpio']                   ir_B                   -53
+    61           ['B', 'limpio', 'limpio']                   ir_A                   -54
+    62           ['A', 'limpio', 'limpio']                   ir_A                   -55
+    63           ['A', 'limpio', 'limpio']                 limpiar                  -56
+    64           ['A', 'limpio', 'limpio']                 limpiar                  -57
+    65           ['A', 'limpio', 'limpio']                   ir_B                   -58
+    66           ['B', 'limpio', 'limpio']                   ir_A                   -59
+    67           ['A', 'limpio', 'limpio']                 limpiar                  -60
+    68           ['A', 'limpio', 'limpio']                   nada                   -61
+    69           ['A', 'limpio', 'limpio']                   ir_B                   -61
+    70           ['B', 'limpio', 'limpio']                 limpiar                  -62
+    71           ['B', 'limpio', 'limpio']                 limpiar                  -63
+    72           ['B', 'limpio', 'limpio']                 limpiar                  -64
+    73           ['B', 'limpio', 'limpio']                   ir_B                   -65
+    74           ['B', 'limpio', 'limpio']                   nada                   -66
+    75           ['B', 'limpio', 'limpio']                   ir_A                   -66
+    76           ['A', 'limpio', 'limpio']                   ir_A                   -67
+    77           ['A', 'limpio', 'limpio']                 limpiar                  -68
+    78           ['A', 'limpio', 'limpio']                   ir_A                   -69
+    79           ['A', 'limpio', 'limpio']                   nada                   -70
+    80           ['A', 'limpio', 'limpio']                   ir_A                   -70
+    81           ['A', 'limpio', 'limpio']                   nada                   -71
+    82           ['A', 'limpio', 'limpio']                   nada                   -71
+    83           ['A', 'limpio', 'limpio']                 limpiar                  -71
+    84           ['A', 'limpio', 'limpio']                   ir_B                   -72
+    85           ['B', 'limpio', 'limpio']                   nada                   -73
+    86           ['B', 'limpio', 'limpio']                   ir_B                   -73
+    87           ['B', 'limpio', 'limpio']                   nada                   -74
+    88           ['B', 'limpio', 'limpio']                   ir_A                   -74
+    89           ['A', 'limpio', 'limpio']                   ir_B                   -75
+    90           ['B', 'limpio', 'limpio']                 limpiar                  -76
+    91           ['B', 'limpio', 'limpio']                   nada                   -77
+    92           ['B', 'limpio', 'limpio']                   nada                   -77
+    93           ['B', 'limpio', 'limpio']                   ir_B                   -77
+    94           ['B', 'limpio', 'limpio']                   ir_A                   -78
+    95           ['A', 'limpio', 'limpio']                   nada                   -79
+    96           ['A', 'limpio', 'limpio']                   ir_B                   -79
+    97           ['B', 'limpio', 'limpio']                   ir_A                   -80
+    98           ['A', 'limpio', 'limpio']                   nada                   -81
+    99           ['A', 'limpio', 'limpio']                   nada                   -81
+__________________________________________________________________________________________
+
+
+Prueba del entorno DosCuartosCiego con un agente reactivo con modelo
+
+
+Simulación de entorno tipo <class '__main__.DosCuartosCiego'> con el agente tipo <class '__main__.AgenteReactivo_Modelo_DosCuartosCiego'>
+
+   Paso                    Estado                           Acción            Desempeño   
+__________________________________________________________________________________________
+    0             ['A', 'sucio', 'sucio']                  limpiar                    0
+    1             ['A', 'limpio', 'sucio']                   ir_B                    -1
+    2             ['B', 'limpio', 'sucio']                 limpiar                   -2
+    3            ['B', 'limpio', 'limpio']                   nada                    -3
+    4            ['B', 'limpio', 'limpio']                   nada                    -3
+    5            ['B', 'limpio', 'limpio']                   nada                    -3
+    6            ['B', 'limpio', 'limpio']                   nada                    -3
+    7            ['B', 'limpio', 'limpio']                   nada                    -3
+    8            ['B', 'limpio', 'limpio']                   nada                    -3
+    9            ['B', 'limpio', 'limpio']                   nada                    -3
+    10           ['B', 'limpio', 'limpio']                   nada                    -3
+    11           ['B', 'limpio', 'limpio']                   nada                    -3
+    12           ['B', 'limpio', 'limpio']                   nada                    -3
+    13           ['B', 'limpio', 'limpio']                   nada                    -3
+    14           ['B', 'limpio', 'limpio']                   nada                    -3
+    15           ['B', 'limpio', 'limpio']                   nada                    -3
+    16           ['B', 'limpio', 'limpio']                   nada                    -3
+    17           ['B', 'limpio', 'limpio']                   nada                    -3
+    18           ['B', 'limpio', 'limpio']                   nada                    -3
+    19           ['B', 'limpio', 'limpio']                   nada                    -3
+    20           ['B', 'limpio', 'limpio']                   nada                    -3
+    21           ['B', 'limpio', 'limpio']                   nada                    -3
+    22           ['B', 'limpio', 'limpio']                   nada                    -3
+    23           ['B', 'limpio', 'limpio']                   nada                    -3
+    24           ['B', 'limpio', 'limpio']                   nada                    -3
+    25           ['B', 'limpio', 'limpio']                   nada                    -3
+    26           ['B', 'limpio', 'limpio']                   nada                    -3
+    27           ['B', 'limpio', 'limpio']                   nada                    -3
+    28           ['B', 'limpio', 'limpio']                   nada                    -3
+    29           ['B', 'limpio', 'limpio']                   nada                    -3
+    30           ['B', 'limpio', 'limpio']                   nada                    -3
+    31           ['B', 'limpio', 'limpio']                   nada                    -3
+    32           ['B', 'limpio', 'limpio']                   nada                    -3
+    33           ['B', 'limpio', 'limpio']                   nada                    -3
+    34           ['B', 'limpio', 'limpio']                   nada                    -3
+    35           ['B', 'limpio', 'limpio']                   nada                    -3
+    36           ['B', 'limpio', 'limpio']                   nada                    -3
+    37           ['B', 'limpio', 'limpio']                   nada                    -3
+    38           ['B', 'limpio', 'limpio']                   nada                    -3
+    39           ['B', 'limpio', 'limpio']                   nada                    -3
+    40           ['B', 'limpio', 'limpio']                   nada                    -3
+    41           ['B', 'limpio', 'limpio']                   nada                    -3
+    42           ['B', 'limpio', 'limpio']                   nada                    -3
+    43           ['B', 'limpio', 'limpio']                   nada                    -3
+    44           ['B', 'limpio', 'limpio']                   nada                    -3
+    45           ['B', 'limpio', 'limpio']                   nada                    -3
+    46           ['B', 'limpio', 'limpio']                   nada                    -3
+    47           ['B', 'limpio', 'limpio']                   nada                    -3
+    48           ['B', 'limpio', 'limpio']                   nada                    -3
+    49           ['B', 'limpio', 'limpio']                   nada                    -3
+    50           ['B', 'limpio', 'limpio']                   nada                    -3
+    51           ['B', 'limpio', 'limpio']                   nada                    -3
+    52           ['B', 'limpio', 'limpio']                   nada                    -3
+    53           ['B', 'limpio', 'limpio']                   nada                    -3
+    54           ['B', 'limpio', 'limpio']                   nada                    -3
+    55           ['B', 'limpio', 'limpio']                   nada                    -3
+    56           ['B', 'limpio', 'limpio']                   nada                    -3
+    57           ['B', 'limpio', 'limpio']                   nada                    -3
+    58           ['B', 'limpio', 'limpio']                   nada                    -3
+    59           ['B', 'limpio', 'limpio']                   nada                    -3
+    60           ['B', 'limpio', 'limpio']                   nada                    -3
+    61           ['B', 'limpio', 'limpio']                   nada                    -3
+    62           ['B', 'limpio', 'limpio']                   nada                    -3
+    63           ['B', 'limpio', 'limpio']                   nada                    -3
+    64           ['B', 'limpio', 'limpio']                   nada                    -3
+    65           ['B', 'limpio', 'limpio']                   nada                    -3
+    66           ['B', 'limpio', 'limpio']                   nada                    -3
+    67           ['B', 'limpio', 'limpio']                   nada                    -3
+    68           ['B', 'limpio', 'limpio']                   nada                    -3
+    69           ['B', 'limpio', 'limpio']                   nada                    -3
+    70           ['B', 'limpio', 'limpio']                   nada                    -3
+    71           ['B', 'limpio', 'limpio']                   nada                    -3
+    72           ['B', 'limpio', 'limpio']                   nada                    -3
+    73           ['B', 'limpio', 'limpio']                   nada                    -3
+    74           ['B', 'limpio', 'limpio']                   nada                    -3
+    75           ['B', 'limpio', 'limpio']                   nada                    -3
+    76           ['B', 'limpio', 'limpio']                   nada                    -3
+    77           ['B', 'limpio', 'limpio']                   nada                    -3
+    78           ['B', 'limpio', 'limpio']                   nada                    -3
+    79           ['B', 'limpio', 'limpio']                   nada                    -3
+    80           ['B', 'limpio', 'limpio']                   nada                    -3
+    81           ['B', 'limpio', 'limpio']                   nada                    -3
+    82           ['B', 'limpio', 'limpio']                   nada                    -3
+    83           ['B', 'limpio', 'limpio']                   nada                    -3
+    84           ['B', 'limpio', 'limpio']                   nada                    -3
+    85           ['B', 'limpio', 'limpio']                   nada                    -3
+    86           ['B', 'limpio', 'limpio']                   nada                    -3
+    87           ['B', 'limpio', 'limpio']                   nada                    -3
+    88           ['B', 'limpio', 'limpio']                   nada                    -3
+    89           ['B', 'limpio', 'limpio']                   nada                    -3
+    90           ['B', 'limpio', 'limpio']                   nada                    -3
+    91           ['B', 'limpio', 'limpio']                   nada                    -3
+    92           ['B', 'limpio', 'limpio']                   nada                    -3
+    93           ['B', 'limpio', 'limpio']                   nada                    -3
+    94           ['B', 'limpio', 'limpio']                   nada                    -3
+    95           ['B', 'limpio', 'limpio']                   nada                    -3
+    96           ['B', 'limpio', 'limpio']                   nada                    -3
+    97           ['B', 'limpio', 'limpio']                   nada                    -3
+    98           ['B', 'limpio', 'limpio']                   nada                    -3
+    99           ['B', 'limpio', 'limpio']                   nada                    -3
+__________________________________________________________________________________________
+
+
+Prueba del entorno estocastico con un agente aleatorio
+
+
+Simulación de entorno tipo <class '__main__.DosCuartosEstocastico'> con el agente tipo <class 'doscuartos_o.AgenteAleatorio'>
+
+   Paso                    Estado                           Acción            Desempeño   
+__________________________________________________________________________________________
+    0             ['A', 'sucio', 'sucio']                    ir_A                     0
+    1             ['A', 'sucio', 'sucio']                    ir_B                    -1
+    2             ['B', 'sucio', 'sucio']                    ir_A                    -2
+    3             ['A', 'sucio', 'sucio']                  limpiar                   -3
+    4             ['A', 'limpio', 'sucio']                   nada                    -4
+    5             ['A', 'limpio', 'sucio']                   ir_B                    -5
+    6             ['B', 'limpio', 'sucio']                 limpiar                   -6
+    7             ['B', 'limpio', 'sucio']                   ir_B                    -7
+    8             ['B', 'limpio', 'sucio']                   ir_A                    -8
+    9             ['A', 'limpio', 'sucio']                   ir_B                    -9
+    10            ['B', 'limpio', 'sucio']                   ir_A                   -10
+    11            ['A', 'limpio', 'sucio']                   ir_B                   -11
+    12            ['B', 'limpio', 'sucio']                   nada                   -12
+    13            ['B', 'limpio', 'sucio']                 limpiar                  -13
+    14           ['B', 'limpio', 'limpio']                   ir_A                   -14
+    15           ['B', 'limpio', 'limpio']                   ir_B                   -15
+    16           ['B', 'limpio', 'limpio']                   ir_B                   -16
+    17           ['B', 'limpio', 'limpio']                   ir_B                   -17
+    18           ['B', 'limpio', 'limpio']                 limpiar                  -18
+    19           ['B', 'limpio', 'limpio']                   ir_A                   -19
+    20           ['A', 'limpio', 'limpio']                   nada                   -20
+    21           ['A', 'limpio', 'limpio']                   nada                   -20
+    22           ['A', 'limpio', 'limpio']                   nada                   -20
+    23           ['A', 'limpio', 'limpio']                   nada                   -20
+    24           ['A', 'limpio', 'limpio']                   nada                   -20
+    25           ['A', 'limpio', 'limpio']                   ir_A                   -20
+    26           ['A', 'limpio', 'limpio']                 limpiar                  -21
+    27           ['A', 'limpio', 'limpio']                   ir_A                   -22
+    28           ['A', 'limpio', 'limpio']                   ir_B                   -23
+    29           ['B', 'limpio', 'limpio']                   ir_A                   -24
+    30           ['B', 'limpio', 'limpio']                 limpiar                  -25
+    31           ['B', 'limpio', 'limpio']                   ir_B                   -26
+    32           ['B', 'limpio', 'limpio']                 limpiar                  -27
+    33           ['B', 'limpio', 'limpio']                   ir_A                   -28
+    34           ['A', 'limpio', 'limpio']                   ir_B                   -29
+    35           ['B', 'limpio', 'limpio']                   ir_A                   -30
+    36           ['A', 'limpio', 'limpio']                   ir_B                   -31
+    37           ['B', 'limpio', 'limpio']                   ir_A                   -32
+    38           ['A', 'limpio', 'limpio']                 limpiar                  -33
+    39           ['A', 'limpio', 'limpio']                   ir_B                   -34
+    40           ['B', 'limpio', 'limpio']                 limpiar                  -35
+    41           ['B', 'limpio', 'limpio']                   nada                   -36
+    42           ['B', 'limpio', 'limpio']                   nada                   -36
+    43           ['B', 'limpio', 'limpio']                 limpiar                  -36
+    44           ['B', 'limpio', 'limpio']                   nada                   -37
+    45           ['B', 'limpio', 'limpio']                   ir_B                   -37
+    46           ['B', 'limpio', 'limpio']                   nada                   -38
+    47           ['B', 'limpio', 'limpio']                   ir_B                   -38
+    48           ['B', 'limpio', 'limpio']                   nada                   -39
+    49           ['B', 'limpio', 'limpio']                   ir_B                   -39
+    50           ['B', 'limpio', 'limpio']                   ir_A                   -40
+    51           ['A', 'limpio', 'limpio']                   ir_B                   -41
+    52           ['B', 'limpio', 'limpio']                   ir_B                   -42
+    53           ['B', 'limpio', 'limpio']                   nada                   -43
+    54           ['B', 'limpio', 'limpio']                 limpiar                  -43
+    55           ['B', 'limpio', 'limpio']                   ir_B                   -44
+    56           ['B', 'limpio', 'limpio']                 limpiar                  -45
+    57           ['B', 'limpio', 'limpio']                   ir_A                   -46
+    58           ['A', 'limpio', 'limpio']                   nada                   -47
+    59           ['A', 'limpio', 'limpio']                   ir_A                   -47
+    60           ['A', 'limpio', 'limpio']                   nada                   -48
+    61           ['A', 'limpio', 'limpio']                   ir_B                   -48
+    62           ['A', 'limpio', 'limpio']                   ir_B                   -49
+    63           ['B', 'limpio', 'limpio']                 limpiar                  -50
+    64           ['B', 'limpio', 'limpio']                 limpiar                  -51
+    65           ['B', 'limpio', 'limpio']                   nada                   -52
+    66           ['B', 'limpio', 'limpio']                   nada                   -52
+    67           ['B', 'limpio', 'limpio']                   ir_A                   -52
+    68           ['A', 'limpio', 'limpio']                   ir_A                   -53
+    69           ['A', 'limpio', 'limpio']                 limpiar                  -54
+    70           ['A', 'limpio', 'limpio']                   nada                   -55
+    71           ['A', 'limpio', 'limpio']                   nada                   -55
+    72           ['A', 'limpio', 'limpio']                 limpiar                  -55
+    73           ['A', 'limpio', 'limpio']                   nada                   -56
+    74           ['A', 'limpio', 'limpio']                 limpiar                  -56
+    75           ['A', 'limpio', 'limpio']                   nada                   -57
+    76           ['A', 'limpio', 'limpio']                   ir_B                   -57
+    77           ['A', 'limpio', 'limpio']                   nada                   -58
+    78           ['A', 'limpio', 'limpio']                   nada                   -58
+    79           ['A', 'limpio', 'limpio']                   ir_B                   -58
+    80           ['B', 'limpio', 'limpio']                   ir_B                   -59
+    81           ['B', 'limpio', 'limpio']                 limpiar                  -60
+    82           ['B', 'limpio', 'limpio']                   nada                   -61
+    83           ['B', 'limpio', 'limpio']                   nada                   -61
+    84           ['B', 'limpio', 'limpio']                 limpiar                  -61
+    85           ['B', 'limpio', 'limpio']                   ir_B                   -62
+    86           ['B', 'limpio', 'limpio']                 limpiar                  -63
+    87           ['B', 'limpio', 'limpio']                   ir_A                   -64
+    88           ['A', 'limpio', 'limpio']                   ir_B                   -65
+    89           ['B', 'limpio', 'limpio']                   ir_A                   -66
+    90           ['A', 'limpio', 'limpio']                   nada                   -67
+    91           ['A', 'limpio', 'limpio']                 limpiar                  -67
+    92           ['A', 'limpio', 'limpio']                   ir_A                   -68
+    93           ['A', 'limpio', 'limpio']                 limpiar                  -69
+    94           ['A', 'limpio', 'limpio']                 limpiar                  -70
+    95           ['A', 'limpio', 'limpio']                   ir_A                   -71
+    96           ['A', 'limpio', 'limpio']                 limpiar                  -72
+    97           ['A', 'limpio', 'limpio']                 limpiar                  -73
+    98           ['A', 'limpio', 'limpio']                 limpiar                  -74
+    99           ['A', 'limpio', 'limpio']                 limpiar                  -75
+__________________________________________________________________________________________
+
+
+Prueba del entorno estocastico con un agente reactivo con modelo
+
+
+Simulación de entorno tipo <class '__main__.DosCuartosEstocastico'> con el agente tipo <class '__main__.AgenteReactivo_Modelo_DosCuartosEstocastico'>
+
+   Paso                    Estado                           Acción            Desempeño   
+__________________________________________________________________________________________
+    0             ['A', 'sucio', 'sucio']                  limpiar                    0
+    1             ['A', 'limpio', 'sucio']                   ir_B                    -1
+    2             ['B', 'limpio', 'sucio']                 limpiar                   -2
+    3             ['B', 'limpio', 'sucio']                 limpiar                   -3
+    4            ['B', 'limpio', 'limpio']                   nada                    -4
+    5            ['B', 'limpio', 'limpio']                   nada                    -4
+    6            ['B', 'limpio', 'limpio']                   nada                    -4
+    7            ['B', 'limpio', 'limpio']                   nada                    -4
+    8            ['B', 'limpio', 'limpio']                   nada                    -4
+    9            ['B', 'limpio', 'limpio']                   nada                    -4
+    10           ['B', 'limpio', 'limpio']                   nada                    -4
+    11           ['B', 'limpio', 'limpio']                   nada                    -4
+    12           ['B', 'limpio', 'limpio']                   nada                    -4
+    13           ['B', 'limpio', 'limpio']                   nada                    -4
+    14           ['B', 'limpio', 'limpio']                   nada                    -4
+    15           ['B', 'limpio', 'limpio']                   nada                    -4
+    16           ['B', 'limpio', 'limpio']                   nada                    -4
+    17           ['B', 'limpio', 'limpio']                   nada                    -4
+    18           ['B', 'limpio', 'limpio']                   nada                    -4
+    19           ['B', 'limpio', 'limpio']                   nada                    -4
+    20           ['B', 'limpio', 'limpio']                   nada                    -4
+    21           ['B', 'limpio', 'limpio']                   nada                    -4
+    22           ['B', 'limpio', 'limpio']                   nada                    -4
+    23           ['B', 'limpio', 'limpio']                   nada                    -4
+    24           ['B', 'limpio', 'limpio']                   nada                    -4
+    25           ['B', 'limpio', 'limpio']                   nada                    -4
+    26           ['B', 'limpio', 'limpio']                   nada                    -4
+    27           ['B', 'limpio', 'limpio']                   nada                    -4
+    28           ['B', 'limpio', 'limpio']                   nada                    -4
+    29           ['B', 'limpio', 'limpio']                   nada                    -4
+    30           ['B', 'limpio', 'limpio']                   nada                    -4
+    31           ['B', 'limpio', 'limpio']                   nada                    -4
+    32           ['B', 'limpio', 'limpio']                   nada                    -4
+    33           ['B', 'limpio', 'limpio']                   nada                    -4
+    34           ['B', 'limpio', 'limpio']                   nada                    -4
+    35           ['B', 'limpio', 'limpio']                   nada                    -4
+    36           ['B', 'limpio', 'limpio']                   nada                    -4
+    37           ['B', 'limpio', 'limpio']                   nada                    -4
+    38           ['B', 'limpio', 'limpio']                   nada                    -4
+    39           ['B', 'limpio', 'limpio']                   nada                    -4
+    40           ['B', 'limpio', 'limpio']                   nada                    -4
+    41           ['B', 'limpio', 'limpio']                   nada                    -4
+    42           ['B', 'limpio', 'limpio']                   nada                    -4
+    43           ['B', 'limpio', 'limpio']                   nada                    -4
+    44           ['B', 'limpio', 'limpio']                   nada                    -4
+    45           ['B', 'limpio', 'limpio']                   nada                    -4
+    46           ['B', 'limpio', 'limpio']                   nada                    -4
+    47           ['B', 'limpio', 'limpio']                   nada                    -4
+    48           ['B', 'limpio', 'limpio']                   nada                    -4
+    49           ['B', 'limpio', 'limpio']                   nada                    -4
+    50           ['B', 'limpio', 'limpio']                   nada                    -4
+    51           ['B', 'limpio', 'limpio']                   nada                    -4
+    52           ['B', 'limpio', 'limpio']                   nada                    -4
+    53           ['B', 'limpio', 'limpio']                   nada                    -4
+    54           ['B', 'limpio', 'limpio']                   nada                    -4
+    55           ['B', 'limpio', 'limpio']                   nada                    -4
+    56           ['B', 'limpio', 'limpio']                   nada                    -4
+    57           ['B', 'limpio', 'limpio']                   nada                    -4
+    58           ['B', 'limpio', 'limpio']                   nada                    -4
+    59           ['B', 'limpio', 'limpio']                   nada                    -4
+    60           ['B', 'limpio', 'limpio']                   nada                    -4
+    61           ['B', 'limpio', 'limpio']                   nada                    -4
+    62           ['B', 'limpio', 'limpio']                   nada                    -4
+    63           ['B', 'limpio', 'limpio']                   nada                    -4
+    64           ['B', 'limpio', 'limpio']                   nada                    -4
+    65           ['B', 'limpio', 'limpio']                   nada                    -4
+    66           ['B', 'limpio', 'limpio']                   nada                    -4
+    67           ['B', 'limpio', 'limpio']                   nada                    -4
+    68           ['B', 'limpio', 'limpio']                   nada                    -4
+    69           ['B', 'limpio', 'limpio']                   nada                    -4
+    70           ['B', 'limpio', 'limpio']                   nada                    -4
+    71           ['B', 'limpio', 'limpio']                   nada                    -4
+    72           ['B', 'limpio', 'limpio']                   nada                    -4
+    73           ['B', 'limpio', 'limpio']                   nada                    -4
+    74           ['B', 'limpio', 'limpio']                   nada                    -4
+    75           ['B', 'limpio', 'limpio']                   nada                    -4
+    76           ['B', 'limpio', 'limpio']                   nada                    -4
+    77           ['B', 'limpio', 'limpio']                   nada                    -4
+    78           ['B', 'limpio', 'limpio']                   nada                    -4
+    79           ['B', 'limpio', 'limpio']                   nada                    -4
+    80           ['B', 'limpio', 'limpio']                   nada                    -4
+    81           ['B', 'limpio', 'limpio']                   nada                    -4
+    82           ['B', 'limpio', 'limpio']                   nada                    -4
+    83           ['B', 'limpio', 'limpio']                   nada                    -4
+    84           ['B', 'limpio', 'limpio']                   nada                    -4
+    85           ['B', 'limpio', 'limpio']                   nada                    -4
+    86           ['B', 'limpio', 'limpio']                   nada                    -4
+    87           ['B', 'limpio', 'limpio']                   nada                    -4
+    88           ['B', 'limpio', 'limpio']                   nada                    -4
+    89           ['B', 'limpio', 'limpio']                   nada                    -4
+    90           ['B', 'limpio', 'limpio']                   nada                    -4
+    91           ['B', 'limpio', 'limpio']                   nada                    -4
+    92           ['B', 'limpio', 'limpio']                   nada                    -4
+    93           ['B', 'limpio', 'limpio']                   nada                    -4
+    94           ['B', 'limpio', 'limpio']                   nada                    -4
+    95           ['B', 'limpio', 'limpio']                   nada                    -4
+    96           ['B', 'limpio', 'limpio']                   nada                    -4
+    97           ['B', 'limpio', 'limpio']                   nada                    -4
+    98           ['B', 'limpio', 'limpio']                   nada                    -4
+    99           ['B', 'limpio', 'limpio']                   nada                    -4
+__________________________________________________________________________________________
+
+
+Hecho por Gilberto Espinoza
