@@ -57,10 +57,103 @@ Todos los incisos tienen un valor de 25 puntos sobre la calificación de
 la tarea.
 
 """
-__author__ = 'escribe_tu_nombre'
+__author__ = 'Xavier Paredes'
 
-import entorno_o
+import entornos_o
+import doscuartos_o 
+
+from random import choice
 
 # Requiere el modulo entornos_o.py
 # Usa el modulo doscuartos_o.py para reutilizar código
 # Agrega los modulos que requieras de python
+
+class SeisCuartos (entornos_o.Entorno):
+  """
+    Clase para un entorno de seis cuartos, tres arriba y tres abajo.
+
+    El estado se define como (robot, ABCDEF)
+    donde robot puede tener los valores "A", "B", "C", "D", "E", "F"
+    A, B, C, D, E, F pueden tener los valores "limpio", "sucio"
+
+    Las acciones válidas en el entorno son ("ir_Derecha", "ir_Izquierda", "subir", "bajar", "limpiar", "nada").
+
+    Los sensores es una tupla (robot, limpio?)
+    con la ubicación del robot y el estado de limpieza
+
+  """
+
+  def __init__(self, x0=["A", "sucio", "sucio", "sucio", "sucio", "sucio", "sucio"]):
+    self.x = x0[:]
+    self.desempeño = 0
+
+  def accion_legal(self, acción):
+    return acción in ["ir_Derecha", "ir_Izquierda", "subir", "bajar", "limpiar", "nada"]
+
+  def transición(self, acción):
+    robot, a, b, c, d, e, f = self.x
+    if not self.acción_legal(acción):
+      raise ValueError("La acción no es legal para este estado")
+
+    if acción is "nada" and "sucio" in self.x:
+      self.desempeño -= 1
+
+    if acción is "limpiar":
+      self.desempeño -= 1
+      self.x[" ABCDEF".find(self.x[0])] = "limpio"
+    
+    elif acción is "nada" and "sucio" not in self.x:
+      pass
+
+    elif acción is "ir_Izquerda":
+      if robot is 'A' or robot is 'D':
+        pass
+      else:
+        self.desempeño -= 1
+        if robot is 'B' or robot is 'C':
+          self.x[0] =  list(" ABCDEF")[ " ABCDEF".find( self.x[0] ) - 1 ]
+        elif robot is 'E' or robot is 'F':
+          self.x[0] = list(" ABCDEF")[ " ABCDEF".find( self.x[0] ) - 1 ]
+    
+    elif acción is "ir_Derecha":
+      self.desempeño -= 1
+      if robot is 'C' or robot is 'F':
+        pass
+      else:
+        if robot is 'A' or robot is 'B':
+          self.x[0] = list(" ABCDEF")[ " ABCDEF".find( self.x[0] ) + 1 ]
+        elif robot is 'D' or robot is 'E':
+          self.x[0] = list(" ABCDEF")[" ABCDEF".find(self.x[0]) + 1]
+
+    elif acción is "subir":
+      self.desempeño -= 2
+      if robot is 'A' or robot is 'B' or robot is 'C' :
+        self.x[0] = list(" ABCDEF")[" ABCDEF".find(self.x[0]) + 3]
+
+    elif acción is "bajar":
+      self.desempeño -= 2
+      if robot is 'D' or robot is 'E' or robot is 'F':
+        self.x[0] = list(" ABCDEF")[" ABCDEF".find(self.x[0]) - 3]
+      
+  def percepción(self):
+    return self.x[0], self.x[ " ABCDEF".find( self.x[0] ) ]
+  
+class AgenteAleatorio(entornos_o.Agente):
+  """
+  Un agente que solo regresa una accion al azar entre las acciones legales
+  """
+  def __init__(self, acciones):
+      self.acciones = acciones
+
+  def programa(self, percepcion):
+    return choice(self.acciones)
+
+def test():
+    """
+    Prueba del entorno y los agentes
+    """
+    print("Prueba del entorno con un agente aleatorio")
+    entornos_o.simulador( SeisCuartos(), AgenteAleatorio(["ir_Derecha", "ir_Izquierda", "subir", "bajar", "limpiar", "nada"]), 100 )
+
+if __name__ == "__main__":
+    test()
