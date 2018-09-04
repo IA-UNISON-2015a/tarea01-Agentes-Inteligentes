@@ -40,10 +40,10 @@ class DosCuartos(entornos_o.Entorno):
         self.x = x0[:]
         self.desempeño = 0
 
-    def acción_legal(self, acción):
+    def accion_legal(self, acción):
         return acción in ("ir_A", "ir_B", "limpiar", "nada")
 
-    def transición(self, acción):
+    def transicion(self, acción):
         if not self.acción_legal(acción):
             raise ValueError("La acción no es legal para este estado")
 
@@ -57,7 +57,7 @@ class DosCuartos(entornos_o.Entorno):
         elif acción is "ir_B":
             self.x[0] = "B"
 
-    def percepción(self):
+    def percepcion(self):
         return self.x[0], self.x[" AB".find(self.x[0])]
 
 
