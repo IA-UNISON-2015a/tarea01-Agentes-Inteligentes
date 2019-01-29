@@ -138,6 +138,7 @@ class SeisCuartos (entornos_o.Entorno):
   def percepción(self):
     return self.x[0], self.x[ " ABCDEF".find( self.x[0] ) ]
   
+#INCISO 2
 class AgenteAleatorio(entornos_o.Agente):
   """
   Un agente que solo regresa una accion al azar entre las acciones legales
@@ -147,6 +148,15 @@ class AgenteAleatorio(entornos_o.Agente):
 
   def programa(self, percepcion):
     return choice(self.acciones)
+
+class AgenteReactivo(entornos_o.Agente):
+    """
+    Agente Reactivo
+    """
+    def __init__(self):
+      #Continuara...
+#FIN INCISO 2
+
 
 def test():
     """
