@@ -72,6 +72,10 @@ class NueveCuartos(entornos_o.Entorno):
     El estado se define como (robot, piso, A, B, C)
     donde robot puede tener los valores "A", "B", "C", piso los valores "1", "2", y "3"
     "A", "B", "C" pueden tener los valores "limpio", "sucio"
+    La estructura de los cuartos:
+    3er Piso: A B C
+    2do Piso: A B C
+    1er Piso: A B C
 
     Las acciones válidas en el entorno son:
     ("ir_Derecha", "ir_Izquierda", "subir", "bajar", "limpiar", "nada").
@@ -85,7 +89,10 @@ class NueveCuartos(entornos_o.Entorno):
     con la ubicación del robot(piso y habitación) y el estado de limpieza
 
     """
-    def __init__(self, x0=["A", "sucio", "sucio", "sucio"]):
+    def __init__(self, x0=["A", 1, 
+                           ("sucio", "sucio", "sucio"), 
+                           ("sucio", "sucio", "sucio"), 
+                           ("sucio", "sucio", "sucio")]):
         """
         Por default inicialmente el robot está en A del primer piso y todos los cuartos
         están sucios
@@ -96,25 +103,35 @@ class NueveCuartos(entornos_o.Entorno):
     def acción_legal(self, acción):
         if self.x[0] is "A" and acción is "ir_Izquierda" : return False
         if self.x[0] is "C" and acción is "ir_Derecha" : return False
-        return acción in ("ir_Derecha", "ir_Izquierda", "limpiar", "nada")
+        if self.x[1] is 1 and acción is "bajar" : return False
+        if self.x[1] is 3 and acción is "subir" : return False
+        if self.x[0] is not "C" and acción is "subir" : return False
+        if self.x[0] is not "A" and acción is "bajar" : return False
+        
+        return acción in ("ir_Derecha", "ir_Izquierda", "subir", "bajar", "limpiar", "nada")
 
     def transición(self, acción):
         if not self.acción_legal(acción):
             acción = "nada"
             #raise ValueError("La acción no es legal para este estado")
-
-        robot, a, b, c = self.x
-        if acción is not "nada" or a is "sucio" or b is "sucio" or c is "sucio":
+        robot, piso, primer_piso, segundo_piso, tercer_piso = self.x[:]
+        if acción is not "nada" or "sucio" in (primer_piso or segundo_piso or tercer_piso):
             self.desempeño -= 1
         if acción is "limpiar":
-            self.x[" ABC".find(self.x[0])] = "limpio"
+            listAux = list(self.x[piso+1])
+            listAux["ABC".find(self.x[0])] = "limpio"
+            self.x[piso+1] = tuple(listAux)
         elif acción is "ir_Izquierda":
             self.x[0] = " ABC"[" ABC".find(self.x[0])-1]
         elif acción is "ir_Derecha":
             self.x[0] = " ABC"[" ABC".find(self.x[0])+1]
+        elif acción is "subir":
+            self.x[1] = piso + 1
+        elif acción is "bajar":
+            self.x[1] = piso - 1
 
     def percepción(self):
-        return self.x[0], self.x[" ABC".find(self.x[0])]
+        return self.x[0], self.x["  ABC".find(self.x[0])]
 
 
 class AgenteAleatorio(entornos_o.Agente):
@@ -129,15 +146,16 @@ class AgenteAleatorio(entornos_o.Agente):
         return choice(self.acciones)
 
 
-class AgenteReactivoDoscuartos(entornos_o.Agente):
+class AgenteReactivoNuevecuartos(entornos_o.Agente):
     """
     Un agente reactivo simple
 
     """
     def programa(self, percepción):
         robot, situación = percepción
-        return ('limpiar' if situación == 'sucio' else
-                'ir_A' if robot == 'B' else 'ir_B')
+        if situación == 'sucio' :
+            return 'limpiar'
+        return ('limpiar' if situación == 'sucio' else'ir_A' if robot == 'B' else 'ir_B')
 
 
 class AgenteReactivoModeloDosCuartos(entornos_o.Agente):
@@ -168,8 +186,8 @@ class AgenteReactivoModeloDosCuartos(entornos_o.Agente):
 
 def test():
     print("Prueba del entorno con un agente aleatorio")
-    entornos_o.simulador(NueveCuartos(),
-                         AgenteAleatorio(['ir_Izquierda', 'ir_Derecha', 'limpiar', 'nada']),
+    entornos_o.simulador(NueveCuartos(), 
+                         AgenteAleatorio(['ir_Izquierda', 'ir_Derecha', 'limpiar', 'nada', 'subir', 'bajar']),
                          200)
     """
     Prueba del entorno y los agentes
