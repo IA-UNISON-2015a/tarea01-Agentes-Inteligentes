@@ -61,6 +61,91 @@ __author__ = 'Celeste Garcia Espinoza'
 
 import entorno_o
 
+class NueveCuartos(entornos_o.Entorno):
+    def __init__(self, x0=["A" + 9 * "sucio"]):
+        super().__init__(x, desempeño)
+
+    def acción_legal(self, acción):
+        if self.x[0] == "A":
+            return acción in ("limpiar", "nada", "subir", "ir_der")
+        elif self.x[0] == "B":
+            return accion in ("limpiar", "nada", "ir_izq", "ir_der")
+        elif self.x[0] == "C":
+            return accion in ("limpiar", "nada", "ir_izq")
+        elif self.x[0] == "D":
+            return accion in ("limpiar", "nada", "subir", "ir_der")
+        elif self.x[0] == "E":
+            return accion in ("limpiar", "nada", "ir_izq", "ir_der")
+        elif self.x[0] == "F":
+            return accion in ("limpiar", "nada", "ir_izq", "bajar")
+        elif self.x[0] == "G":
+            return accion in ("limpiar", "nada", "ir_der")
+        elif self.x[0] == "H":
+            return accion in ("limpiar", "nada", "ir_izq", "ir_der")
+        elif self.x[0] == "I":
+            return accion in ("limpiar", "nada", "ir_izq", "bajar")
+
+    def transición(self, acción):
+        if not self.acción_legal(acción):
+            raise ValueError("Caracoles... La acción no es legal para este estado")
+
+        if acción is "subir" or acción "bajar":
+            self.desempeño -= 4
+        elif acción is "ir_izq" or acción is "ir_der" or acción is "nada":
+            self.desempeño -= 3
+        elif accion is "nada":
+            self.desempeño -= 2
+        else:
+            self.desempeño -= 1
+
+        if acción is "limpiar":
+            self.x[" ABCDEFGHI".find(self.x[0])] = "limpio"
+        elif acción is "ir_izq":
+            if self.x[0] == "B":
+                self.x[0] = "A"
+            elif self.x[0] == "C":
+                self.x[0] = "B"
+            elif self.x[0] == "E":
+                self.x[0] = "D"
+            elif self.x[0] == "F":
+                self.x[0] = "E"
+            elif self.x[0] == "H":
+                self.x[0] = "G"
+            elif self.x[0] == "I":
+                self.x[0] = "H"
+        elif acción is "ir_der":
+            if self.x[0] == "A":
+                self.x[0] = "B"
+            elif self.x[0] == "B":
+                self.x[0] = "C"
+            elif self.x[0] == "D":
+                self.x[0] = "E"
+            elif self.x[0] == "E":
+                self.x[0] = "F"
+            elif self.x[0] == "G":
+                self.x[0] = "H"
+            elif self.x[0] == "H":
+                self.x[0] = "I"
+        elif acción is "subir":
+            if self.x[0] == "A":
+                self.x[0] = "D"
+            elif self.x[0] == "D":
+                self.x[0] = "G"
+        elif acción is "bajar":
+            if self.x[0] == "F":
+                self.x[0] = "C"
+            elif self.x[0] == "I":
+                self.x[0] = "F"
+
+    def percepción(self):
+        return self.x[0], self.x[" ABCDEFGHI".find(self.x[0])]
+
+
+
+
+
+
+
 # Requiere el modulo entornos_o.py
 # Usa el modulo doscuartos_o.py para reutilizar código
 # Agrega los modulos que requieras de python
