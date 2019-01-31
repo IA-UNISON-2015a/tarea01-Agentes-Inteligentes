@@ -93,7 +93,10 @@ def simulador(entorno, agente, pasos=10, verbose=True):
     for paso in range(pasos):
         p = entorno.percepción()
         a = agente.programa(p)
+        print("a",a)
+        print("p",p)
         entorno.transición(a)
+        
 
         historial_desempeño.append(entorno.desempeño)
         historial_estados.append(entorno.x[:])

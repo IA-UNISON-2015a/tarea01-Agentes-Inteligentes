@@ -73,14 +73,21 @@ class NueveCuartos(entornos_o.Entorno):
 
     def acción_legal(self, acción):
         legal=True
-        if acción is "subir" and self.x[4] is not 1 or 2 and self.x[0] is not "C":
+        print(acción,self.x[0],self.x[4])
+        if acción is "subir" and ((self.x[4] is "3") or (self.x[4] is not "3" and self.x[0] is not "C")):
+            print("entre subir")
             legal=False
-        elif acción is "bajar" and self.x[4] is not 2 or 3 and self.x[0] is not "A":
+        elif acción is "bajar" and ((self.x[4] is "1") or (self.x[4] is not "1" and self.x[0] is not "A")):
+            print("entre bajar")
             legal=False
-        if acción is "ir_Izquierda" and self.x[0] is "A":
+        elif acción is "ir_Izquierda" and self.x[0] is "A":
+            print("entre izq")
             legal=False
         elif acción is "ir_Derecha" and self.x[0] is "C":
+            print("entre der")
             legal=False
+        print(legal)
+        print("")
         return legal
 
     def transición(self, acción):
@@ -105,12 +112,22 @@ class NueveCuartos(entornos_o.Entorno):
                 self.x[0] = "C"
             elif robot is "A":
                 self.x[0] = "B"
+        elif acción is "subir":
+            if piso_actual is "1":
+                self.x[4] = 2
+            elif piso_actual is "2":
+                self.x[4] = 3
+        elif acción is "bajar":
+            if piso_actual is "3":
+                self.x[4] = 2
+            elif piso_actual is "2":
+                self.x[4] = 1
 
     def percepción(self):
         return self.x[0], self.x[" ABC".find(self.x[0])], self.x[4]
 
 
-class AgenteAleatorio(entornos_o.Agente):
+class AgenteAleatorio(entornos_o.Agente,NueveCuartos):
     """
     Un agente que solo regresa una accion al azar entre las acciones legales
 
@@ -119,7 +136,15 @@ class AgenteAleatorio(entornos_o.Agente):
         self.acciones = acciones
 
     def programa(self, percepcion):
-        return choice(self.acciones)
+        robot,_,piso = percepcion
+        self.x=[robot,"_","_","_",piso]
+        lista_legales_nolegales= list(self.acciones)
+        lista_legales=[ac for ac in lista_legales_nolegales if self.acción_legal(ac)]
+        choice1 = choice(lista_legales)
+        print("lista:",lista_legales)
+        print("choice:", choice1)
+        return (choice1)
+        #return choice(self.acciones)
 
 
 class AgenteReactivoDoscuartos(entornos_o.Agente):
@@ -167,7 +192,7 @@ def test():
     print("Prueba del entorno con un agente aleatorio")
     entornos_o.simulador(NueveCuartos(),
                          AgenteAleatorio(['ir_Izquierda', 'ir_Derecha', 'limpiar', 'nada', "subir", "bajar"]),
-                         100)
+                         10)
 
     #print("Prueba del entorno con un agente reactivo")
     #entornos_o.simulador(DosCuartos(), AgenteReactivoDoscuartos(), 100)
