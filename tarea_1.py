@@ -62,7 +62,7 @@ class NueveCuartos(entornos_o.Entorno):
     con la ubicación del robot y el estado de limpieza
 
     """
-    def __init__(self, x0=["1", "sucio", "sucio", "sucio", "sucio", "sucio", "sucio", "sucio"],"sucio","sucio"):
+    def __init__(self, x0=[1, "sucio", "sucio", "sucio", "sucio", "sucio", "sucio", "sucio","sucio","sucio"]):
         """
         Por default inicialmente el robot está en A y los dos cuartos
         están sucios
@@ -71,7 +71,7 @@ class NueveCuartos(entornos_o.Entorno):
         self.x = x0[:]
         self.desempeño = 0
         self.a_legal={1:["ir_Derecha"],
-                      2:["ir_Derecha","ir_Izquierda"]
+                      2:["ir_Derecha","ir_Izquierda"],
                       3:["ir_Izquierda","subir"],
                       4:["ir_Derecha","bajar"],
                       5:["ir_Izquierda","ir_Derecha"],
@@ -82,44 +82,37 @@ class NueveCuartos(entornos_o.Entorno):
                       }
 
     def acción_legal(self, acción):
-        
-        return acción in ["limpiar", "nada"]+self.a_legal[self.x[0]]
+        robot = self.x[0]
+        print("robot",robot)
+        print(self.a_legal[int(robot)])
+        acc_legal_lista=self.a_legal[robot] + ["limpiar", "nada"] 
+        print(acc_legal_lista)
+        return acción in acc_legal_lista
 
     def transición(self, acción):
         if not self.acción_legal(acción):
             raise ValueError("La acción no es legal para este estado")
 
-        robot, a, b, c, piso_actual, estado_piso_1, estado_piso_2, estado_piso_3 = self.x
+        robot, a, b, c, d, e, f, g, h, i = self.x
         
-        if acción is not "nada" or estado_piso_1 is "incompleto" or estado_piso_2 is "incompleto" or estado_piso_3 is "incompleto":
-            self.desempeño -= 1
+        #if acción is not "nada" or estado_piso_1 is "incompleto" or estado_piso_2 is "incompleto" or estado_piso_3 is "incompleto":
+           # self.desempeño -= 1
         if acción is "limpiar":
-            self.x[" ABC".find(self.x[0])] = "limpio"
+            self.x[" 123456789".find(str(self.x[0]))] = "limpio"
             if a is "limpio" and b is "limpio" and c is "limpio":
                 self.x[4+self.x[4]] = "limpio"
         elif acción is "ir_Izquierda":
-            if robot is "C":
-                self.x[0] = "B"
-            elif robot is "B":
-                self.x[0] = "A"
+            self.x[0] -= 1 
         elif acción is "ir_Derecha":
-            if robot is "B":
-                self.x[0] = "C"
-            elif robot is "A":
-                self.x[0] = "B"
+            self.x[0] += 1
         elif acción is "subir":
-            if piso_actual is "1":
-                self.x[4] = 2
-            elif piso_actual is "2":
-                self.x[4] = 3
+            self.x[0] += 3
         elif acción is "bajar":
-            if piso_actual is "3":
-                self.x[4] = 2
-            elif piso_actual is "2":
-                self.x[4] = 1
+            self.x[0] -= 3
+
 
     def percepción(self):
-        return self.x[0], self.x[" ABC".find(self.x[0])], self.x[4]
+        return self.x[0], self.x[" 123456789".find(str(self.x[0]))]
 
 
 class AgenteAleatorio(entornos_o.Agente,NueveCuartos):
@@ -128,11 +121,21 @@ class AgenteAleatorio(entornos_o.Agente,NueveCuartos):
 
     """
     def __init__(self, acciones):
+        self.a_legal={1:["ir_Derecha"],
+                      2:["ir_Derecha","ir_Izquierda"],
+                      3:["ir_Izquierda","subir"],
+                      4:["ir_Derecha","bajar"],
+                      5:["ir_Izquierda","ir_Derecha"],
+                      6:["ir_Izquierda","subir"],
+                      7:["ir_Derecha"],
+                      8:["ir_Izquierda","ir_Derecha"],
+                      9:["ir_Izquierda"],
+                      }
         self.acciones = acciones
 
     def programa(self, percepcion):
-        robot,_,piso = percepcion
-        self.x=[robot,"_","_","_",piso]
+        robot,situacion_cuarto = percepcion
+        self.x=[robot,situacion_cuarto]
         lista_legales_nolegales= list(self.acciones)
         lista_legales=[ac for ac in lista_legales_nolegales if self.acción_legal(ac)]
         choice1 = choice(lista_legales)
