@@ -21,7 +21,7 @@ Tarea de desarrollo de entornos y agentes
    Las acciones de subir y bajar son mas costosas en término de energía que ir a la derecha y a la izquierda, por lo 
    que la función de desempeño debe de ser de tener limpios todos los cuartos, con el menor numero de acciones 
    posibles, y minimizando subir y bajar en relación a ir a los lados. El costo de limpiar es menor a los costos   
-   de cualquier acción.
+   de cualquier acción. DONE
 
 2. Diseña un Agente reactivo basado en modelo para este entorno y compara su desempeño con un agente aleatorio 
    despues de 200 pasos de simulación.
@@ -95,19 +95,23 @@ class NueveCuartos(entornos_o.Entorno):
 
         robot, a, b, c, d, e, f, g, h, i = self.x
         
-        #if acción is not "nada" or estado_piso_1 is "incompleto" or estado_piso_2 is "incompleto" or estado_piso_3 is "incompleto":
-           # self.desempeño -= 1
+        if acción is "nada" and (a is "sucio" or b is "sucio" or c is "sucio" or d is "sucio" or e is "sucio" or f is "sucio" 
+                                or g is "sucio" or h is "sucio" or i is "sucio"):
+            self.desempeño -= 2
         if acción is "limpiar":
             self.x[" 123456789".find(str(self.x[0]))] = "limpio"
-            if a is "limpio" and b is "limpio" and c is "limpio":
-                self.x[4+self.x[4]] = "limpio"
+            self.desempeño -= 1
         elif acción is "ir_Izquierda":
+            self.desempeño -= 3
             self.x[0] -= 1 
         elif acción is "ir_Derecha":
+            self.desempeño -= 3
             self.x[0] += 1
         elif acción is "subir":
+            self.desempeño -= 4
             self.x[0] += 3
         elif acción is "bajar":
+            self.desempeño -= 4
             self.x[0] -= 3
 
 
@@ -138,25 +142,25 @@ class AgenteAleatorio(entornos_o.Agente,NueveCuartos):
         self.x=[robot,situacion_cuarto]
         lista_legales_nolegales= list(self.acciones)
         lista_legales=[ac for ac in lista_legales_nolegales if self.acción_legal(ac)]
-        choice1 = choice(lista_legales)
-        print("lista:",lista_legales)
-        print("choice:", choice1)
-        return (choice1)
-        #return choice(self.acciones)
+        #choice1 = choice(lista_legales)
+        #print("lista:",lista_legales)
+        #print("choice:", choice1)
+        return (choice(lista_legales))
 
 
-class AgenteReactivoDoscuartos(entornos_o.Agente):
-    """
-    Un agente reactivo simple
 
-    """
-    def programa(self, percepción):
-        robot, situación = percepción
-        return ('limpiar' if situación == 'sucio' else
-                'ir_A' if robot == 'B' else 'ir_B')
+#class AgenteReactivoDoscuartos(entornos_o.Agente):
+    #"""
+   # Un agente reactivo simple
+
+   # """
+   # def programa(self, percepción):
+   #     robot, situación = percepción
+    #    return ('limpiar' if situación == 'sucio' else
+   #             'ir_A' if robot == 'B' else 'ir_B')
 
 
-class AgenteReactivoModeloDosCuartos(entornos_o.Agente):
+class AgenteReactivoModeloNueve(entornos_o.Agente,NueveCuartos):
     """
     Un agente reactivo basado en modelo
 
