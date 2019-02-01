@@ -228,7 +228,7 @@ class NueveCuartosCiego():
         self.desempeño = 0
         
     def acción_legal(self, acción):
-        return accióon in ("", )
+        return acción in ("", )
 
 def test():
     """
@@ -244,7 +244,7 @@ def test():
    # entornos_o.simulador(DosCuartos(), AgenteReactivoDoscuartos(), 100)
 
    print("Prueba del entorno con un agente reactivo con modelo")
-   entornos_o.simulador(NueveCuartos(), AgenteReactivoModeloDosCuartos(), 100)
+   entornos_o.simulador(NueveCuartos(), AgenteReactivoModeloNueveCuartos(), 100)
 
 
 if __name__ == "__main__":
