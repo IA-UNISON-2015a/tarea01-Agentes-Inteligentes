@@ -62,7 +62,7 @@ class NueveCuartos(entornos_o.Entorno):
     con la ubicación del robot y el estado de limpieza
 
     """
-    def __init__(self, x0=["A", "sucio", "sucio", "sucio", "1", "incompleto", "incompleto", "incompleto"]):
+    def __init__(self, x0=["1", "sucio", "sucio", "sucio", "sucio", "sucio", "sucio", "sucio"],"sucio","sucio"):
         """
         Por default inicialmente el robot está en A y los dos cuartos
         están sucios
@@ -70,25 +70,20 @@ class NueveCuartos(entornos_o.Entorno):
         """
         self.x = x0[:]
         self.desempeño = 0
+        self.a_legal={1:["ir_Derecha"],
+                      2:["ir_Derecha","ir_Izquierda"]
+                      3:["ir_Izquierda","subir"],
+                      4:["ir_Derecha","bajar"],
+                      5:["ir_Izquierda","ir_Derecha"],
+                      6:["ir_Izquierda","subir"],
+                      7:["ir_Derecha"],
+                      8:["ir_Izquierda","ir_Derecha"],
+                      9:["ir_Izquierda"],
+                      }
 
     def acción_legal(self, acción):
-        legal=True
-        print(acción,self.x[0],self.x[4])
-        if acción is "subir" and ((self.x[4] is "3") or (self.x[4] is not "3" and self.x[0] is not "C")):
-            print("entre subir")
-            legal=False
-        elif acción is "bajar" and ((self.x[4] is "1") or (self.x[4] is not "1" and self.x[0] is not "A")):
-            print("entre bajar")
-            legal=False
-        elif acción is "ir_Izquierda" and self.x[0] is "A":
-            print("entre izq")
-            legal=False
-        elif acción is "ir_Derecha" and self.x[0] is "C":
-            print("entre der")
-            legal=False
-        print(legal)
-        print("")
-        return legal
+        
+        return acción in ["limpiar", "nada"]+self.a_legal[self.x[0]]
 
     def transición(self, acción):
         if not self.acción_legal(acción):
@@ -192,7 +187,7 @@ def test():
     print("Prueba del entorno con un agente aleatorio")
     entornos_o.simulador(NueveCuartos(),
                          AgenteAleatorio(['ir_Izquierda', 'ir_Derecha', 'limpiar', 'nada', "subir", "bajar"]),
-                         10)
+                         50)
 
     #print("Prueba del entorno con un agente reactivo")
     #entornos_o.simulador(DosCuartos(), AgenteReactivoDoscuartos(), 100)
