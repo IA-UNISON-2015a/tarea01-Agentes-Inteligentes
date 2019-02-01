@@ -205,9 +205,8 @@ class AgenteReactivoModeloNueveCuartos(entornos_o.Agente):
         a, b, c, d, e, f, g, h, i = self.modelo[1], self.modelo[2], self.modelo[3], self.modelo[4], self.modelo[5], self.modelo[6], self.modelo[7], self.modelo[8], self.modelo[9]
         return ('nada' if a == b == c == d == e == f == g == h == i == 'limpio' else
                 'limpiar' if situación == 'sucio' else
-                'ir_Derecha' if robot == 'B' or robot == 'A' else 
+                'ir_Derecha' if robot == 'B' or robot == 'A' or (situación == "limpio" and robot == "E" or robot == "D")else 
                 'ir_Izquierda' if robot == 'E' or robot == 'F' else
-                'ir_Derecha' if self.modelo[' ABCDEFGHI'.find(3)] == 'limpio' or self.modelo[' ABCDEFGHI'.find(4)] == 'limpio' else
                 'subir' if robot == 'C' or robot == 'F' else
                 'bajar' if robot == 'G' or robot == 'D' else
                 'nada')
