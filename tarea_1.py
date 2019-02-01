@@ -237,7 +237,7 @@ def test():
     """
     print("Prueba del entorno con un agente aleatorio")
     entornos_o.simulador(NueveCuartos(), 
-                         AgenteAleatorio(['ir_Dzquierda', 'ir_Derecha', 'limpiar', 'nada', 'subir', 'bajar']),
+                         AgenteAleatorio(['ir_Izquierda', 'ir_Derecha', 'limpiar', 'nada', 'subir', 'bajar']),
                          200)
 
    # print("Prueba del entorno con un agente reactivo")
