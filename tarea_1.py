@@ -83,20 +83,17 @@ class NueveCuartos(entornos_o.Entorno):
 
     def acción_legal(self, acción):
         robot = self.x[0]
-        print("robot",robot)
-        print(self.a_legal[int(robot)])
+        #print("robot",robot)
+        #print(self.a_legal[int(robot)])
         acc_legal_lista=self.a_legal[robot] + ["limpiar", "nada"] 
-        print(acc_legal_lista)
+        #print(acc_legal_lista)
         return acción in acc_legal_lista
 
     def transición(self, acción):
         if not self.acción_legal(acción):
             raise ValueError("La acción no es legal para este estado")
 
-        robot, a, b, c, d, e, f, g, h, i = self.x
-        
-        if acción is "nada" and (a is "sucio" or b is "sucio" or c is "sucio" or d is "sucio" or e is "sucio" or f is "sucio" 
-                                or g is "sucio" or h is "sucio" or i is "sucio"):
+        if acción is "nada" and any(cuarto is "sucio" for cuarto in self.x):
             self.desempeño -= 2
         if acción is "limpiar":
             self.x[" 123456789".find(str(self.x[0]))] = "limpio"
@@ -108,10 +105,10 @@ class NueveCuartos(entornos_o.Entorno):
             self.desempeño -= 3
             self.x[0] += 1
         elif acción is "subir":
-            self.desempeño -= 4
+            self.desempeño -= 13
             self.x[0] += 3
         elif acción is "bajar":
-            self.desempeño -= 4
+            self.desempeño -= 13
             self.x[0] -= 3
 
 
@@ -160,7 +157,7 @@ class AgenteAleatorio(entornos_o.Agente,NueveCuartos):
    #             'ir_A' if robot == 'B' else 'ir_B')
 
 
-class AgenteReactivoModeloNueve(entornos_o.Agente,NueveCuartos):
+class AgenteReactivoModeloNueveCuartos(entornos_o.Agente,NueveCuartos):
     """
     Un agente reactivo basado en modelo
 
@@ -170,17 +167,45 @@ class AgenteReactivoModeloNueve(entornos_o.Agente,NueveCuartos):
         Inicializa el modelo interno en el peor de los casos
 
         """
-        self.modelo = ['A', 'sucio', 'sucio']
+        self.a_legal={1:["ir_Derecha"],
+                      2:["ir_Derecha","ir_Izquierda"],
+                      3:["ir_Izquierda","subir"],
+                      4:["ir_Derecha","bajar"],
+                      5:["ir_Izquierda","ir_Derecha"],
+                      6:["ir_Izquierda","subir"],
+                      7:["ir_Derecha"],
+                      8:["ir_Izquierda","ir_Derecha"],
+                      9:["ir_Izquierda"],
+                      }
+        self.modelo = [1, "sucio", "sucio", "sucio", "sucio", "sucio", "sucio", "sucio","sucio","sucio"]
 
     def programa(self, percepción):
         robot, situación = percepción
 
         # Actualiza el modelo interno
         self.modelo[0] = robot
-        self.modelo[' AB'.find(robot)] = situación
+        self.modelo[' 123456789'.find(str(robot))] = situación
 
+        cuartos = self.modelo[1:]
+        piso_1 = cuartos[0:3]
+        piso_2 = cuartos[3:6]
+        piso_3 = cuartos[6:]
+
+        if all(cuarto is "limpio" for cuarto in cuartos):
+            return "nada"
+        elif situación == "sucio":
+            return "limpiar"
+        elif robot<=3:
+            if any(cuarto is "sucio" for cuarto in piso_1):
+                acc_pref = set(self.a_legal[robot]).intersection(["ir_Izquierda","ir_Derecha"])
+                return choice(acc_pref)
+        elif robot>3 and robot<=7:
+            if any(cuarto is "sucio" for cuarto in piso_2):
+                acc_pref = set(self.a_legal[robot]).intersection(["ir_Izquierda","ir_Derecha"])
+                return choice(acc_pref)
         # Decide sobre el modelo interno
-        a, b = self.modelo[1], self.modelo[2]
+        #a, b = self.modelo[1], self.modelo[2]
+        
         return ('nada' if a == b == 'limpio' else
                 'limpiar' if situación == 'sucio' else
                 'ir_A' if robot == 'B' else 'ir_B')
@@ -191,16 +216,16 @@ def test():
     Prueba del entorno y los agentes
 
     """
-    print("Prueba del entorno con un agente aleatorio")
-    entornos_o.simulador(NueveCuartos(),
-                         AgenteAleatorio(['ir_Izquierda', 'ir_Derecha', 'limpiar', 'nada', "subir", "bajar"]),
-                         50)
+    #print("Prueba del entorno con un agente aleatorio")
+    #entornos_o.simulador(NueveCuartos(),
+                         #AgenteAleatorio(['ir_Izquierda', 'ir_Derecha', 'limpiar', 'nada', "subir", "bajar"]),
+                         #50)
 
     #print("Prueba del entorno con un agente reactivo")
     #entornos_o.simulador(DosCuartos(), AgenteReactivoDoscuartos(), 100)
 
-    #print("Prueba del entorno con un agente reactivo con modelo")
-    #entornos_o.simulador(DosCuartos(), AgenteReactivoModeloDosCuartos(), 100)
+    print("Prueba del entorno con un agente reactivo con modelo")
+    entornos_o.simulador(NueveCuartos(), AgenteReactivoModeloNueveCuartos(), 100)
 
 
 if __name__ == "__main__":
