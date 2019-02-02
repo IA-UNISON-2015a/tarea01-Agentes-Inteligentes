@@ -61,7 +61,7 @@ class NueveCuartos(entornos_o.Entorno):
 
 
     """
-    def __init__(self, x0=[5, "sucio", "sucio", "sucio", "sucio", "sucio", "sucio", "sucio","sucio","sucio"]):
+    def __init__(self, x0=[1, "sucio", "sucio", "sucio", "sucio", "sucio", "sucio", "sucio","sucio","sucio"]):
         self.x = x0[:]
         self.desempeño = 0
         self.a_legal={1:["ir_Derecha"],
@@ -188,8 +188,7 @@ class NueveCuartosCiego(NueveCuartos):
 
 class AgenteCiego(entornos_o.Agente,):
     """
-    Un agente reactivo basado en modelo
-
+    Un agente que sólo sabe en donde se encuentra
     """
     def __init__(self):
         self.a_legal={1:["ir_Derecha"],
@@ -211,7 +210,6 @@ class AgenteCiego(entornos_o.Agente,):
     def programa(self, robot):
         if self.dónde_empece is -1:
             self.dónde_empece = robot
-        print("sn:",self.nuevo,"ro:",robot,"de:",self.dónde_empece)
         if self.nuevo is False and robot is self.dónde_empece and self.de_ida:
             return "nada"
         else:
@@ -251,7 +249,6 @@ class AgenteCiego(entornos_o.Agente,):
                 else:
                     if robot is 7:
                         self.bajando = True
-                        #self.estado="listo"
                         return "bajar"
                     else:
                         self.estado="listo"
@@ -321,12 +318,6 @@ class AgenteReactivoModeloNueveCuartos(entornos_o.Agente):
         piso_1 = self.modelo[1:4]
         piso_2 = self.modelo[4:7]
         piso_3 = self.modelo[7:]
-        print(piso_3)
-        print(piso_2)
-        print(piso_1)
-        print("")
-        
-
         if all(cuarto is "limpio" for cuarto in self.modelo[1:]):
             return "nada"
         
@@ -389,22 +380,32 @@ def test():
     Prueba del entorno y los agentes
 
     """
-    #print("Prueba del entorno con un agente aleatorio")
-    #entornos_o.simulador(NueveCuartos(),
-                         #AgenteAleatorio(['ir_Izquierda', 'ir_Derecha', 'limpiar', 'nada', "subir", "bajar"]),
-                         #50)
-
-    #print("Prueba del entorno con un agente reactivo")
-    #entornos_o.simulador(DosCuartos(), AgenteReactivoDoscuartos(), 100)
-
-    #print("Prueba del entorno con un agente reactivo con modelo")
-    #entornos_o.simulador(NueveCuartos(), AgenteReactivoModeloNueveCuartos(), 50)
-
-    #print("Prueba del entorno con un agente reactivo con modelo")
-    #entornos_o.simulador(NueveCuartosEstocástico(), AgenteReactivoModeloNueveCuartos(), 50)
+    print("Prueba del entorno con un agente reactivo con modelo")
+    ultimo_estado_m,_,desempeño_m = entornos_o.simulador(NueveCuartos(), AgenteReactivoModeloNueveCuartos(), 200)
     
     print("Prueba del entorno con un agente ciego")
-    entornos_o.simulador(NueveCuartosCiego(), AgenteCiego(), 50)
+    ultimo_estado_c,_,desempeño_c = entornos_o.simulador(NueveCuartosCiego(), AgenteCiego(), 50)
+    
+    print("Prueba del entorno estocástico")
+    ultimo_estado_e,_,desempeño_e=entornos_o.simulador(NueveCuartosEstocástico(), AgenteReactivoModeloNueveCuartos(), 50)
+    
+    print("Prueba del entorno con un agente aleatorio")
+    ultimo_estado_a,_,desempeño_a = entornos_o.simulador(NueveCuartos(),
+                         AgenteAleatorio(['ir_Izquierda', 'ir_Derecha', 'limpiar', 'nada', "subir", "bajar"]),
+                         200)
+    print("Agente reactivo con modelo:")
+    print("Ultimo Estado: ",ultimo_estado_m[-1],"\nDesempeño: ",desempeño_m[-1],"\n")
+    
+    print("Agente aleatorio:")
+    print("Ultimo Estado: ",ultimo_estado_a[-1],"\nDesempeño: ",desempeño_a[-1],"\n")
+    
+    print("Agente en entorno estocástico:")
+    print("Ultimo Estado: ",ultimo_estado_e[-1],"\nDesempeño: ",desempeño_e[-1],"\n")
+    
+    print("Agente ciego:")
+    print("Ultimo Estado: ",ultimo_estado_c[-1],"\nDesempeño: ",desempeño_c[-1],"\n")
+    
+
 
 if __name__ == "__main__":
     test()
