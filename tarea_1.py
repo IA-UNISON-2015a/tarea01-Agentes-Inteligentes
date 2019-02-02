@@ -57,7 +57,7 @@ Todos los incisos tienen un valor de 25 puntos sobre la calificación de
 la tarea.
 
 """
-from random import choice
+from random import choice, random
 
 from entornos_o import Entorno, Agente, simulador
 from doscuartos_o import DosCuartos
@@ -141,6 +141,24 @@ class NueveCuartosCiego(NueveCuartos):
 
     def percepción(self):
         return self.x[0], self.x[1]
+
+
+class NueveCuartosEstocastico(NueveCuartos):
+    def transición(self, acción):
+        if not self.acción_legal(acción):
+            raise ValueError("La acción {} no es legal para el estado {}".format(acción, self.x))
+
+        if acción == 'limpiar' and random() <= 0.2:
+            acción = 'nada'
+        elif acción in ['ir_derecha', 'ir_izquierda', 'subir', 'bajar']:
+            if random() <= 0.2:
+                acción = 'nada' if random() <= 0.5 else choice(["ir_derecha", "ir_izquierda", "subir", "bajar", "limpiar", "nada"])
+        
+        
+        while not self.acción_legal(acción):
+            acción = choice(["ir_derecha", "ir_izquierda", "subir", "bajar", "limpiar", "nada"])
+
+        super().transición()
 
 #*********** Agentes ***********
 
