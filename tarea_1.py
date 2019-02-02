@@ -471,69 +471,6 @@ class AgenteReactivoModeloNueveCuartos(entornos_o.Agente):
         elif robot == 9: #cuaro de la izq del tercer piso, ya no se puede subir mas
             return 'ir_Izquierda'
 
-class AgenteRacionalNueveCuartosCiego(entornos_o.Agente):
-    """
-    Un agente reactivo basado en modelo
-
-    """
-    def __init__(self):
-        """
-        Inicializa el modelo interno en el peor de los casos
-
-        """
-        self.modelo = [1, 'sucio', 'sucio', 'sucio', 'sucio', 'sucio', 'sucio', 'sucio', 'sucio', 'sucio']
-
-    def programa(self, percepción):
-        robot, situación = percepción
-
-        # Actualiza el modelo interno
-        self.modelo[0] = robot
-        self.modelo[robot] = situación
-
-        
-        if a == b == c == d == e == f == g == h == i == 'limpio':
-            return'nada' #si todo esta limpio no hacemos nada
-        elif situación == 'sucio':
-            return 'limpiar' #si el cuarto en el que esta el robot esta sucio lo limpiamos
-        elif robot == 1: 
-            return 'ir_Derecha'#si esl robot esta en el primer cuarto, su unica opcion es ir a la derecha
-        elif robot == 2:#limpiamos en orden el piso
-            if a =='sucio':
-                return 'ir_Izquierda'
-            else:
-                return 'ir_Derecha'
-        elif robot == 3:
-            if b == 'sucio':
-                return 'ir_Izquierda'
-            else:
-                return 'subir'
-        elif robot == 4:#cuarto de mas a la derecha del segundo piso
-            if a == 'sucio':
-                return 'bajar'
-            else:
-                return 'ir_Derecha'
-        elif robot == 5:#cuarto de el centro del segundo piso
-            if d == 'sucio':
-                return 'ir_Izquierda'
-            else:
-                return 'ir_Derecha'
-        elif robot == 6: #cuarto de la izq del segundo piso
-            if e == 'sucio':
-                return 'ir_Izquierda'
-            else:
-                return 'subir'
-        elif robot == 7: #cuarto de la derecha del tercer piso
-            if d == 'sucio':
-                return 'bajar'
-            else:
-                return 'ir_Derecha'
-        elif robot == 8:# cuarto del centro del tercer piso
-            if g == 'sucio':
-                return 'ir_Izquierda'
-            else:
-                return 'ir_Derecha'
-        elif robot == 9: #cuaro de la izq del tercer piso, ya no se puede subir mas
-            return 'ir_Izquierda'
         
 def test():
     """
