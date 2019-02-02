@@ -38,7 +38,7 @@ Tarea de desarrollo de entornos y agentes
    correctamente de cuarto el 80% de la veces, el 10% de la veces se queda en su lugar y el 10% de las veces realiza 
    una acción legal aleatoria. Diseña un agente racional para este problema, pruebalo y comparalo con el agente aleatorio.
 
-   A este entorno llámalo NueveCuartosEstocástico.
+   A este entorno llámalo NueveCuartosEstocástico.DONE
 
 Todos los incisos tienen un valor de 25 puntos sobre la calificación de la tarea.
 
@@ -70,7 +70,7 @@ class NueveCuartos(entornos_o.Entorno):
                       4:["ir_Derecha","bajar"],
                       5:["ir_Izquierda","ir_Derecha"],
                       6:["ir_Izquierda","subir"],
-                      7:["ir_Derecha"],
+                      7:["ir_Derecha","bajar"],
                       8:["ir_Izquierda","ir_Derecha"],
                       9:["ir_Izquierda"],
                       }
@@ -129,7 +129,7 @@ class NueveCuartosEstocástico(entornos_o.Entorno):
                       4:["ir_Derecha","bajar"],
                       5:["ir_Izquierda","ir_Derecha"],
                       6:["ir_Izquierda","subir"],
-                      7:["ir_Derecha"],
+                      7:["ir_Derecha","bajar"],
                       8:["ir_Izquierda","ir_Derecha"],
                       9:["ir_Izquierda"],
                       }
@@ -175,16 +175,93 @@ class NueveCuartosEstocástico(entornos_o.Entorno):
 
 
     def percepción(self):
-        return self.x[0], self.x[" 123456789".find(str(self.x[0]))]
+        return self.x[0], self.x[" 123456789".find(str(self.x[0]))]    
     
-    
-    
-    
-    
-    
-    
-    
-    
+"""
+*****************************************************************************************************************************************************
+"""     
+
+class NueveCuartosCiego(NueveCuartos):
+    def percepción(self):
+        return self.x[0]
+
+
+class AgenteCiego(entornos_o.Agente,):
+    """
+    Un agente reactivo basado en modelo
+
+    """
+    def __init__(self):
+        self.a_legal={1:["ir_Derecha"],
+                      2:["ir_Derecha","ir_Izquierda"],
+                      3:["ir_Izquierda","subir"],
+                      4:["ir_Derecha","bajar"],
+                      5:["ir_Izquierda","ir_Derecha"],
+                      6:["ir_Izquierda","subir"],
+                      7:["ir_Derecha","bajar"],
+                      8:["ir_Izquierda","ir_Derecha"],
+                      9:["ir_Izquierda"],
+                      }
+        self.estado="listo"
+        self.nuevo=True
+        self.dónde_empece= -1
+        self.de_ida = True
+        self.bajando = False
+
+    def programa(self, robot):
+        if self.dónde_empece is -1:
+            self.donde_empece = robot
+        if self.nuevo is False and robot is self.dónde_empece:
+            return "nada"
+        else:
+            self.nuevo = False
+            if self.estado is "listo":
+                self.estado="esperando"
+                return "limpiar"
+            else:
+                if robot<3:
+                    self.estado="listo"
+                    return "ir_Derecha"
+                elif robot is 3:
+                    self.estado="listo"
+                    return "subir"
+                elif robot < 7:
+                    if robot is 4 and self.bajando:
+                        self.estado="listo"
+                        self.bajando = False
+                        return "bajar"
+                    elif robot is 4:
+                        self.de_ida = False
+                        return "ir_Derecha"
+                    elif robot is 5 and self.de_ida:
+                        self.estado="listo"
+                        return "ir_Izquierda"
+                    elif robot is 5 and not self.de_ida:
+                        self.estado="listo"
+                        return "ir_Derecha"
+                    elif robot is 6 and self.de_ida:
+                        self.estado="listo"
+                        return "ir_Izquierda"
+                    elif robot is 6 and not self.de_ida:
+                        self.estado="listo"
+                        return "subir"
+                else:
+                    if robot is 7:
+                        self.bajando = True
+                        #self.estado="listo"
+                        return "bajar"
+                    else:
+                        self.estado="listo"
+                        return "ir_Izquierda"
+            
+            
+            
+            
+            
+"""
+*****************************************************************************************************************************************************
+"""   
+
 class AgenteAleatorio(entornos_o.Agente,NueveCuartos):
     """
     Un agente que solo regresa una accion al azar entre las acciones legales
@@ -210,6 +287,10 @@ class AgenteAleatorio(entornos_o.Agente,NueveCuartos):
         lista_legales=[ac for ac in lista_legales_nolegales if self.acción_legal(ac)]
         return (random.choice(lista_legales))
 
+"""
+*****************************************************************************************************************************************************
+"""
+
 class AgenteReactivoModeloNueveCuartos(entornos_o.Agente):
     """
     Un agente reactivo basado en modelo
@@ -226,7 +307,7 @@ class AgenteReactivoModeloNueveCuartos(entornos_o.Agente):
                       4:["ir_Derecha","bajar"],
                       5:["ir_Izquierda","ir_Derecha"],
                       6:["ir_Izquierda","subir"],
-                      7:["ir_Derecha"],
+                      7:["ir_Derecha","bajar"],
                       8:["ir_Izquierda","ir_Derecha"],
                       9:["ir_Izquierda"],
                       }
@@ -298,6 +379,9 @@ class AgenteReactivoModeloNueveCuartos(entornos_o.Agente):
             elif any(cuarto is "sucio" for cuarto in piso_3) and robot is 7:
                 return "ir_Derecha"
             else: return "bajar"
+"""
+*****************************************************************************************************************************************************
+"""
 
 def test():
     """
@@ -315,8 +399,11 @@ def test():
     #print("Prueba del entorno con un agente reactivo con modelo")
     #entornos_o.simulador(NueveCuartos(), AgenteReactivoModeloNueveCuartos(), 50)
 
-    print("Prueba del entorno con un agente reactivo con modelo")
-    entornos_o.simulador(NueveCuartosEstocástico(), AgenteReactivoModeloNueveCuartos(), 50)
+    #print("Prueba del entorno con un agente reactivo con modelo")
+    #entornos_o.simulador(NueveCuartosEstocástico(), AgenteReactivoModeloNueveCuartos(), 50)
+    
+    print("Prueba del entorno con un agente ciego")
+    entornos_o.simulador(NueveCuartosCiego(), AgenteCiego(), 50)
 
 if __name__ == "__main__":
     test()
