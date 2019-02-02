@@ -8,6 +8,8 @@ Entornos y agentes desde una prespectiva OO
 
 """
 
+from copy import deepcopy
+
 __author__ = 'juliowaissman'
 
 class Entorno:
@@ -87,7 +89,7 @@ def simulador(entorno, agente, pasos=10, verbose=True):
 
     """
     historial_desempeño = [entorno.desempeño]
-    historial_estados = [entorno.x[:]]
+    historial_estados = [deepcopy(entorno.x)]
     historial_acciones = []
 
     for paso in range(pasos):
@@ -96,7 +98,7 @@ def simulador(entorno, agente, pasos=10, verbose=True):
         entorno.transición(a)
 
         historial_desempeño.append(entorno.desempeño)
-        historial_estados.append(entorno.x[:])
+        historial_estados.append(deepcopy(entorno.x))
         historial_acciones.append(a)
 
     historial_acciones.append(None)
