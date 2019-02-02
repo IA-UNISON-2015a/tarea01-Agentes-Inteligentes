@@ -24,7 +24,7 @@ Tarea de desarrollo de entornos y agentes
    de cualquier acción. DONE
 
 2. Diseña un Agente reactivo basado en modelo para este entorno y compara su desempeño con un agente aleatorio 
-   despues de 200 pasos de simulación.
+   despues de 200 pasos de simulación. DONE
 
 3. A este modelo de NueveCuartos, modificalo de manera que el agente solo pueda saber en que cuarto se encuentra pero
    no sabe si está limpio o sucio. Utiliza la herencia entre clases para no escribir código redundante.
@@ -46,28 +46,22 @@ Todos los incisos tienen un valor de 25 puntos sobre la calificación de la tare
 __author__ = 'Lizeth Soto Félix'
 
 import entornos_o
-from random import choice
+import random
+#from random import choice
 
 
 class NueveCuartos(entornos_o.Entorno):
     """
-    El estado se define como (robot, A, B, C, piso_actual, estado_piso_1, estado_piso_2, estado_piso_3)
-    donde robot puede tener los valores "A", "B"
-    A y B pueden tener los valores "limpio", "sucio"
+    El estado se define como (robot, 1, 2, 3, 4, 5, 6, 7, 8, 9)
+    donde robot puede tener los valores del 1-9
+    1-9 pueden tener los valores "limpio", "sucio"
 
-    Las acciones válidas en el entorno son ("ir_A", "ir_B", "limpiar", "nada").
+    Las acciones válidas en el entorno son ("ir_Izquierda", "ir_Derecha", "limpiar", "nada","subir, "bajar").
     Todas las acciones son válidas en todos los estados.
 
-    Los sensores es una tupla (robot, limpio?, piso)
-    con la ubicación del robot y el estado de limpieza
 
     """
-    def __init__(self, x0=[1, "sucio", "sucio", "sucio", "sucio", "sucio", "sucio", "sucio","sucio","sucio"]):
-        """
-        Por default inicialmente el robot está en A y los dos cuartos
-        están sucios
-
-        """
+    def __init__(self, x0=[5, "sucio", "sucio", "sucio", "sucio", "sucio", "sucio", "sucio","sucio","sucio"]):
         self.x = x0[:]
         self.desempeño = 0
         self.a_legal={1:["ir_Derecha"],
@@ -83,10 +77,7 @@ class NueveCuartos(entornos_o.Entorno):
 
     def acción_legal(self, acción):
         robot = self.x[0]
-        #print("robot",robot)
-        #print(self.a_legal[int(robot)])
         acc_legal_lista=self.a_legal[robot] + ["limpiar", "nada"] 
-        #print(acc_legal_lista)
         return acción in acc_legal_lista
 
     def transición(self, acción):
@@ -115,7 +106,85 @@ class NueveCuartos(entornos_o.Entorno):
     def percepción(self):
         return self.x[0], self.x[" 123456789".find(str(self.x[0]))]
 
+"""
+*****************************************************************************************************************************************************
+"""
 
+class NueveCuartosEstocástico(entornos_o.Entorno):
+    """
+    El estado se define como (robot, 1, 2, 3, 4, 5, 6, 7, 8, 9)
+    donde robot puede tener los valores del 1-9
+    1-9 pueden tener los valores "limpio", "sucio"
+
+    Las acciones válidas en el entorno son ("ir_Izquierda", "ir_Derecha", "limpiar", "nada","subir, "bajar").
+    Todas las acciones son válidas en todos los estados.
+
+    """
+    def __init__(self, x0=[5, "sucio", "sucio", "sucio", "sucio", "sucio", "sucio", "sucio","sucio","sucio"]):
+        self.x = x0[:]
+        self.desempeño = 0
+        self.a_legal={1:["ir_Derecha"],
+                      2:["ir_Derecha","ir_Izquierda"],
+                      3:["ir_Izquierda","subir"],
+                      4:["ir_Derecha","bajar"],
+                      5:["ir_Izquierda","ir_Derecha"],
+                      6:["ir_Izquierda","subir"],
+                      7:["ir_Derecha"],
+                      8:["ir_Izquierda","ir_Derecha"],
+                      9:["ir_Izquierda"],
+                      }
+
+    def acción_legal(self, acción):
+        robot = self.x[0]
+        acc_legal_lista=self.a_legal[robot] + ["limpiar", "nada"] 
+        return acción in acc_legal_lista
+
+    def transición(self, acción, segunda_vuelta=False):
+        ran_num = random.uniform(0, 1) if not segunda_vuelta else 0
+        if not self.acción_legal(acción):
+            raise ValueError("La acción no es legal para este estado")
+
+        if acción is "nada" and any(cuarto is "sucio" for cuarto in self.x):
+            self.desempeño -= 2
+        if acción is "limpiar":
+            
+            if ran_num<=0.20:
+                self.x[" 123456789".find(str(self.x[0]))] = "limpio"
+                self.desempeño -= 1
+            else:
+                #print("nokeyo")
+                self.desempeño -= 2
+        elif acción is "ir_Izquierda":
+            if ran_num<=0.80:
+                self.desempeño -= 3
+                self.x[0] -= 1
+            elif ran_num<=0.90:
+                self.desempeño -= 2
+            else:
+                self.transición(random.choice(self.a_legal[self.x[0]]),True)
+                
+        elif acción is "ir_Derecha":
+            self.desempeño -= 3
+            self.x[0] += 1
+        elif acción is "subir":
+            self.desempeño -= 13
+            self.x[0] += 3
+        elif acción is "bajar":
+            self.desempeño -= 13
+            self.x[0] -= 3
+
+
+    def percepción(self):
+        return self.x[0], self.x[" 123456789".find(str(self.x[0]))]
+    
+    
+    
+    
+    
+    
+    
+    
+    
 class AgenteAleatorio(entornos_o.Agente,NueveCuartos):
     """
     Un agente que solo regresa una accion al azar entre las acciones legales
@@ -128,7 +197,7 @@ class AgenteAleatorio(entornos_o.Agente,NueveCuartos):
                       4:["ir_Derecha","bajar"],
                       5:["ir_Izquierda","ir_Derecha"],
                       6:["ir_Izquierda","subir"],
-                      7:["ir_Derecha"],
+                      7:["ir_Derecha","bajar"],
                       8:["ir_Izquierda","ir_Derecha"],
                       9:["ir_Izquierda"],
                       }
@@ -139,25 +208,9 @@ class AgenteAleatorio(entornos_o.Agente,NueveCuartos):
         self.x=[robot,situacion_cuarto]
         lista_legales_nolegales= list(self.acciones)
         lista_legales=[ac for ac in lista_legales_nolegales if self.acción_legal(ac)]
-        #choice1 = choice(lista_legales)
-        #print("lista:",lista_legales)
-        #print("choice:", choice1)
-        return (choice(lista_legales))
+        return (random.choice(lista_legales))
 
-
-
-#class AgenteReactivoDoscuartos(entornos_o.Agente):
-    #"""
-   # Un agente reactivo simple
-
-   # """
-   # def programa(self, percepción):
-   #     robot, situación = percepción
-    #    return ('limpiar' if situación == 'sucio' else
-   #             'ir_A' if robot == 'B' else 'ir_B')
-
-
-class AgenteReactivoModeloNueveCuartos(entornos_o.Agente,NueveCuartos):
+class AgenteReactivoModeloNueveCuartos(entornos_o.Agente):
     """
     Un agente reactivo basado en modelo
 
@@ -181,35 +234,70 @@ class AgenteReactivoModeloNueveCuartos(entornos_o.Agente,NueveCuartos):
 
     def programa(self, percepción):
         robot, situación = percepción
-
-        # Actualiza el modelo interno
         self.modelo[0] = robot
         self.modelo[' 123456789'.find(str(robot))] = situación
+        piso_1 = self.modelo[1:4]
+        piso_2 = self.modelo[4:7]
+        piso_3 = self.modelo[7:]
+        print(piso_3)
+        print(piso_2)
+        print(piso_1)
+        print("")
+        
 
-        cuartos = self.modelo[1:]
-        piso_1 = cuartos[0:3]
-        piso_2 = cuartos[3:6]
-        piso_3 = cuartos[6:]
-
-        if all(cuarto is "limpio" for cuarto in cuartos):
+        if all(cuarto is "limpio" for cuarto in self.modelo[1:]):
             return "nada"
+        
         elif situación == "sucio":
             return "limpiar"
-        elif robot<=3:
-            if any(cuarto is "sucio" for cuarto in piso_1):
-                acc_pref = set(self.a_legal[robot]).intersection(["ir_Izquierda","ir_Derecha"])
-                return choice(acc_pref)
-        elif robot>3 and robot<=7:
-            if any(cuarto is "sucio" for cuarto in piso_2):
-                acc_pref = set(self.a_legal[robot]).intersection(["ir_Izquierda","ir_Derecha"])
-                return choice(acc_pref)
-        # Decide sobre el modelo interno
-        #a, b = self.modelo[1], self.modelo[2]
         
-        return ('nada' if a == b == 'limpio' else
-                'limpiar' if situación == 'sucio' else
-                'ir_A' if robot == 'B' else 'ir_B')
-
+        elif robot<=3:
+            if robot is 1:
+                return "ir_Derecha"
+            elif robot is 2 and piso_1[0] is "sucio":
+                return "ir_Izquierda"
+            elif robot is 2 and piso_1[0] is "limpio":
+                return "ir_Derecha"
+            elif any(cuarto is "sucio" for cuarto in piso_1) and robot is 3:
+                return "ir_Izquierda"
+            else: 
+                return "subir"
+            
+        elif robot>3 and robot<=7:
+            if robot is 6:
+                if all(cuarto is "limpio" for cuarto in piso_2):
+                    if all(cuarto is "limpio" for cuarto in piso_3):
+                        return "ir_Izquierda"
+                    else: 
+                        return "subir"
+                else:
+                    return "ir_Izquierda"
+            elif robot is 5:
+                if all(cuarto is "limpio" for cuarto in piso_1):
+                    if piso_2[0] is "sucio": 
+                        return "ir_Izquierda"
+                    else:
+                        return "ir_Derecha"
+                else:
+                    if piso_2[2] is "sucio": 
+                        return "ir_Derecha"
+                    else:
+                        return "ir_Izquierda"
+            elif any(cuarto is "sucio" for cuarto in piso_2) and robot is 4:
+                return "ir_Derecha"
+            else: 
+                return "bajar"
+            
+        elif robot>7:
+            if robot is 9:
+                return "ir_Izquierda"
+            elif robot is 8 and piso_3[2] is "sucio":
+                return "ir_Derecha"
+            elif robot is 8 and piso_3[2] is "limpio":
+                return "ir_Izquierda"
+            elif any(cuarto is "sucio" for cuarto in piso_3) and robot is 7:
+                return "ir_Derecha"
+            else: return "bajar"
 
 def test():
     """
@@ -224,9 +312,11 @@ def test():
     #print("Prueba del entorno con un agente reactivo")
     #entornos_o.simulador(DosCuartos(), AgenteReactivoDoscuartos(), 100)
 
-    print("Prueba del entorno con un agente reactivo con modelo")
-    entornos_o.simulador(NueveCuartos(), AgenteReactivoModeloNueveCuartos(), 100)
+    #print("Prueba del entorno con un agente reactivo con modelo")
+    #entornos_o.simulador(NueveCuartos(), AgenteReactivoModeloNueveCuartos(), 50)
 
+    print("Prueba del entorno con un agente reactivo con modelo")
+    entornos_o.simulador(NueveCuartosEstocástico(), AgenteReactivoModeloNueveCuartos(), 50)
 
 if __name__ == "__main__":
     test()
