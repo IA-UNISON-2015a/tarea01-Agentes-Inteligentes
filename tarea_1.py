@@ -148,7 +148,7 @@ class NueveCuartosEstocástico(entornos_o.Entorno):
             self.desempeño -= 2
         if acción is "limpiar":
             
-            if ran_num<=0.20:
+            if ran_num<=0.80:
                 self.x[" 123456789".find(str(self.x[0]))] = "limpio"
                 self.desempeño -= 1
             else:
