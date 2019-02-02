@@ -91,7 +91,7 @@ class NueveCuartos(DosCuartos):
     cuarto.
     """
 
-    def __init__(self, x0 = [0,0, [[1,1,1],[1,1,1,],[1,1,1]] ]):
+    def __init__(self, x0 = [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1]):
         """
         Inicializa el entorno con el robot en la posicion 0,0
         y todos los cuartos sucios.
@@ -103,10 +103,10 @@ class NueveCuartos(DosCuartos):
         ren, col = self.x[0], self.x[1]
         try:
             return bool({
-                'ir_izquierda': ren,
-                'ir_derecha': ren<2,
-                'subir': (ren==2) * col,
-                'bajar': (ren==0) * (col<2),
+                'ir_izquierda': col,
+                'ir_derecha': col<2,
+                'subir': (col==2) * ren,
+                'bajar': (col==0) * (ren<2),
                 'limpiar': 1,
                 'nada': 1
             }[acción])
@@ -115,24 +115,25 @@ class NueveCuartos(DosCuartos):
     
     def transición(self, acción):
         if not self.acción_legal(acción):
-            raise ValueError("La acción no es legal para este estado")
+            raise ValueError("La acción {} no es legal para el estado {}".format(acción, self.x))
 
         if acción == 'subir' or acción == 'bajar':
             self.desempeño -= 3
-            self.x[1] += {'subir':-1, 'bajar':1}[acción]
+            self.x[0] += {'subir':-1, 'bajar':1}[acción]
         elif acción == 'ir_izquierda' or acción == 'ir_derecha':
             self.desempeño -= 2
-            self.x[0] += {'ir_izquierda':-1, 'ir_derecha':1}[acción]
+            self.x[1] += {'ir_izquierda':-1, 'ir_derecha':1}[acción]
         elif acción == 'limpiar':
             self.desempeño -= 1
-            self.x[2][self.x[0]][self.x[1]] = 0
-        elif acción == 'nada' and 1 in [e for col in self.x[2] for e in col]:
+            self.x[2 + self.x[0]*3 + self.x[1]] = 0
+        elif acción == 'nada' and 1 in self.x[2:]:
             self.desempeño -= 1
     
     def percepción(self):
-        col, ren, matriz_de_cuartos = self.x
-        print("col: {}, ren: {}".format(col,ren))
-        return ren, col, matriz_de_cuartos[col][ren]
+        ren, col = self.x[0], self.x[1]
+        matriz_de_cuartos = self.x[2:]
+        print("ren: {}, col: {}".format(ren,col))
+        return ren, col, matriz_de_cuartos[ren*3 + col]
     
 class AgenteAleatorioNueveCuartos(Agente):
     def __init__(self):
@@ -159,11 +160,37 @@ class AgenteAleatorioNueveCuartos(Agente):
         except:
             return False
 
+class AgenteReactivoModeloNueveCuartos():
+    def __init__(self):
+        self.modelo = [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+
+    def programa(self, percepción):
+        self.ActualizarModelo(percepción)
+
+        i, j = self.modelo[0], self.modelo[1]
+        situacion = self.modelo[2 + i*3 + j]
+
+        return ('nada' if not 1 in self.modelo[2:] else
+                'limpiar' if situacion else
+                'ir_derecha' if (i == 2 and (j == 0 or j == 1)) or
+                (i == 1 and j == 1) else
+                'ir_izquierda' if  (i == 0 and (j == 2 or j == 1)) or
+                ((i == 1 and j == 2) and self.modelo[6]) else 
+                'subir' if  j == 2 and (i == 2 or i == 1) else
+                'bajar')
+
+
+    def ActualizarModelo(self, percepción):
+        i, j = percepción[0], percepción[1]
+        self.modelo[0], self.modelo[1] = i, j
+        self.modelo[2 + i*3 + j] = percepción[2]
+
 if __name__ == "__main__":
     print("Prueba del entorno con un agente aleatorio")
-    simulador(NueveCuartos(),
-                         AgenteAleatorioNueveCuartos(),
-                         200)
+    simulador(NueveCuartos(), AgenteAleatorioNueveCuartos(), 200)
+    
+    print("Prueba del entorno con un agente reactivo con modelo")
+    simulador(NueveCuartos(), AgenteReactivoModeloNueveCuartos(), 100)
 
 # Requiere el modulo entornos_o.py
 # Usa el modulo doscuartos_o.py para reutilizar código
