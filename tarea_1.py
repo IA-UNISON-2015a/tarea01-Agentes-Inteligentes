@@ -64,6 +64,8 @@ from doscuartos_o import DosCuartos
 
 __author__ = 'Ricardo E. Alvarado Mata'
 
+#*********** Entornos ***********
+
 class NueveCuartos(DosCuartos):
     """
     Clase que representa un entorno con nueve cuartos divididos
@@ -132,9 +134,16 @@ class NueveCuartos(DosCuartos):
     def percepción(self):
         ren, col = self.x[0], self.x[1]
         matriz_de_cuartos = self.x[2:]
-        print("ren: {}, col: {}".format(ren,col))
         return ren, col, matriz_de_cuartos[ren*3 + col]
-    
+
+
+class NueveCuartosCiego(NueveCuartos):
+
+    def percepción(self):
+        return self.x[0], self.x[1]
+
+#*********** Agentes ***********
+
 class AgenteAleatorioNueveCuartos(Agente):
     def __init__(self):
         self.acciones = ["ir_derecha", "ir_izquierda", "subir", "bajar", "limpiar", "nada"]
@@ -147,13 +156,13 @@ class AgenteAleatorioNueveCuartos(Agente):
         
         return c
 
-    def acción_legal(self, acción, col, ren):
+    def acción_legal(self, acción, ren, col):
         try:
             return bool({
-                'ir_izquierda': ren,
-                'ir_derecha': ren<2,
-                'subir': (ren==2) * col,
-                'bajar': (ren==0) * (col<2),
+                'ir_izquierda': col,
+                'ir_derecha': col<2,
+                'subir': (col==2) * ren,
+                'bajar': (col==0) * (ren<2),
                 'limpiar': 1,
                 'nada': 1
             }[acción])
@@ -165,7 +174,7 @@ class AgenteReactivoModeloNueveCuartos():
         self.modelo = [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 
     def programa(self, percepción):
-        self.ActualizarModelo(percepción)
+        self.actualizar_modelo(percepción)
 
         i, j = self.modelo[0], self.modelo[1]
         situacion = self.modelo[2 + i*3 + j]
@@ -180,17 +189,37 @@ class AgenteReactivoModeloNueveCuartos():
                 'bajar')
 
 
-    def ActualizarModelo(self, percepción):
+    def actualizar_modelo(self, percepción):
         i, j = percepción[0], percepción[1]
         self.modelo[0], self.modelo[1] = i, j
         self.modelo[2 + i*3 + j] = percepción[2]
 
+class AgenteReactivoModeloNueveCuartosCiego(AgenteReactivoModeloNueveCuartos):
+    
+    def programa(self, percepción):
+        i, j = percepción[0], percepción[1]
+        suposición = [i, j, self.modelo[2 + i*3 + j]]
+        acción = super().programa(suposición)
+
+        if acción == 'limpiar':
+            suposición[2] = 0
+        
+        super().actualizar_modelo(suposición)
+
+        return acción
+
 if __name__ == "__main__":
-    print("Prueba del entorno con un agente aleatorio")
+    print("Prueba del entorno NueveCuartos con un agente aleatorio")
     simulador(NueveCuartos(), AgenteAleatorioNueveCuartos(), 200)
     
-    print("Prueba del entorno con un agente reactivo con modelo")
-    simulador(NueveCuartos(), AgenteReactivoModeloNueveCuartos(), 100)
+    print("Prueba del entorno NueveCuartos con un agente reactivo con modelo")
+    simulador(NueveCuartos(), AgenteReactivoModeloNueveCuartos(), 200)
+
+    print("Prueba del entorno NueveCuartosCiego con un agente aleatorio")
+    simulador(NueveCuartosCiego(), AgenteAleatorioNueveCuartos(), 200)
+
+    print("Prueba del entorno NueveCuartosCiego con un agente reactivo con modelo")
+    simulador(NueveCuartosCiego(), AgenteReactivoModeloNueveCuartosCiego(), 200)
 
 # Requiere el modulo entornos_o.py
 # Usa el modulo doscuartos_o.py para reutilizar código
