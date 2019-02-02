@@ -210,11 +210,13 @@ class AgenteCiego(entornos_o.Agente,):
 
     def programa(self, robot):
         if self.dónde_empece is -1:
-            self.donde_empece = robot
-        if self.nuevo is False and robot is self.dónde_empece:
+            self.dónde_empece = robot
+        print("sn:",self.nuevo,"ro:",robot,"de:",self.dónde_empece)
+        if self.nuevo is False and robot is self.dónde_empece and self.de_ida:
             return "nada"
         else:
-            self.nuevo = False
+            if self.estado is "esperando":
+                self.nuevo = False
             if self.estado is "listo":
                 self.estado="esperando"
                 return "limpiar"
@@ -243,6 +245,7 @@ class AgenteCiego(entornos_o.Agente,):
                         self.estado="listo"
                         return "ir_Izquierda"
                     elif robot is 6 and not self.de_ida:
+                        self.de_ida = True
                         self.estado="listo"
                         return "subir"
                 else:
@@ -253,10 +256,8 @@ class AgenteCiego(entornos_o.Agente,):
                     else:
                         self.estado="listo"
                         return "ir_Izquierda"
-            
-            
-            
-            
+        
+        
             
 """
 *****************************************************************************************************************************************************
