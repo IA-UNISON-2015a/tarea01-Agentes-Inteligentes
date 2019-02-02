@@ -80,7 +80,7 @@ class NueveCuartos(entornos_o.Entorno):
     donde robot puede tener los valores 1-9
     1-9 pueden tener los valores "limpio", "sucio"
 
-    Las acciones válidas en el entorno son ("der", "izg", "subir", "bajar",  "limpiar", "nada").
+    Las acciones válidas en el entorno son ('ir_Derecha', "izg", "subir", "bajar",  "limpiar", "nada").
     No todas las acciones son válidas en todos los estados.
     
 
@@ -99,23 +99,23 @@ class NueveCuartos(entornos_o.Entorno):
 
     def acción_legal(self, acción):
         if self.x[0]==1:
-            return acción in ("der", "limpiar", "nada")
+            return acción in ('ir_Derecha', "limpiar", "nada")
         if self.x[0]==2:
-            return acción in ("der","izq", "limpiar", "nada")
+            return acción in ('ir_Derecha','ir_Izquierda', "limpiar", "nada")
         if self.x[0]==3:
-            return acción in ("izq", "subir" , "limpiar", "nada")
+            return acción in ('ir_Izquierda', "subir" , "limpiar", "nada")
         if self.x[0]==4:
-            return acción in ("der", "bajar", "limpiar", "nada")
+            return acción in ('ir_Derecha', "bajar", "limpiar", "nada")
         if self.x[0]==5:
-            return acción in ("der","izq", "limpiar", "nada")
+            return acción in ('ir_Derecha','ir_Izquierda', "limpiar", "nada")
         if self.x[0]==6:
-            return acción in ("izq", "subir" , "limpiar", "nada")
+            return acción in ('ir_Izquierda', "subir" , "limpiar", "nada")
         if self.x[0]==7:
-            return acción in ("der", "bajar", "limpiar", "nada")
+            return acción in ('ir_Derecha', "bajar", "limpiar", "nada")
         if self.x[0]==8:
-            return acción in ("der","izq", "limpiar", "nada")
+            return acción in ('ir_Derecha','ir_Izquierda', "limpiar", "nada")
         if self.x[0]==9:
-            return acción in ("izq", "limpiar", "nada")
+            return acción in ('ir_Izquierda', "limpiar", "nada")
 
     def transición(self, acción):
         if not self.acción_legal(acción):
@@ -131,10 +131,10 @@ class NueveCuartos(entornos_o.Entorno):
         if acción is "limpiar":
             self.desempeño-=1
             self.x[self.x[0]] = "limpio"
-        elif acción is "der":
+        elif acción is 'ir_Derecha':
             self.desempeño-=1
             self.x[0] += 1 
-        elif acción is "izq":
+        elif acción is 'ir_Izquierda':
             self.desempeño-=1
             self.x[0] -= 1 
         elif acción is "subir":
@@ -161,23 +161,23 @@ class NueveCuartosCiego(NueveCuartos):
 
     def acción_legal(self, acción):
         if self.x[0]==1:
-            return acción in ("der", "limpiar", "nada")
+            return acción in ('ir_Derecha', "limpiar", "nada")
         if self.x[0]==2:
-            return acción in ("der","izq", "limpiar", "nada")
+            return acción in ('ir_Derecha','ir_Izquierda', "limpiar", "nada")
         if self.x[0]==3:
-            return acción in ("izq", "subir" , "limpiar", "nada")
+            return acción in ('ir_Izquierda', "subir" , "limpiar", "nada")
         if self.x[0]==4:
-            return acción in ("der", "bajar", "limpiar", "nada")
+            return acción in ('ir_Derecha', "bajar", "limpiar", "nada")
         if self.x[0]==5:
-            return acción in ("der","izq", "limpiar", "nada")
+            return acción in ('ir_Derecha','ir_Izquierda', "limpiar", "nada")
         if self.x[0]==6:
-            return acción in ("izq", "subir" , "limpiar", "nada")
+            return acción in ('ir_Izquierda', "subir" , "limpiar", "nada")
         if self.x[0]==7:
-            return acción in ("der", "bajar", "limpiar", "nada")
+            return acción in ('ir_Derecha', "bajar", "limpiar", "nada")
         if self.x[0]==8:
-            return acción in ("der","izq", "limpiar", "nada")
+            return acción in ('ir_Derecha','ir_Izquierda', "limpiar", "nada")
         if self.x[0]==9:
-            return acción in ("izq", "limpiar", "nada")
+            return acción in ('ir_Izquierda', "limpiar", "nada")
 
     def transición(self, acción):
         if not self.acción_legal(acción):
@@ -192,10 +192,10 @@ class NueveCuartosCiego(NueveCuartos):
         #subir y bajar cuestan 2
         if acción is "limpiar":
             self.desempeño-=1
-        elif acción is "der":
+        elif acción is 'ir_Derecha':
             self.desempeño-=1
             self.x[0] += 1 
-        elif acción is "izq":
+        elif acción is 'ir_Izquierda':
             self.desempeño-=1
             self.x[0] -= 1 
         elif acción is "subir":
@@ -230,23 +230,23 @@ class NueveCuartosEstocastico(entornos_o.Entorno):
 
     def acción_legal(self, acción):
         if self.x[0]==1:
-            return acción in ("der", "limpiar", "nada")
+            return acción in ('ir_Derecha', "limpiar", "nada")
         if self.x[0]==2:
-            return acción in ("der","izq", "limpiar", "nada")
+            return acción in ('ir_Derecha','ir_Izquierda', "limpiar", "nada")
         if self.x[0]==3:
-            return acción in ("izq", "subir" , "limpiar", "nada")
+            return acción in ('ir_Izquierda', "subir" , "limpiar", "nada")
         if self.x[0]==4:
-            return acción in ("der", "bajar", "limpiar", "nada")
+            return acción in ('ir_Derecha', "bajar", "limpiar", "nada")
         if self.x[0]==5:
-            return acción in ("der","izq", "limpiar", "nada")
+            return acción in ('ir_Derecha','ir_Izquierda', "limpiar", "nada")
         if self.x[0]==6:
-            return acción in ("izq", "subir" , "limpiar", "nada")
+            return acción in ('ir_Izquierda', "subir" , "limpiar", "nada")
         if self.x[0]==7:
-            return acción in ("der", "bajar", "limpiar", "nada")
+            return acción in ('ir_Derecha', "bajar", "limpiar", "nada")
         if self.x[0]==8:
-            return acción in ("der","izq", "limpiar", "nada")
+            return acción in ('ir_Derecha','ir_Izquierda', "limpiar", "nada")
         if self.x[0]==9:
-            return acción in ("izq", "limpiar", "nada")
+            return acción in ('ir_Izquierda', "limpiar", "nada")
 
     def transición(self, acción):
         if not self.acción_legal(acción):
@@ -264,7 +264,7 @@ class NueveCuartosEstocastico(entornos_o.Entorno):
             self.desempeño-=1
             if aleatorio < 8:
                 self.x[self.x[0]] = "limpio"
-        elif acción is "der":
+        elif acción is 'ir_Derecha':
             if aleatorio < 8:
                 self.desempeño-=1
                 self.x[0] += 1
@@ -290,18 +290,18 @@ class NueveCuartosEstocastico(entornos_o.Entorno):
                         self.desempeño-=1
                 #-------------terminamos las acciones de los cuartos 4 y 7
                 if robot == 2 or robot == 5 or robot == 8:
-                    accion_aleatoria= choice(['limpiar','nada', 'izq'])
+                    accion_aleatoria= choice(['limpiar','nada', 'ir_Izquierda'])
                     if accion_aleatoria == 'limpiar':
                         self.desempeño-=1
                         self.x[robot]='limpio'
-                    elif accion_aleatoria == 'izq':
+                    elif accion_aleatoria == 'ir_Izquierda':
                         self.desempeño-=1
                         self.x[0] -= 1
                     else:
                         self.desempeño-=1
                 #---------terminamos las acciones de los cuartos 2, 5, 8
         #=====terminamos todas las acciones que podrian pasar por ir a la derecha
-        elif acción is "izq":
+        elif acción is 'ir_Izquierda':
             if aleatorio < 8:
                 self.desempeño-=1
                 self.x[0] -= 1
@@ -327,11 +327,11 @@ class NueveCuartosEstocastico(entornos_o.Entorno):
                         self.desempeño-=1
                 #-------------terminamos las acciones de los cuartos 4 y 7
                 if robot == 2 or robot == 5 or robot == 8:
-                    accion_aleatoria= choice(['limpiar', 'nada', 'der'])
+                    accion_aleatoria= choice(['limpiar', 'nada', 'ir_Derecha'])
                     if accion_aleatoria == 'limpiar':
                         self.desempeño-=1
                         self.x[robot]='limpio'
-                    elif accion_aleatoria == 'der':
+                    elif accion_aleatoria == 'ir_Derecha':
                         self.desempeño-=1
                         self.x[0] += 1
                     else:
@@ -346,11 +346,11 @@ class NueveCuartosEstocastico(entornos_o.Entorno):
                 self.desempeño-=1
             else:##elejimos una accion aleatoriamente
                 ##vemos donde esta para escogfer su accion aleatoria
-                accion_aleatoria= choice(['limpiar', 'nada', 'izq'])
+                accion_aleatoria= choice(['limpiar', 'nada', 'ir_Izquierda'])
                 if accion_aleatoria == 'limpiar':
                     self.desempeño-=1
                     self.x[robot]='limpio'
-                elif accion_aleatoria == 'izq':
+                elif accion_aleatoria == 'ir_Izquierda':
                     self.desempeño-=1
                     self.x[0] -= 1
                 else:
@@ -364,11 +364,11 @@ class NueveCuartosEstocastico(entornos_o.Entorno):
                 self.desempeño-=1
             else:##elejimos una accion aleatoriamente
                 ##vemos donde esta para escogfer su accion aleatoria
-                accion_aleatoria= choice(['limpiar', 'nada', 'der'])
+                accion_aleatoria= choice(['limpiar', 'nada', 'ir_Derecha'])
                 if accion_aleatoria == 'limpiar':
                     self.desempeño-=1
                     self.x[robot]='limpio'
-                elif accion_aleatoria == 'der':
+                elif accion_aleatoria == 'ir_Derecha':
                     self.desempeño-=1
                     self.x[0] += 1
                 else:
@@ -432,54 +432,133 @@ class AgenteReactivoModeloNueveCuartos(entornos_o.Agente):
         elif situación == 'sucio':
             return 'limpiar' #si el cuarto en el que esta el robot esta sucio lo limpiamos
         elif robot == 1: 
-            return 'der'#si esl robot esta en el primer cuarto, su unica opcion es ir a la derecha
+            return 'ir_Derecha'#si esl robot esta en el primer cuarto, su unica opcion es ir a la derecha
         elif robot == 2:#limpiamos en orden el piso
             if a =='sucio':
-                return 'izq'
+                return 'ir_Izquierda'
             else:
-                return 'der'
+                return 'ir_Derecha'
         elif robot == 3:
             if b == 'sucio':
-                return 'izq'
+                return 'ir_Izquierda'
             else:
                 return 'subir'
         elif robot == 4:#cuarto de mas a la derecha del segundo piso
             if a == 'sucio':
                 return 'bajar'
             else:
-                return 'der'
+                return 'ir_Derecha'
         elif robot == 5:#cuarto de el centro del segundo piso
             if d == 'sucio':
-                return 'izq'
+                return 'ir_Izquierda'
             else:
-                return 'der'
+                return 'ir_Derecha'
         elif robot == 6: #cuarto de la izq del segundo piso
             if e == 'sucio':
-                return 'izq'
+                return 'ir_Izquierda'
             else:
                 return 'subir'
         elif robot == 7: #cuarto de la derecha del tercer piso
             if d == 'sucio':
                 return 'bajar'
             else:
-                return 'der'
+                return 'ir_Derecha'
         elif robot == 8:# cuarto del centro del tercer piso
             if g == 'sucio':
-                return 'izq'
+                return 'ir_Izquierda'
             else:
-                return 'der'
+                return 'ir_Derecha'
         elif robot == 9: #cuaro de la izq del tercer piso, ya no se puede subir mas
-            return 'izq'
-            
+            return 'ir_Izquierda'
+
+class AgenteRacionalNueveCuartosCiego(entornos_o.Agente):
+    """
+    Un agente reactivo basado en modelo
+
+    """
+    def __init__(self):
+        """
+        Inicializa el modelo interno en el peor de los casos
+
+        """
+        self.modelo = [1, 'sucio', 'sucio', 'sucio', 'sucio', 'sucio', 'sucio', 'sucio', 'sucio', 'sucio']
+
+    def programa(self, percepción):
+        robot, situación = percepción
+
+        # Actualiza el modelo interno
+        self.modelo[0] = robot
+        self.modelo[robot] = situación
+
+        
+        if a == b == c == d == e == f == g == h == i == 'limpio':
+            return'nada' #si todo esta limpio no hacemos nada
+        elif situación == 'sucio':
+            return 'limpiar' #si el cuarto en el que esta el robot esta sucio lo limpiamos
+        elif robot == 1: 
+            return 'ir_Derecha'#si esl robot esta en el primer cuarto, su unica opcion es ir a la derecha
+        elif robot == 2:#limpiamos en orden el piso
+            if a =='sucio':
+                return 'ir_Izquierda'
+            else:
+                return 'ir_Derecha'
+        elif robot == 3:
+            if b == 'sucio':
+                return 'ir_Izquierda'
+            else:
+                return 'subir'
+        elif robot == 4:#cuarto de mas a la derecha del segundo piso
+            if a == 'sucio':
+                return 'bajar'
+            else:
+                return 'ir_Derecha'
+        elif robot == 5:#cuarto de el centro del segundo piso
+            if d == 'sucio':
+                return 'ir_Izquierda'
+            else:
+                return 'ir_Derecha'
+        elif robot == 6: #cuarto de la izq del segundo piso
+            if e == 'sucio':
+                return 'ir_Izquierda'
+            else:
+                return 'subir'
+        elif robot == 7: #cuarto de la derecha del tercer piso
+            if d == 'sucio':
+                return 'bajar'
+            else:
+                return 'ir_Derecha'
+        elif robot == 8:# cuarto del centro del tercer piso
+            if g == 'sucio':
+                return 'ir_Izquierda'
+            else:
+                return 'ir_Derecha'
+        elif robot == 9: #cuaro de la izq del tercer piso, ya no se puede subir mas
+            return 'ir_Izquierda'
         
 def test():
     """
     Prueba del entorno y los agentes
 
     """
+    """
+    PRUEBAS DE NueveCuartos
+    
+    print("Prueba del entorno con un agente aleatorio")
+    entornos_o.simulador(NueveCuartos(),
+                         AgenteAleatorio(['ir_Derecha', 'ir_Izquierda', 'subir', 'bajar', 'limpiar', 'nada']),
+                         200)
+
+    #print("Prueba del entorno con un agente reactivo")
+    #entornos_o.simulador(NueveCuartos(), AgenteReactivoNuevecuartos(), 100)
+
+    print("Prueba del entorno con un agente reactivo con modelo")
+    entornos_o.simulador(NueveCuartos(), AgenteReactivoModeloNueveCuartos(), 200)
+
+    """
+    #PRUEBAS DE NueveCuartosEstocasticos
     print("Prueba del entorno con un agente aleatorio")
     entornos_o.simulador(NueveCuartosEstocastico(),
-                         AgenteAleatorio(['der', 'izq', 'subir', 'bajar', 'limpiar', 'nada']),
+                         AgenteAleatorio(['ir_Derecha', 'ir_Izquierda', 'subir', 'bajar', 'limpiar', 'nada']),
                          200)
 
     #print("Prueba del entorno con un agente reactivo")
