@@ -139,31 +139,162 @@ class SeisCuartos (entornos_o.Entorno):
     return self.x[0], self.x[ " ABCDEF".find( self.x[0] ) ]
   
 #INCISO 2
-class AgenteAleatorio(entornos_o.Agente):
-  """
-  Un agente que solo regresa una accion al azar entre las acciones legales
-  """
-  def __init__(self, acciones):
-      self.acciones = acciones
-
-  def programa(self, percepcion):
-    return choice(self.acciones)
-
 class AgenteReactivo(entornos_o.Agente):
-    """
-    Agente Reactivo
-    """
     def __init__(self):
-      #Continuara...
+        self.modelo = {"robot":"A", "A":"sucio", "B":"sucio", "C":"sucio", "D":"sucio", "E":"sucio", "F":"sucio"}
+    def programa(self,percepción):
+        cuarto_actual, estado_actual = percepción
+
+        self.modelo["robot"] = cuarto_actual
+        self.modelo[cuarto_actual] = estado_actual
+
+        if estado_actual is "sucio":
+            return "limpiar"
+
+        if not "sucio" in [self.modelo[i] for i in "ABCDEF"]: return "nada"
+        if cuarto_actual in "ABC":
+            if cuarto_actual in 'AC' and not("sucio" in [self.modelo[i] for i in "ABC"]):
+                return "subir"
+            elif cuarto_actual in "AB" and self.modelo["A"] == "limpio":
+                return "ir_Derecha"
+            elif cuarto_actual in "BC":
+                return "ir_Izquierda"
+        if cuarto_actual in "DEF":
+            if cuarto_actual is 'E' and not "sucio" in [self.modelo[i] for i in "DEF"]:
+                return "bajar"
+            elif cuarto_actual in 'DE' and self.modelo["D"] == "limpio":
+                return "ir_Derecha"
+            elif cuarto_actual in "EF": 
+                return "ir_Izquierda"
+
+        return "nada"
+class AgenteAleatorio(entornos_o.Agente):
+	def __init__(self,acciones):
+        self.acciones = acciones
+    def programa(self, percepción):
+        cuarto_actual = percepción[0]
+        acciones = self.acciones[:]
+
+        if cuarto_actual in "ABC":
+            acciones.remove("bajar")
+            if cuarto_actual is "B":    acciones.remove("subir")
+            elif cuarto_actual is "A":  acciones.remove("ir_Izquierda")
+            elif cuarto_actual is "C":  acciones.remove("ir_Derecha")
+        elif cuarto_actual in "DEF":
+            acciones.remove("subir")
+            if cuarto_actual in "DF":   acciones.remove("bajar")
+            if cuarto_actual is "D":  acciones.remove("ir_Izquierda")
+            if cuarto_actual is "F":  acciones.remove("ir_Derecha")
+
+        return random.choice(acciones)
+	def test1(pasos = 100):
+		print("Prueba en SeisCuartos con un agente aleatorio.")
+		entornos_o.simulador(SeisCuartos(), AgenteAleatorio(['ir_Derecha', 'ir_Izquierda', 'subir', 'bajar', 'limpiar', 'nada']), pasos)
+
+		print("Prueba en SeisCuartos con un agente reactivo basado en modelo.")
+		entornos_o.simulador(SeisCuartos(), AgenteReactivo(), pasos)
 #FIN INCISO 2
+#INCISO 3
+class DosCuartosCiego(entornos_o.Entorno):
+    def __init__(self, x0=["A", "sucio", "sucio"]):
+        self.x = x0[:]
+        self.desempeño = 0
 
+    def acción_legal(self, accion):
+        return accion in ("ir_A", "ir_B", "limpiar", "nada")
 
-def test():
-    """
-    Prueba del entorno y los agentes
-    """
-    print("Prueba del entorno con un agente aleatorio")
-    entornos_o.simulador( SeisCuartos(), AgenteAleatorio(["ir_Derecha", "ir_Izquierda", "subir", "bajar", "limpiar", "nada"]), 100 )
+    def transición(self, accion):
+        if not self.acción_legal(accion):
+            raise ValueError("La acción no es legal para este estado")
+
+        robot, a, b = self.x
+        if accion is not "nada" or a is "sucio" or b is "sucio":
+            self.desempeño -= 1
+
+        if accion is "limpiar":
+            self.x[" AB".find(self.x[0])] = "limpio"
+        elif accion is "ir_A":
+            self.x[0] = "A"
+        elif accion is "ir_B":
+            self.x[0] = "B"
+
+    def percepción(self):
+        return self.x[0]
+
+class AgenteRacional(entornos_o.Agente):
+    def __init__(self):
+        self.modelo = ['A', 'sucio', 'sucio']
+
+    def programa(self, percepción):
+        robot = percepción
+        self.modelo[0] = robot
+        situacion = self.modelo[' AB'.find(robot)]
+
+        if situacion is "sucio":
+            self.modelo[' AB'.find(robot)] = "limpio"
+            return "limpiar"
+        if self.modelo[1] == self.modelo[2] == "limpio": return "nada"
+        if robot == "A": return "ir_B"
+        else: return "ir_A"
+
+def test2():
+    print("Prueba del entorno DosCuartosCiego con un agente aleatorio")
+    entornos_o.simulador(DosCuartosCiego(),doscuartos_o.AgenteAleatorio(['ir_A', 'ir_B', 'limpiar', 'nada']),100)
+
+    print("Prueba del entorno DosCuartosCiego con un agente reactivo con modelo")
+    entornos_o.simulador(DosCuartosCiego(), AgenteRacional(), 100)
+#FIN INCISO 3
+#INCISO 4
+class DosCuartosEstocastico(entornos_o.Entorno):
+    def __init__(self, x0=["A", "sucio", "sucio"]):
+        self.x = x0[:]
+        self.desempeño = 0
+
+    def acción_legal(self, accion):
+        return accion in ("ir_A", "ir_B", "limpiar", "nada")
+    def transición(self, accion):
+        if not self.acción_legal(accion):
+            raise ValueError("La acción no es legal para este estado")
+
+        robot, a, b = self.x
+        if accion is not "nada" or a is "sucio" or b is "sucio":
+            self.desempeño -= 1
+        if accion is "limpiar":
+            if random.random() <= 0.8:
+                self.x[" AB".find(self.x[0])] = "limpio"
+        elif accion is "ir_A":
+            if random.random() <= 0.9:
+                self.x[0] = "A"
+        elif accion is "ir_B":
+            if random.random() <= 0.9:
+                self.x[0] = "B"
+
+    def percepción(self):
+        return self.x[0], self.x[" AB".find(self.x[0])]
+
+class AgenteRacional_estocastico(entornos_o.Agente):
+    def __init__(self):
+        self.modelo = ['A', 'sucio', 'sucio']
+
+    def programa(self, percepción):
+        robot, situacion = percepción
+
+        self.modelo[0] = robot
+        self.modelo[' AB'.find(robot)] = situacion
+
+        a, b = self.modelo[1], self.modelo[2]
+        return ('nada' if a == b == 'limpio' else
+                'limpiar' if situacion == 'sucio' else
+                'ir_A' if robot == 'B' else 'ir_B')
+def test3():
+    print("Prueba del entorno estocastico con un agente aleatorio")
+    entornos_o.simulador(DosCuartosEstocastico(),doscuartos_o.AgenteAleatorio(['ir_A', 'ir_B', 'limpiar', 'nada']),100)
+
+    print("Prueba del entorno estocastico con un agente reactivo con modelo")
+    entornos_o.simulador(DosCuartosEstocastico(), AgenteRacional_estocastico(), 100)
+#FIN INCISO 4
 
 if __name__ == "__main__":
-    test()
+    test1() #  prueba Ejercicio 1 y 2
+    #test2() #  prueba Ejercicio 3
+    #test3() #  prueba ejercicio 4
