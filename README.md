@@ -72,3 +72,10 @@ En esta tarea realiza las siguiente acciones:
 Todos los incisos tienen un valor de 25 puntos sobre la calificación de
 la tarea.
 
+## Comentarios del alumno
+
+Fue interesante ver los dos tipos de agente (racional, aleatorio) interactuar en el primer entorno, el normal. En ocasiones el aleatorio no terminaba de limpiar los cuartos después de 200 pasos de simulación. 
+
+En el caso del entorno ciego, lo interesante fue ver que en el mejor de los casos era casi igual que el agente con modelo normal (un paso menos el ciego, puesto que no fui tan estricto con las condiciones en el normal), y en el peor de los casos, realizaba casi el doble de acciones y aproximadamente un doble de costos.
+
+En el estocástico nunca vi que fuera más costoso que el ciego (éste en el peor de los casos) a pesar de los posibles escenarios donde el robot no podía limpiar o era movido involuntariamente hacia otro cuarto.

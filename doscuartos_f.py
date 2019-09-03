@@ -4,9 +4,7 @@
 """
 doscuartos_f.py
 ----------------
-
 Ejemplo de un entorno muy simple y agentes idem
-
 """
 
 import entornos_f
@@ -19,43 +17,39 @@ __author__ = 'juliowaissman'
 class DosCuartos(entornos_f.Entorno):
     """
     Clase para un entorno de dos cuartos. 
-    Muy sencilla solo regrupa métodos.
-
+    Muy sencilla solo regrupa metodos.
     El estado se define como (robot, A, B)
     donde robot puede tener los valores "A", "B"
     A y B pueden tener los valores "limpio", "sucio"
-
-    Las acciones válidas en el entorno son 
+    Las acciones validas en el entorno son 
         ("ir_A", "ir_B", "limpiar", "nada").
     
-    Todas las acciones son válidas en todos los estados.
-
+    Todas las acciones son validas en todos los estados.
     Los sensores es una tupla (robot, limpio?)
-    con la ubicación del robot y el estado de limpieza
-
+    con la ubicacion del robot y el estado de limpieza
     """
-    def acción_legal(self, acción):
-        return acción in ("ir_A", "ir_B", "limpiar", "nada")
+    def accion_legal(self, accion):
+        return accion in ("ir_A", "ir_B", "limpiar", "nada")
 
-    def transición(self, estado, acción):
+    def transicion(self, estado, accion):
         robot, a, b = estado
 
-        c_local = 0 if a == b == "limpio" and acción is "nada" else 1
+        c_local = 0 if a == b == "limpio" and accion is "nada" else 1
 
-        return ((estado, c_local) if a is "nada" else
-                (("A", a, b), c_local) if acción is "ir_A" else
-                (("B", a, b), c_local) if acción is "ir_B" else
+        return ((estado, c_local) if accion is "nada" else
+                (("A", a, b), c_local) if accion is "ir_A" else
+                (("B", a, b), c_local) if accion is "ir_B" else
                 ((robot, "limpio", b), c_local) if robot is "A" else
                 ((robot, a, "limpio"), c_local))
 
-    def percepción(self, estado):
+    def percepcion(self, estado):
+        # regresa donde se encuentra el robot y si el cuarto donde esta se encuentra limpio o sucio
         return estado[0], estado[" AB".find(estado[0])]
 
 
 class AgenteAleatorio(entornos_f.Agente):
     """
     Un agente que solo regresa una accion al azar entre las acciones legales
-
     """
     def __init__(self, acciones):
         self.acciones = acciones
@@ -67,42 +61,39 @@ class AgenteAleatorio(entornos_f.Agente):
 class AgenteReactivoDoscuartos(entornos_f.Agente):
     """
     Un agente reactivo simple
-
     """
-    def programa(self, percepción):
-        robot, situación = percepción
-        return ('limpiar' if situación == 'sucio' else
+    def programa(self, percepcion):
+        robot, situacion = percepcion
+        return ('limpiar' if situacion == 'sucio' else
                 'ir_A' if robot == 'B' else 'ir_B')
 
 
 class AgenteReactivoModeloDosCuartos(entornos_f.Agente):
     """
     Un agente reactivo basado en modelo
-
     """
     def __init__(self):
         """
         Inicializa el modelo interno en el peor de los casos
-
         """
         self.modelo = ['A', 'sucio', 'sucio']
 
-    def programa(self, percepción):
-        robot, situación = percepción
+    def programa(self, percepcion):
+        robot, situacion = percepcion
 
         # Actualiza el modelo interno
         self.modelo[0] = robot
-        self.modelo[' AB'.find(robot)] = situación
+        self.modelo[' AB'.find(robot)] = situacion
 
         # Decide sobre el modelo interno
         a, b = self.modelo[1], self.modelo[2]
         return ('nada' if a == b == 'limpio' else
-                'limpiar' if situación == 'sucio' else
+                'limpiar' if situacion == 'sucio' else
                 'ir_A' if robot == 'B' else 'ir_B')
 
 
 def prueba_agente(agente):
-    entornos_f.imprime_simulación(
+    entornos_f.imprime_simulacion(
         entornos_f.simulador(
             DosCuartos(),
             agente,
@@ -115,7 +106,6 @@ def prueba_agente(agente):
 def test():
     """
     Prueba del entorno y los agentes
-
     """
     print("Prueba del entorno con un agente aleatorio")
     prueba_agente(AgenteAleatorio(['ir_A', 'ir_B', 'limpiar', 'nada']))
