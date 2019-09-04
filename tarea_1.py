@@ -9,7 +9,7 @@ Tarea de desarrollo de entornos y agentes
 
 1. Desarrolla un entorno similar al de los dos cuartos (el cual se
    encuentra en el módulo doscuartos_f.py), pero con tres cuartos en
-   el primer piso, y tres cuartos en el segundo piso.
+   el primer p==o, y tres cuartos en el segundo piso.
    
    El entorno se llamará `SeisCuartos`.
 
@@ -57,10 +57,350 @@ Todos los incisos tienen un valor de 25 puntos sobre la calificación de
 la tarea.
 
 """
-__author__ = 'escribe_tu_nombre'
+__author__ = 'MiguelRomero'
 
 import entornos_f
+from random import choice
 
 # Requiere el modulo entornos_f.py
 # Usa el modulo doscuartos_f.py para reutilizar código
 # Agrega los modulos que requieras de python
+
+
+class NueveCuartos(entornos_f.Entorno):
+
+    def acción_legal(self, s, a):
+        """
+        @param s: Una tupla con un estado legal del entorno
+        @param a: Una accion en el entorno
+
+        Las acciones son: subir, bajar, ir_Izquierda, ir_Derecha, limpiar, nada.
+
+        @return: True si accion es legal en estado, False en caso contrario
+
+        Por default acepta cualquier acción.
+
+        """
+
+        robot, A, B, C, D, E, F, G, H, I = s
+        
+
+        if a == "subir":
+            if robot == "C" or robot == "F":
+                return True
+            else:
+                return False
+
+        elif a == "bajar":
+            if robot == "G" or robot == "D":
+                return True
+            else:
+                return False
+
+        elif a == "ir_Izquierda":
+            if robot == "A" or robot == "D" or robot == "G":
+                return False
+            else: return True
+
+        elif a == "ir_Derecha":
+            if robot == "C" or robot == "F" or robot == "I":
+                return False
+            else: return True
+
+        elif a == "limpiar" or a == "nada":
+            return True
+        
+        else: return False
+             
+
+    #Fin funcion accion_legal
+
+
+
+    def transición(self, s, a):
+
+        """
+        @param s: Una tupla con un estado legal del entorno
+        @param a: Una accion en el entorno
+
+        @return: (s_n, c_local) una tupla con el nuevo estado y
+                 el costo de ir de s a s_n con la acción a
+
+        """
+
+        robot, A, B, C, D, E, F, G, H, I = s
+
+        
+
+        if A == B == C == D == E == F == G == H == I == "limpio" \
+           and a == "nada":
+            c_local = 0
+
+        elif a == "limpiar":
+            c_local = 2
+        elif a == "ir_Izquierda" or a == "ir_Derecha":
+            c_local = 3
+        elif a == "subir" or a == "bajar":
+            c_local = 4
+
+
+
+
+        if a == "limpiar":
+            if robot == "A":
+                A = "limpio"
+            elif robot == "B":
+                B = "limpio"
+            elif robot == "C":
+                C = "limpio"
+                
+            elif robot == "D":
+                D = "limpio"
+            elif robot == "E":
+                E = "limpio"
+            elif robot == "F":
+                F = "limpio"
+                
+            elif robot == "G":
+                G = "limpio"
+            elif robot == "H":
+                H = "limpio"
+            elif robot == "I":
+                I = "limpio"
+
+
+        elif a == "ir_Izquierda":
+            if robot == "B":
+                robot = "A"
+            elif robot == "C":
+                robot = "B"
+
+            if robot == "E":
+                robot = "D"
+            elif robot == "F":
+                robot = "E"
+
+            if robot == "H":
+                robot = "G"
+            elif robot == "I":
+                robot = "H"
+
+
+        elif a == "ir_Derecha":
+            if robot == "A":
+                robot = "B"
+            elif robot == "B":
+                robot = "C"
+
+            if robot == "D":
+                robot = "E"
+            elif robot == "E":
+                robot = "F"
+
+            if robot == "G":
+                robot = "H"
+            elif robot == "H":
+                robot = "I"
+
+        elif a == "subir":
+            if robot == "C":
+                robot = "F"
+            elif robot == "F":
+                robot = "I"
+
+        elif a == "bajar":
+            if robot == "D":
+                robot = "A"
+            elif robot == "G":
+                robot = "D"  
+        
+
+        s = (robot, A, B, C, D, E, F, G, H, I)
+
+        return (s, c_local)
+
+    #Fin funcion transicion
+
+
+    def percepción(self, s):
+        """
+        @param s: Una tupla con un estado legal del entorno
+        @return: Tupla con los valores que se perciben del entorno por
+                 default el estado completo
+
+        """
+
+        cuarto_actual = s[0]
+        estatus_cuarto = s[" ABCDEFGHI".find(cuarto_actual)]
+        
+        return cuarto_actual, estatus_cuarto
+
+    #Fin funcion percepcion
+
+
+#Fin clase NueveCuartos
+
+#########################################################################
+    
+
+class AgenteAleatorio(entornos_f.Agente):
+    """
+    Un agente que solo regresa una accion al azar entre las acciones legales
+
+    """
+    def __init__(self, acciones):
+        self.acciones = acciones
+
+    def programa(self, _):
+
+        try:
+            sig_accion = choice(self.acciones)
+            print("Se pasó por aquí")
+        except ValueError:
+            
+            self.programa()
+
+        return sig_accion
+            
+
+
+#Fin clase AgenteAleatorio
+
+###################################################
+
+
+class AgenteReactivoModeloNueveCuartos(entornos_f.Agente):
+
+    """
+    Un agente reactivo basado en modelo
+
+    """
+    def __init__(self):
+        """
+        Inicializa el modelo interno en el peor de los casos
+
+        """
+        self.modelo = ['A', 'sucio', 'sucio', 'sucio',
+                       'sucio', 'sucio', 'sucio',
+                       'sucio', 'sucio', 'sucio']
+
+    #Fin constructor
+
+
+    def programa(self, percepción):
+        robot, situación = percepción
+
+        # Actualiza el modelo interno
+        self.modelo[0] = robot
+        self.modelo[' ABCDEFGHI'.find(robot)] = situación
+
+        # Decide sobre el modelo interno
+        a, b, c, d, e, f, g, h , i = self.modelo[1], self.modelo[2], self.modelo[3], \
+                                     self.modelo[4], self.modelo[5], self.modelo[6], \
+                                     self.modelo[7], self.modelo[8], self.modelo[9]
+
+
+        if a == b == c == \
+           d == e == f ==\
+           g == h == i == "limpio":
+
+            sig_accion = "nada"
+            
+        elif situación == "sucio":
+            sig_accion = "limpiar"
+            
+        elif robot == "A":
+            sig_accion = "ir_Derecha"
+
+        elif robot == "B":
+
+            if a == "sucio":
+                sig_accion = "ir_Izquierda"    
+            else:
+                sig_accion = "ir_Derecha"
+
+        elif robot == "C":
+
+            if b == "sucio":
+                sig_accion = "ir_Izquierda"
+            else:
+                sig_accion = "subir"
+
+        elif robot == "D":
+
+            if e == "sucio":
+                sig_accion = "ir_Derecha"
+            else:
+                sig_accion = "bajar"
+
+        elif robot == "E":
+
+            if d == "sucio":
+                sig_accion = "ir_Izquierda"
+            else:
+                sig_accion = "ir_Derecha"
+
+        elif robot == "F":
+
+            if e == "sucio":
+               sig_accion = "ir_Izquierda"
+            else:
+                sig_accion = "subir"
+
+        elif robot == "G":
+
+            if h == "sucio":
+                sig_accion = "ir_Derecha"
+            else:
+                sig_accion = "bajar"
+
+        elif robot == "H":
+
+            if i == "sucio":
+                sig_accion = "ir_Derecha"
+            else:
+                sig_accion = "ir_Izquierda"
+
+        elif robot == "I":
+
+            sig_accion = "ir_Izquierda"
+        
+        
+        return sig_accion
+
+
+#Fin clase AgenteReactivoModeloNueveCuartos
+
+def prueba_agente(agente):
+    entornos_f.imprime_simulación(
+        entornos_f.simulador(
+            NueveCuartos(),
+            agente,
+            ["A", "sucio", "sucio", "sucio",
+                "sucio", "sucio", "sucio",
+                "sucio", "sucio", "sucio"],
+            200
+        ),
+        ['A', 'sucio', 'sucio', 'sucio',
+            'sucio', 'sucio', 'sucio',
+            'sucio', 'sucio', 'sucio']
+    )
+
+def test():
+    """
+    Prueba del entorno y los agentes
+
+    """
+    #print("Prueba del entorno con un agente aleatorio")
+    #prueba_agente(AgenteAleatorio(['subir', 'bajar', 'ir_Izquierda', 'ir_Derecha', 'limpiar', 'nada']))
+
+    
+    print("Prueba del entorno con un agente reactivo con modelo")
+    prueba_agente(AgenteReactivoModeloNueveCuartos())
+    
+
+
+if __name__ == "__main__":
+    test()    
+
+

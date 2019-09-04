@@ -84,9 +84,11 @@ def simulador(entorno, agente, s, T=10, c=0):
 
     """
     a = agente.programa(entorno.percepción(s))
-    if not entorno.acción_legal(a):
+    if not entorno.acción_legal(s, a):
         raise ValueError("Error en el agente, ofrece una acción no legal")
+        
     s_n, c_local = entorno.transición(s, a)
+
 
     return ([] + [(a, s_n, c + c_local)] if T <= 1 else
             [(a, s_n, c + c_local)] + simulador(entorno, agente, s_n, T - 1, c + c_local))
@@ -102,16 +104,17 @@ def imprime_simulación(historial, s_0):
     print("\n\nSimulación, iniciando en el estado" + 
             str(s_0) + "\n") 
 
-    print('Paso'.center(10) +
-            'Acción'.center(40) +
-            'Siguente estado'.center(25) +
-            'Costo'.center(15))
-    print('_' * (10 + 40 + 25 + 15))
+    print('Paso'.center(5) +
+            'Acción'.center(20) +
+            'Siguente estado'.center(87) +
+            'Costo'.center(5))
+    
+    print('_' * 120)
 
     for (i, (a_i, s_i, c_i)) in enumerate(historial):
-        print(str(i).center(10) +
-                str(a_i).center(40) +
+        print(str(i+1).center(5) +
+                str(a_i).center(15) +
                 str(s_i).center(25) +
-                str(c_i).rjust(12))
-    print('_' * (10 + 40 + 25 + 15) + '\n\n')
+                str(c_i).rjust(5))
+    print('_' * (120) + '\n\n')
 
