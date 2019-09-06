@@ -136,6 +136,9 @@ class NueveCuartos(entornos_f.Entorno):
            and a == "nada":
             c_local = 0
 
+        elif a == "nada":
+            c_local = 1
+        
         elif a == "limpiar":
             c_local = 2
         elif a == "ir_Izquierda" or a == "ir_Derecha":
@@ -251,14 +254,39 @@ class AgenteAleatorio(entornos_f.Agente):
     def __init__(self, acciones):
         self.acciones = acciones
 
-    def programa(self, _):
+    def programa(self, percepción):
+        
+        robot, situación = percepción
 
-        try:
-            sig_accion = choice(self.acciones)
-            print("Se pasó por aquí")
-        except ValueError:
+        
+        if robot == "A":
+            sig_accion = choice(["nada", "limpiar", "ir_Derecha"])
+
+        elif robot == "B":
+            sig_accion = choice(["nada", "limpiar", "ir_Izquierda", "ir_Derecha"])
+
+        elif robot == "C":
+            sig_accion = choice(["nada", "limpiar", "ir_Izquierda", "subir"])
+
+        elif robot == "D":
+            sig_accion = choice(["nada", "limpiar", "bajar", "ir_Derecha"])
+
+        elif robot == "E":
+            sig_accion = choice(["nada", "limpiar", "ir_Derecha", "ir_Izquierda"])
+
+        elif robot == "F":
+            sig_accion = choice(["nada", "limpiar", "subir", "ir_Izquierda"])
+
+        elif robot == "G":
+            sig_accion = choice(["nada", "limpiar", "ir_Derecha", "bajar"])
+
+        elif robot == "H":
+            sig_accion = choice(["nada", "limpiar", "ir_Derecha", "ir_Izquierda"])
+
+        elif robot == "I":
+            sig_accion = choice(["nada", "limpiar", "ir_Izquierda"])
             
-            self.programa()
+            
 
         return sig_accion
             
@@ -391,8 +419,8 @@ def test():
     Prueba del entorno y los agentes
 
     """
-    #print("Prueba del entorno con un agente aleatorio")
-    #prueba_agente(AgenteAleatorio(['subir', 'bajar', 'ir_Izquierda', 'ir_Derecha', 'limpiar', 'nada']))
+    print("Prueba del entorno con un agente aleatorio")
+    prueba_agente(AgenteAleatorio(['subir', 'bajar', 'ir_Izquierda', 'ir_Derecha', 'limpiar', 'nada']))
 
     
     print("Prueba del entorno con un agente reactivo con modelo")
