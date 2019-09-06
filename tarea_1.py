@@ -244,6 +244,106 @@ class NueveCuartos(entornos_f.Entorno):
 #Fin clase NueveCuartos
 
 #########################################################################
+
+class NueveCuartosCiego(NueveCuartos):
+
+
+    def percepción(self, s):
+        """
+        @param s: Una tupla con un estado legal del entorno
+        @return: Tupla con los valores que se perciben del entorno por
+                 default el estado completo
+
+        """
+
+        cuarto_actual = s[0]
+        estatus_cuarto = s[" ABCDEFGHI".find(cuarto_actual)]
+        
+        return cuarto_actual, _
+
+    #Fin funcion percepcion
+
+
+#Fin clase Nuevecuartosciego
+
+################################################################################
+
+class AgenteRacionalNueveCuartosCiego(entornos_f.Agente):
+
+    def __init__(self):
+        """
+        Inicializa el modelo interno en el peor de los casos
+
+        """
+        self.modelo = ['A', 'sucio', 'sucio', 'sucio',
+                       'sucio', 'sucio', 'sucio',
+                       'sucio', 'sucio', 'sucio']
+
+    #Fin constructor
+
+
+    def programa(self, percepción):
+        robot, situación = percepción
+
+        # Actualiza el modelo interno
+        self.modelo[0] = robot
+        self.modelo[' ABCDEFGHI'.find(robot)] = situación
+
+        # Decide sobre el modelo interno
+        a, b, c, d, e, f, g, h , i = self.modelo[1], self.modelo[2], self.modelo[3], \
+                                     self.modelo[4], self.modelo[5], self.modelo[6], \
+                                     self.modelo[7], self.modelo[8], self.modelo[9]
+
+        if a == b == c == \
+           d == e == f ==\
+           g == h == i == "limpio":
+
+            sig_accion = "nada"
+            
+        elif robot == "A":
+            sig_accion = choice(["ir_Derecha", "limpiar", "nada"])
+
+        elif robot == "B":
+
+            sig_accion = choice(["ir_Derecha", "ir_Izquierda", "limpiar", "nada"])
+
+        elif robot == "C":
+
+            sig_accion = choice(["ir_Izquierda", "subir", "limpiar", "nada"])
+
+        elif robot == "D":
+
+            sig_accion = choice(["ir_Derecha", "bajar", "limpiar", "nada"])
+
+        elif robot == "E":
+
+            sig_accion = choice(["ir_Derecha", "ir_Izquierda", "limpiar", "nada"])
+
+        elif robot == "F":
+
+            sig_accion = choice(["subir", "ir_Izquierda", "limpiar", "nada"])
+
+        elif robot == "G":
+
+            sig_accion = choice(["ir_Derecha", "bajar", "limpiar", "nada"])
+
+        elif robot == "H":
+
+            sig_accion = choice(["ir_Derecha", "ir_Izquierda", "limpiar", "nada"])
+
+        elif robot == "I":
+
+            sig_accion = choice(["ir_Izquierda", "limpiar", "nada"])
+        
+        
+        return sig_accion
+
+    #Fin funcion programa
+    
+
+#Fin clase AgenteRacionalNueveCuartosCiego
+    
+#####################################################################################
     
 
 class AgenteAleatorio(entornos_f.Agente):
@@ -253,6 +353,7 @@ class AgenteAleatorio(entornos_f.Agente):
     """
     def __init__(self, acciones):
         self.acciones = acciones
+        
 
     def programa(self, percepción):
         
@@ -287,9 +388,9 @@ class AgenteAleatorio(entornos_f.Agente):
             sig_accion = choice(["nada", "limpiar", "ir_Izquierda"])
             
             
-
         return sig_accion
-            
+
+    #Fin funcion programa    
 
 
 #Fin clase AgenteAleatorio
@@ -419,12 +520,15 @@ def test():
     Prueba del entorno y los agentes
 
     """
-    print("Prueba del entorno con un agente aleatorio")
-    prueba_agente(AgenteAleatorio(['subir', 'bajar', 'ir_Izquierda', 'ir_Derecha', 'limpiar', 'nada']))
+    #print("Prueba del entorno con un agente aleatorio")
+    #prueba_agente(AgenteAleatorio(['subir', 'bajar', 'ir_Izquierda', 'ir_Derecha', 'limpiar', 'nada']))
 
     
-    print("Prueba del entorno con un agente reactivo con modelo")
-    prueba_agente(AgenteReactivoModeloNueveCuartos())
+    #print("Prueba del entorno con un agente reactivo con modelo")
+    #prueba_agente(AgenteReactivoModeloNueveCuartos())
+
+    print("Prueba del entorno ciego con un agente racional.")
+    prueba_agente(AgenteRacionalNueveCuartosCiego())
     
 
 
