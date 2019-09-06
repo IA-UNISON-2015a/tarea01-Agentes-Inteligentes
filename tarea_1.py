@@ -60,7 +60,7 @@ la tarea.
 __author__ = 'MiguelRomero'
 
 import entornos_f
-from random import choice
+from random import choice, randint
 
 # Requiere el modulo entornos_f.py
 # Usa el modulo doscuartos_f.py para reutilizar código
@@ -145,7 +145,6 @@ class NueveCuartos(entornos_f.Entorno):
             c_local = 3
         elif a == "subir" or a == "bajar":
             c_local = 4
-
 
 
 
@@ -245,28 +244,153 @@ class NueveCuartos(entornos_f.Entorno):
 
 #########################################################################
 
-class NueveCuartosCiego(NueveCuartos):
+
+class AgenteNueveCuartosEstocastico(NueveCuartos):
 
 
-    def percepción(self, s):
+    def __init__(self):
         """
-        @param s: Una tupla con un estado legal del entorno
-        @return: Tupla con los valores que se perciben del entorno por
-                 default el estado completo
+        Inicializa el modelo interno en el peor de los casos
 
         """
+        self.modelo = ['A', 'sucio', 'sucio', 'sucio',
+                       'sucio', 'sucio', 'sucio',
+                       'sucio', 'sucio', 'sucio']
 
-        cuarto_actual = s[0]
-        estatus_cuarto = s[" ABCDEFGHI".find(cuarto_actual)]
+    #Fin constructor
+
+
+    def programa(self, percepción):
+        robot, situación = percepción
+
+        # Actualiza el modelo interno
+        self.modelo[0] = robot
+        self.modelo[' ABCDEFGHI'.find(robot)] = situación
+
+        # Decide sobre el modelo interno
+        a, b, c, d, e, f, g, h , i = self.modelo[1], self.modelo[2], self.modelo[3], \
+                                     self.modelo[4], self.modelo[5], self.modelo[6], \
+                                     self.modelo[7], self.modelo[8], self.modelo[9]
+
+
+        n = randint(1, 100)
+
+        if a == b == c == \
+           d == e == f ==\
+           g == h == i == "limpio":
+
+            sig_accion = "nada"
+            
+        elif situación == "sucio":
+            if n <= 80:
+                sig_accion = "limpiar"
+            else:
+                sig_accion = "limpiar"
+            
+        elif robot == "A":
+            if n <= 80:
+                sig_accion = "ir_Derecha"
+            elif n > 80 and n <= 90:
+                sig_accion = choice(["nada", "limpiar"])
+            else:
+                sig_accion = "nada"
         
-        return cuarto_actual, _
+        elif robot == "B":
 
-    #Fin funcion percepcion
+            if a == "sucio" and n <= 80:
+                sig_accion = "ir_Izquierda"    
+            elif n <= 80:
+                sig_accion = "ir_Derecha"
+            elif n > 80 and n <= 90:
+                sig_accion = choice(["nada", "limpiar"])
+            else:
+                sig_accion = "nada"
 
+        elif robot == "C":
 
-#Fin clase Nuevecuartosciego
+            if b == "sucio" and n <= 80:
+                sig_accion = "ir_Izquierda"
+            elif n <= 80:
+                sig_accion = "subir"
+            elif n > 80 and n <= 90:
+                sig_accion = choice(["nada", "limpiar"])
+            else:
+                sig_accion = "nada"
 
-################################################################################
+        elif robot == "D":
+
+            if e == "sucio" and n <= 80:
+                sig_accion = "ir_Derecha"
+            elif n <= 80:
+                sig_accion = "bajar"
+            elif n > 80 and n <= 90:
+                sig_accion = choice(["nada", "limpiar"])
+            else:
+                sig_accion = "nada"
+
+        elif robot == "E":
+
+            if d == "sucio" and n <= 80:
+                sig_accion = "ir_Izquierda"
+            elif n <= 80:
+                sig_accion = "ir_Derecha"
+            elif n > 80 and n <= 90:
+                sig_accion = choice(["nada", "limpiar"])
+            else:
+                sig_accion = "nada"
+
+        elif robot == "F":
+
+            if e == "sucio" and n <= 80:
+               sig_accion = "ir_Izquierda"
+            elif n <= 80:
+                sig_accion = "subir"
+            elif n > 80 and n <= 90:
+                sig_accion = choice(["nada", "limpiar"])
+            else:
+                sig_accion = "nada"
+
+        elif robot == "G":
+
+            if h == "sucio" and n <= 80:
+                sig_accion = "ir_Derecha"
+            elif n <= 80:
+                sig_accion = "bajar"
+            elif n > 80 and n <= 90:
+                sig_accion = choice(["nada", "limpiar"])
+            else:
+                sig_accion = "nada"
+
+        elif robot == "H":
+
+            if i == "sucio" and n <= 80:
+                sig_accion = "ir_Derecha"
+            elif n <= 80:
+                sig_accion = "ir_Izquierda"
+            elif n > 80 and n <= 90:
+                sig_accion = choice(["nada", "limpiar"])
+            else:
+                sig_accion = "nada"
+
+        elif robot == "I":
+
+            if n <= 80:
+                sig_accion = "ir_Izquierda"
+            elif n > 80 and n <= 90:
+                sig_accion = choice(["nada", "limpiar"])
+            else:
+                sig_accion = "nada"
+        
+        
+        return sig_accion
+        
+    #Fin funcion programa
+       
+                    
+
+#Fin clase AgenteNueveCuartosEstocastico
+
+#######################################################################
 
 class AgenteRacionalNueveCuartosCiego(entornos_f.Agente):
 
@@ -520,16 +644,17 @@ def test():
     Prueba del entorno y los agentes
 
     """
-    #print("Prueba del entorno con un agente aleatorio")
-    #prueba_agente(AgenteAleatorio(['subir', 'bajar', 'ir_Izquierda', 'ir_Derecha', 'limpiar', 'nada']))
+    print("Prueba del entorno con un agente aleatorio")
+    prueba_agente(AgenteAleatorio(['subir', 'bajar', 'ir_Izquierda', 'ir_Derecha', 'limpiar', 'nada']))
 
-    
-    #print("Prueba del entorno con un agente reactivo con modelo")
-    #prueba_agente(AgenteReactivoModeloNueveCuartos())
+    print("Prueba del entorno con un agente reactivo con modelo")
+    prueba_agente(AgenteReactivoModeloNueveCuartos())
 
     print("Prueba del entorno ciego con un agente racional.")
     prueba_agente(AgenteRacionalNueveCuartosCiego())
-    
+
+    print("Prueba del entorno con un agente estocástico.")
+    prueba_agente(AgenteNueveCuartosEstocastico())
 
 
 if __name__ == "__main__":
