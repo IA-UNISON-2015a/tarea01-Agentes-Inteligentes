@@ -18,16 +18,16 @@ __author__ = 'juliowaissman'
 
 class DosCuartos(entornos_f.Entorno):
     """
-    Clase para un entorno de dos cuartos. 
+    Clase para un entorno de dos cuartos.
     Muy sencilla solo regrupa métodos.
 
     El estado se define como (robot, A, B)
     donde robot puede tener los valores "A", "B"
     A y B pueden tener los valores "limpio", "sucio"
 
-    Las acciones válidas en el entorno son 
+    Las acciones válidas en el entorno son
         ("ir_A", "ir_B", "limpiar", "nada").
-    
+
     Todas las acciones son válidas en todos los estados.
 
     Los sensores es una tupla (robot, limpio?)
@@ -73,6 +73,7 @@ class AgenteReactivoDoscuartos(entornos_f.Agente):
         robot, situación = percepción
         return ('limpiar' if situación == 'sucio' else
                 'ir_A' if robot == 'B' else 'ir_B')
+
 
 
 class AgenteReactivoModeloDosCuartos(entornos_f.Agente):
@@ -125,7 +126,7 @@ def test():
 
     print("Prueba del entorno con un agente reactivo con modelo")
     prueba_agente(AgenteReactivoModeloDosCuartos())
-    
+
 
 if __name__ == "__main__":
     test()
