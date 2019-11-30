@@ -71,47 +71,47 @@ class NueveCuartos(entornos_f.Entorno):
             return all([x == 'limpio' for x in cuartos])
 
         def modificar_estado(robot, cuartos, acción):
-            if acción is "ir_Der":
-                if estado[0] is "A":
+            if acción == "ir_Der":
+                if estado[0] =="A":
                     robot = "B"
-                elif estado[0] is "B":
+                elif estado[0] =="B":
                     robot = "C"
-                elif estado[0] is "D":
+                elif estado[0] =="D":
                     robot = "E"
-                elif estado[0] is "E":
+                elif estado[0] =="E":
                     robot = "F"
-                elif estado[0] is "G":
+                elif estado[0] =="G":
                     robot = "H"
-                elif estado[0] is "H":
+                elif estado[0] =="H":
                     robot = "I"
                 c_local = 2
-            elif acción is "ir_Izq":
-                if estado[0] is "B":
+            elif acción =="ir_Izq":
+                if estado[0] =="B":
                     robot = "A"
-                elif estado[0] is "C":
+                elif estado[0] =="C":
                     robot = "B"
-                elif estado[0] is "E":
+                elif estado[0] =="E":
                     robot = "D"
-                elif estado[0] is "F":
+                elif estado[0] =="F":
                     robot = "E"
-                elif estado[0] is "H":
+                elif estado[0] =="H":
                     robot = "G"
-                elif estado[0] is "I":
+                elif estado[0] =="I":
                     robot = "H"
                 c_local = 2
-            elif acción is "bajar":
-                if estado[0] is "D":
+            elif acción =="bajar":
+                if estado[0] =="D":
                     robot = "A"
-                elif estado[0] is "G":
+                elif estado[0] =="G":
                     robot = "D"
                 c_local = 3
-            elif acción is "subir":
-                if estado[0] is "C":
+            elif acción =="subir":
+                if estado[0] =="C":
                     robot = "F"
-                elif estado[0] is "F":
+                elif estado[0] =="F":
                     robot = "I"
                 c_local = 3
-            elif acción is "limpiar":
+            elif acción =="limpiar":
                 cuartos["ABCDEFGHI".find(estado[0])] = "limpio"
                 c_local = 1
             else:
@@ -143,26 +143,26 @@ class AgenteReactivoModeloNuevecuartos(entornos_f.Agente):
              self.modelo[1]['ABCDEFGHI'.find(robot)] = situación
 
              def calcular_acción(percepción):
-                if situación is "sucio":
+                if situación =="sucio":
                     return "limpiar"
                 else:
                     if all([x == "limpio" for x in self.modelo[1]]):
                         return "nada"
                     elif robot == "A" or robot == "B" or robot == "E":
                         return "ir_Der"
-                    elif robot == "H" and self.modelo[1][8] is "sucio":
+                    elif robot == "H" and self.modelo[1][8] =="sucio":
                         return "ir_Der"
-                    elif robot == "H" and self.modelo[1][8] is "limpio":
+                    elif robot == "H" and self.modelo[1][8] =="limpio":
                         return "ir_Izq"
                     elif robot == "B" or robot == "E" or robot == "I":
                         return "ir_Izq"
-                    elif robot == "D" and self.modelo[1][4] is "sucio":
+                    elif robot == "D" and self.modelo[1][4] =="sucio":
                         return "ir_Der"
                     elif robot == "C" or robot == "F":
                         return "subir"
                     elif robot == "G":
                         return "bajar"
-                    elif robot == "D" and  self.modelo[1][4] is "limpio":
+                    elif robot == "D" and  self.modelo[1][4] =="limpio":
                         return "bajar"
 
             # Decide sobre el modelo interno
@@ -189,8 +189,141 @@ def prueba_agente(agente):
             ["A", ["sucio"]* 9])
 
 class NueveCuartosCiego(NueveCuartos):
-    def percepción(self, estado)Ñ
-    return estado[0]
+    def percepción(self, estado):
+        return estado[0]
+
+class AgenteRacionalCiego(AgenteReactivoModeloNuevecuartos):
+    def __init__(self):
+        """ Inicializa el modelo interno en el peor de los casos """
+        cuartos = [False] * 9
+        self.modelo = ['A', cuartos]
+
+    def programa(self, percepción):
+         robot = percepción #Nada más dice en que cuarto esta
+         # Actualiza el modelo interno
+         self.modelo[0] = robot
+         limpiado = self.modelo[1]['ABCDEFGHI'.find(robot)]
+
+         if limpiado ==False: #Si no lo he limpiado
+             self.modelo[1]['ABCDEFGHI'.find(robot)] = True
+             return "limpiar"
+         else:
+             if robot == "A" or robot == "B":
+                 return "ir_Der"
+             elif robot == "C" or robot == "F":
+                return "subir"
+             elif robot == "I" or robot == "H":
+                return "ir_Izq"
+             elif robot == "G":
+                return "bajar"
+             elif robot == "D":
+                 return "ir_Der"
+             elif robot == "E":
+                 return "nada"
+
+def prueba_agente_ciego(agente):
+    entornos_f.imprime_simulación(
+        entornos_f.simulador(
+            NueveCuartosCiego(),
+            agente,
+            ["A", ["sucio"] * 9],200),
+            ["A", ["sucio"]* 9])
+
+class NueveCuartosEstocástico(NueveCuartos):
+    def acción_legal(self, estado, acción):
+        NueveCuartos.acción_legal(self,estado,acción)
+
+    def transición(self, estado, acción):
+        robot, cuartos = estado[0], estado[1][:]
+
+        def todos_limpios():
+            return all([x == 'limpio' for x in cuartos])
+
+        def modificar_estado(robot, cuartos, acción):
+            #probabilidad de cambiar de estado
+            p = randint(1,100)
+
+            # Cambia de cuarto
+            if acción =="ir_Der" or "ir_Izq" or "subir" or "bajar" and p > 20:
+                if acción =="ir_Der":
+                    if estado[0] =="A":
+                        robot = "B"
+                    elif estado[0] =="B":
+                        robot = "C"
+                    elif estado[0] =="D":
+                        robot = "E"
+                    elif estado[0] =="E":
+                        robot = "F"
+                    elif estado[0] =="G":
+                        robot = "H"
+                    elif estado[0] =="H":
+                        robot = "I"
+                    c_local = 2
+                elif acción =="ir_Izq":
+                    if estado[0] =="B":
+                        robot = "A"
+                    elif estado[0] =="C":
+                        robot = "B"
+                    elif estado[0] =="E":
+                        robot = "D"
+                    elif estado[0] =="F":
+                        robot = "E"
+                    elif estado[0] =="H":
+                        robot = "G"
+                    elif estado[0] =="I":
+                        robot = "H"
+                    c_local = 2
+                elif acción =="bajar":
+                    if estado[0] =="D":
+                        robot = "A"
+                    elif estado[0] =="G":
+                        robot = "D"
+                    c_local = 3
+                elif acción =="subir":
+                    if estado[0] =="C":
+                        robot = "F"
+                    elif estado[0] =="F":
+                        robot = "I"
+                    c_local = 3
+            #Aquí si la probabilidad esta entre 10 y 20 realiza accion aleatoria
+            elif p > 10 and p <= 20:
+                 acciones = ['ir_Der', 'ir_Izq', 'subir', 'bajar', 'limpiar', 'nada']
+                 for a in sample(acciones, len(acciones)):
+                     if acción_legal(estado[0], a):
+                         modificar_estado(robot, cuartos, a)
+            # si p < 10 no hace nada
+
+            if acción =="limpiar":
+                # si p > 20 este limpia si no pues lo deja sucio
+                if p > 20:
+                    cuartos["ABCDEFGHI".find(estado[0])] = "limpio"
+                    c_local = 1
+            else:
+                if todos_limpios():
+                    c_local = 0
+                else:
+                    c_local = 4
+            return robot, cuartos, c_local
+
+        #cl = costo_local(acción)
+        r, c , cl= modificar_estado(robot, cuartos, acción)
+        return ((r, c), cl)
+
+    def percepción(self, estado):
+        return estado[0], estado[1]["ABCDEFGHI".find(estado[0])]
+
+class AgenteRacionalEstocástico(AgenteReactivoModeloNuevecuartos):
+        """ Un agente reactivo basado en el modelo """
+        def __init__(self):
+            AgenteReactivoModeloNuevecuartos.__init__(self)
+
+def prueba_agente(agente):
+    entornos_f.imprime_simulación(
+        entornos_f.simulador(
+            NueveCuartosEstocástico(),
+            agente,
+            ["A", ["sucio"] * 9],200),
+            ["A", ["sucio"]* 9])
 
 def test():
     """
@@ -201,6 +334,13 @@ def test():
 
     print("Prueba del entorno con un agente reactivo con modelo")
     prueba_agente(AgenteReactivoModeloNuevecuartos())
+
+    print("Prueba del entorno ciego con un agente reactivo ciego con modelo")
+    prueba_agente_ciego(AgenteRacionalCiego())
+
+    print("Prueba del entorno con un agente reactivo con modelo")
+    prueba_agente(AgenteRacionalEstocástico())
+
 
 if __name__ == "__main__":
     test()
