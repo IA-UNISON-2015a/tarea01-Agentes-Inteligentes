@@ -37,7 +37,7 @@ class Entorno:
         """
         return True
 
-    def transición(self, accion):
+    def transicion(self, accion):
         """
         @param accion: Uno de los elementos de acciones_legales( estado)
 
