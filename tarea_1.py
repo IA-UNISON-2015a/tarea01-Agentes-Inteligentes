@@ -10,8 +10,7 @@ Revisa el archivo README.md con las instrucciones de la tarea.
 __author__ = 'Manuel Búsani Yanes'
 
 import entornos_f
-# import entornos_o
-from random import choice
+from doscuartos_f import AgenteAleatorio
 
 # Requiere el modulo entornos_f.py o entornos_o.py
 # Usa el modulo doscuartos_f.py para reutilizar código
@@ -39,12 +38,13 @@ class NueveCuartos(entornos_f.Entorno):
 		y = estado[1]
 
 		return ((x == 2 and y != 2) if accion == "subir" else
-				(x == 0 and y != 0) or accion != "bajar")
+				(x == 0 and y != 0) if accion == "bajar" else
+				accion in ["ir_Derecha", "ir_Izquierda", "limpiar", "nada"])
 
 	def transicion(self, estado, accion):
 		# no se si aqui hay que checar si la accion es legal
-		if not self.accion_legal(estado,accion):
-			raise ValueError("Error en el agente, ofrece una acción no legal")
+		if not self.accion_legal(estado, accion):
+			raise ValueError("Error en transicion, la acción recibida no es legal")
 
 		x, y, cuartos = estado
 
@@ -64,5 +64,32 @@ class NueveCuartos(entornos_f.Entorno):
 		elif accion == "limpiar":
 			cuartos[x][y] = True
 
-		return ([x,y,cuartos], c_local)
+		return ([x, y, cuartos], c_local)
+	
+	def percepcion(self, estado):
+		x, y, cuartos = estado
+		return (x, y, cuartos[x][y])
 
+class AgenteReactivoModeloNueveCuartos(entornos_f.Agente):
+    # Un agente reactivo basado en modelo
+
+    def __init__(self):
+        # Inicializa el modelo interno
+        self.modelo = [0, 0, [[False,False,False],[False,False,False],[False,False,False]]]
+
+    def programa(self, percepcion):
+    	x, y, cuarto_limpio = percepcion
+    	cuartos = self.modelo[2] 
+
+    	# Actualiza el modelo interno
+    	self.modelo[0] = x
+    	self.modelo[1] = y
+    	self.modelo[2][x][y] = cuarto_limpio
+
+    	# Decide sobre el modelo interno
+		return ("limpiar" if not cuarto_limpio else
+				"ir_Derecha" if ((x != 2) and (not cuartos[x+1][y]) or
+								 (x == 0) and (not(cuartos[2][y]))) else 
+				"ir_Izquierda" if ((x != 0) and (not cuartos[x-1][y]) or
+								   (x == 2) and (not(cuartos[0][y]))) else
+				"subir" if ((x == 2) and (y != 2)
