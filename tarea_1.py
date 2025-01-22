@@ -40,9 +40,10 @@ class NueveCuartos(entornos_f.Entorno):
                 )
     
     def percepcion(self, estado):
+        robot, cuarto, piso = estado
         return cuarto[piso][robot]
 
-
+#aca sacar el agente aleatorio
 
 class AgenteReactivo(entornos_f.Agente):
     def programa(self, percepcion):
@@ -51,5 +52,53 @@ class AgenteReactivo(entornos_f.Agente):
                 'ir_Izquierda' if robot < 0 else 
                 'bajar' if robot == 0 else
                 'ir_Derecha' if robot > 2 else
-                'subir' #if robot == 2 
+                'subir'
                 )
+    
+class AgenteReactivoModeloNueveCuartos(entornos_f.Agente):
+    def __init__(self):
+        self.modelo = [0, 0, [['sucio'] * 3 for _ in range(3)]]
+
+    def programa(self, percepcion):
+        # robot, situación = percepción
+        cuarto, piso, situacion = percepcion
+
+        self.modelo[0] = cuarto
+        self.modelo[1] = piso
+        self.modelo[2][cuarto][piso] = situacion
+
+        cuarto, piso = self.modelo[0], self.modelo[1]
+        return ('nada' if piso == 2 and cuarto == 2 and all(
+                    estado == 'limpio' for piso in self.modelo[2] for estado in piso) else
+                'limpiar' if situacion == 'sucio' else
+                'ir_Derecha' if cuarto < 2 else
+                'ir_Izquierda' if cuarto > 0 else
+                'subir' if cuarto == 2 and piso < 2 else
+                'bajar' if cuarto == 0 and piso > 0 else
+                'nada' # VER COMO ARREGLAR ESTO
+                )
+    
+    def prueba_agente(agente):
+        entornos_f.imprime_simulacion(
+            entornos_f.simulador(
+                NueveCuartos(),
+                agente,
+                [0, 0, [['sucio'] * 3 for _ in range(3)]],
+                100
+            ),
+            [0, 0, [['sucio'] * 3 for _ in range(3)]]
+    )
+
+    def test():
+        print("Prueba del entorno con un agente aleatorio")
+        prueba_agente(AgenteAleatorio(['ir_Izquierda', 'ir_Derecha', 'subir', 'bajar', 'limpiar', 'nada']))
+
+        print("Prueba del entorno con un agente reactivo")
+        prueba_agente(AgenteReactivo())
+
+        print("Prueba del entorno con un agente reactivo con modelo")
+        prueba_agente(AgenteReactivoModeloNueveCuartos())
+        
+
+    if __name__ == "__main__":
+        test()
