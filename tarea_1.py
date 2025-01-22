@@ -9,8 +9,7 @@ Revisa el archivo README.md con las instrucciones de la tarea.
 """
 __author__ = 'Julio Andrés Camargo Loaiza'
 
-import entornos_f
-import entornos_o
+import entornos_f_tarea
 from random import choice
 
 
@@ -19,7 +18,7 @@ from random import choice
 # Agrega los modulos que requieras de python
 
 
-class TresCuartos(entornos_f.Entorno):
+class TresCuartos(entornos_f_tarea.Entorno):
     """
     Clase para un entorno de tres cuartos.
 
@@ -36,21 +35,35 @@ class TresCuartos(entornos_f.Entorno):
     con la ubicación del robot y el estado de limpieza
 
     """
-    def accion_legal(self, _, accion):
-        return accion in ("ir_A", "ir_B", "ir_C", "limpiar", "nada")
+    def accion_legal(self, estado, accion):
+        robot = estado[0]  # Posición actual del robot
+        if accion == "izq" and robot == "A":
+            return False
+        if accion == "der" and robot == "C":
+            return False
+        return accion in ("izq", "der", "limpiar", "nada")
 
-    def transicion(self, estado, acción):
+    def transicion(self, estado, accion):
+        # Descompone el estado actual
         robot, a, b, c = estado
 
-        c_local = 0 if a == b == c == "limpio" and acción == "nada" else 1
+        # Determina costo local
+        c_local = 0 if a == b == c == "limpio" and accion == "nada" else 1
 
-        return ((estado, c_local) if a == "nada" else
-                (("A", a, b, c), c_local) if acción == "ir_A" else
-                (("B", a, b, c), c_local) if acción == "ir_B" else
-                (("C", a, b, c), c_local) if acción == "ir_C" else
-                ((robot, "limpio", b, c), c_local) if robot == "A" else
-                ((robot, a, "limpio", c), c_local) if robot == "B" else
-                ((robot, a, b, "limpio"), c_local))
+        # Transiciones posibles según su acción y estado actual
+        if robot == "A":
+            return ((estado, c_local) if accion == "nada" else
+                    (("B", a, b, c), c_local) if accion == "der" else
+                    ((robot, "limpio", b, c), c_local))
+        if robot == "B":
+            return ((estado, c_local) if accion == "nada" else
+                    (("A", a, b, c), c_local) if accion == "izq" else
+                    (("C", a, b, c), c_local) if accion == "der" else
+                    ((robot, a, "limpio", c), c_local))
+        if robot == "C":
+            return ((estado, c_local) if accion == "nada" else
+                    (("B", a, b, c), c_local) if accion == "izq" else
+                    ((robot, a, b, "limpio"), c_local))
 
     def percepcion(self, estado):
         return estado[0], estado[" ABC".find(estado[0])]
