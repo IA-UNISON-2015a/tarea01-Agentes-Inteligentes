@@ -22,30 +22,30 @@ class NueveCuartos(entornos_f.Entorno):
         return accion in ("ir_Izquierda", "ir_Derecha", "subir", "bajar", "limpiar", "nada")
     
     def transicion(self, estado, accion):
-        robot, cuarto, piso = estado
+        robot, piso, cuartos = estado
 
-        # El robot puede estar en uno de los 3 cuartos --> robot puede ser 1, 2 o 3
-        # El robot puede estar en uno de los 3 pisos --> piso puede ser 1, 2 o 3
-        # cuarto sería un arreglo/matriz con el estado de cada cuarto del piso --> cada cuarto puede ser "limpio" o "sucio"
+        # El robot puede estar en uno de los 3 cuartos --> robot puede ser 0, 1 o 2
+        # El robot puede estar en uno de los 3 pisos --> piso puede ser 0, 1 o 2
+        # cuartos sería un arreglo con el estado de cada cuarto del piso --> cada cuarto puede ser "limpio" o "sucio"
 
-        c_local = 0 if cuarto[piso][robot] == "limpio" and accion == "nada" else 1 
-        # REVISAR SI FUNCIONA Y CAMBIAR COSTOS
+        c_local = 0 if cuartos[piso][robot] == "limpio" and accion == "nada" else 1
+        # CAMBIAR COSTOS
         return ((estado, c_local) if accion == "nada" else
-                ((robot - 1, cuarto, piso), c_local) if accion == "ir_Izquierda" and robot > 0 else
-                ((robot + 1, cuarto, piso), c_local) if accion == "ir_Derecha" and robot < 2 else
-                ((robot, cuarto, piso + 1), c_local) if robot == "subir" and robot == 2 and piso < 3 else
-                ((robot, cuarto, piso - 1), c_local) if robot == "bajar" and robot == 0 and piso > 0 else
-                ((robot, "limpio", piso), c_local) if robot == "limpiar" else # VER COMO ACCEDER AL CUARTO ESPECIFICO
-                (estado, c_local) # VER COMO QUITAR PARA NO REPETIR
+                ((robot - 1, piso, cuartos), c_local) if accion == "ir_Izquierda" and robot > 0 else
+                ((robot + 1, piso, cuartos), c_local) if accion == "ir_Derecha" and robot < 2 else
+                ((robot, piso + 1, cuartos), c_local) if robot == "subir" and robot == 2 and piso < 3 else
+                ((robot, piso - 1, cuartos), c_local) if robot == "bajar" and robot == 0 and piso > 0 else
+                ((robot, piso, "limpio"), c_local) if robot == "limpiar" else # VER COMO ACCEDER AL CUARTO ESPECIFICO
+                (estado, c_local) 
                 )
     
     def percepcion(self, estado):
-        robot, cuarto, piso = estado
-        return cuarto[piso][robot]
+        robot, piso, cuartos = estado
+        return cuartos, piso, cuartos[piso][robot]
 
 class AgenteReactivo(entornos_f.Agente):
     def programa(self, percepcion):
-        robot, situacion = percepcion
+        cuarto, piso, situacion = percepcion
         return ('limpiar' if situacion == 'sucio' else
                 'ir_Izquierda' if robot < 0 else 
                 'bajar' if robot == 0 else
@@ -59,11 +59,11 @@ class AgenteReactivoModeloNueveCuartos(entornos_f.Agente):
 
     def programa(self, percepcion):
         # robot, situación = percepción
-        cuarto, piso, situacion = percepcion
+        cuartos, piso, situacion = percepcion
 
-        self.modelo[0] = cuarto
+        self.modelo[0] = cuartos
         self.modelo[1] = piso
-        self.modelo[2][cuarto][piso] = situacion
+        self.modelo[2][piso][cuartos] = situacion
 
         cuarto, piso = self.modelo[0], self.modelo[1]
         return ('nada' if piso == 2 and cuarto == 2 and all(
@@ -76,26 +76,26 @@ class AgenteReactivoModeloNueveCuartos(entornos_f.Agente):
                 'nada' # VER COMO ARREGLAR ESTO
                 )
     
-    def prueba_agente(agente):
-        entornos_f.imprime_simulacion(
-            entornos_f.simulador(
-                NueveCuartos(),
-                agente,
-                [0, 0, [['sucio'] * 3 for _ in range(3)]],
-                100
-            ),
-            [0, 0, [['sucio'] * 3 for _ in range(3)]])
+def prueba_agente(agente):
+    entornos_f.imprime_simulacion(
+        entornos_f.simulador(
+            NueveCuartos(),
+            agente,
+            [0, 0, [['sucio'] * 3 for _ in range(3)]],
+            100
+        ),
+        [0, 0, [['sucio'] * 3 for _ in range(3)]])
 
-    def test():
-        print("Prueba del entorno con un agente aleatorio")
-        prueba_agente(AgenteAleatorio(['ir_Izquierda', 'ir_Derecha', 'subir', 'bajar', 'limpiar', 'nada']))
+def test():
+    print("Prueba del entorno con un agente aleatorio")
+    prueba_agente(AgenteAleatorio(['ir_Izquierda', 'ir_Derecha', 'subir', 'bajar', 'limpiar', 'nada']))
 
-        print("Prueba del entorno con un agente reactivo")
-        prueba_agente(AgenteReactivo())
+    print("Prueba del entorno con un agente reactivo")
+    prueba_agente(AgenteReactivo())
 
-        print("Prueba del entorno con un agente reactivo con modelo")
-        prueba_agente(AgenteReactivoModeloNueveCuartos())
-        
+    print("Prueba del entorno con un agente reactivo con modelo")
+    prueba_agente(AgenteReactivoModeloNueveCuartos())
+    
 
-    if __name__ == "__main__":
-        test()
+if __name__ == "__main__":
+    test()
