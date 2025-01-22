@@ -13,11 +13,12 @@ import entornos_f
 from random import choice
 
 class NueveCuartos(entornos_f.Entorno):
-    def accion_legal(self,_,accion):
-        return accion in ("ir_Derecha", "ir_Izquierda","Subir",
-                          "Bajar","Limpiar","Nada")
+    def accion_legal(self,estado,accion):
+        
+        return accion in ("ir_Derecha","ir_Izquierda","Subir","Bajar", "Limpiar", "Nada")
+    
     def transicion(self, estado, accion):
-        robot, a,b,c,d,e,f,g,h,i = estado
+        robot,a,b,c,d,e,f,g,h,i = estado
         
         if accion in ["ir_Derecha", "ir_Izquierda", "Nada"]:
             c_local = 1
@@ -27,23 +28,25 @@ class NueveCuartos(entornos_f.Entorno):
             c_local = 2
         
         return ((estado, c_local) if a == "Nada" else
-                (("B",a,b,c,d,e,f,g,h,i),c_local) if robot == "A" and accion == "ir_Izquierda" 
-                    or robot == "C" and accion == "ir_Derecha" else 
-                (("E",a,b,c,d,e,f,g,h,i),c_local) if robot == "F" and accion == "ir_Izquierda"
-                    or robot == "D" and accion == "ir_Derecha" else
-                (("H",a,b,c,d,e,f,g,h,i),c_local)if robot == "I" and accion == "ir_Izquierda"
-                    or robot == "G" and accion == "ir_Derecha" else
-                (("A",a,b,c,d,e,f,g,h,i),c_local) if robot == "B" and accion == "ir_Derecha" else
-                (("D",a,b,c,d,e,f,g,h,i),c_local) if robot == "E" and accion == "ir_Derecha"
-                    or robot == "A" and accion == "Subir" else
-                (("G",a,b,c,d,e,f,g,h,i),c_local) if robot == "H" and accion == "ir_Izquierda" 
-                    or robot == "D" and accion == "Subir" else
-                (("C",a,b,c,d,e,f,g,h,i),c_local) if robot == "B" and accion == "ir_Izquierda"
-                    or robot == "F" and accion == "Bajar" else
-                (("F",a,b,c,d,e,f,g,h,i),c_local) if robot == "E" and accion == "ir_Izquierda"
-                    or robot == "I" and accion == "Bajar" else
-                (("I",a,b,c,d,e,f,g,h,i),c_local) if robot == "H" and accion == "ir_Izquierda"else
-                ((robot,"limpio",b,c,d,e,f,g,h,i),c_local))        
+                (("B",a,b,c,d,e,f,g,h,i),c_local) if robot in ['C','A'] and accion in ['ir_Derecha', 'ir_Izquierda'] else
+                (("E",a,b,c,d,e,f,g,h,i),c_local) if robot in ['D','F'] and accion in ['ir_Derecha', 'ir_Izquierda'] else
+                (("H",a,b,c,d,e,f,g,h,i),c_local) if robot in ['G','I'] and accion in ['ir_Derecha', 'ir_Izquierda']else
+                (("C",a,b,c,d,e,f,g,h,i),c_local) if robot in ['F','B'] and accion in ['Bajar','ir_Izquierda'] else
+                (("F",a,b,c,d,e,f,g,h,i),c_local) if robot in ['I','E'] and accion in ['Bajar', 'ir_Izquierda'] else
+                (("D",a,b,c,d,e,f,g,h,i),c_local) if robot in ['A','E'] and accion in ['ir_Derecha', 'Subir'] else
+                (("G",a,b,c,d,e,f,g,h,i),c_local) if robot in ['D','H'] and accion in ['Subir', 'Derecha'] else
+                (("I",a,b,c,d,e,f,g,h,i),c_local) if robot in ['H'] and accion in ['ir_Izquierda'] else
+                (("A",a,b,c,d,e,f,g,h,i),c_local) if robot in ['B'] and accion in ['ir_Derecha']else
+                ((robot,"limpio",b,c,d,e,f,g,h,i),c_local)if robot == "A" else
+                ((robot,a,"limpio",c,d,e,f,g,h,i),c_local)if robot == "B" else
+                ((robot,a,b,"limpio",d,e,f,g,h,i),c_local)if robot == "C" else
+                ((robot,a,b,c,"limpio",e,f,g,h,i),c_local)if robot == "D" else
+                ((robot,a,b,c,d,"limpio",f,g,h,i),c_local)if robot == "E" else
+                ((robot,a,b,c,d,e,"limpio",g,h,i),c_local)if robot == "F" else
+                ((robot,a,b,c,d,e,f,"limpio",h,i),c_local)if robot == "G" else
+                ((robot,a,b,c,d,e,f,g,"limpio",i),c_local)if robot == "H" else
+                ((robot,a,b,c,d,e,f,g,h,"limpio"),c_local))
+                        
         
                 
     def percepcion(self, estado):
@@ -69,7 +72,7 @@ class AgenteReactivoModeloNueveCuartos(entornos_f.Agente):
         self.modelo[' ABCDEFGHI'.find(robot)] = situación
 
         # Decide sobre el modelo interno
-        a, b,c,d,e,f,g,h,i = self.modelo[1], self.modelo[2],self.modelo[3],self.modelo[4],self.modelo[5],self.modelo[6],self.modelo[7],self.modelo[8],self.modelo[9]
+        a,b,c,d,e,f,g,h,i = self.modelo[1], self.modelo[2],self.modelo[3],self.modelo[4],self.modelo[5],self.modelo[6],self.modelo[7],self.modelo[8],self.modelo[9]
         return ('Nada' if a == b == c == d == e == f == g == h == i == 'limpio' else
                 'Limpiar' if situación == 'sucio' else
                  'ir_Derecha' if robot in ['B','C','E','F','H','I'] else
@@ -93,7 +96,7 @@ def prueba_agente(agente):
             NueveCuartos(),
             agente,
             ["A", "sucio", "sucio","sucio","sucio","sucio","sucio","sucio","sucio","sucio"],
-            200
+            100
         ),
         ["A", "sucio", "sucio","sucio","sucio","sucio","sucio","sucio","sucio","sucio"]
     )
@@ -102,12 +105,14 @@ def test():
     """
     Prueba del entorno y los agentes
 
-    """
+    """    
     print("Prueba del entorno con un agente aleatorio")
-    prueba_agente(AgenteAleatorio(['ir_Derecha', 'ir_Izquierda', 'Subir', 'Bajar','Limpiar','Nada']))
+    prueba_agente(AgenteAleatorio(['ir_Izquierda','ir_Derecha','Bajar','Subir','Limpiar','Nada']))
 
-    #print("Prueba del entorno con un agente reactivo con modelo")
-    #prueba_agente(AgenteReactivoModeloNueveCuartos())
+
+    print("Prueba del entorno con un agente reactivo con modelo")
+    prueba_agente(AgenteReactivoModeloNueveCuartos())
+    
 
 if __name__ == "__main__":
     test()
