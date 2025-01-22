@@ -43,8 +43,6 @@ class NueveCuartos(entornos_f.Entorno):
         robot, cuarto, piso = estado
         return cuarto[piso][robot]
 
-#aca sacar el agente aleatorio
-
 class AgenteReactivo(entornos_f.Agente):
     def programa(self, percepcion):
         robot, situacion = percepcion
@@ -86,8 +84,7 @@ class AgenteReactivoModeloNueveCuartos(entornos_f.Agente):
                 [0, 0, [['sucio'] * 3 for _ in range(3)]],
                 100
             ),
-            [0, 0, [['sucio'] * 3 for _ in range(3)]]
-    )
+            [0, 0, [['sucio'] * 3 for _ in range(3)]])
 
     def test():
         print("Prueba del entorno con un agente aleatorio")
