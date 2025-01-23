@@ -92,4 +92,5 @@ class AgenteReactivoModeloNueveCuartos(entornos_f.Agente):
 								 (x == 0) and (not(cuartos[2][y]))) else 
 				"ir_Izquierda" if ((x != 0) and (not cuartos[x-1][y]) or
 								   (x == 2) and (not(cuartos[0][y]))) else
-				"subir" if ((x == 2) and (y != 2)
+				"subir" if ((x == 0) and (y != 2) and (cuartos[0] != [True, True, True])
+
