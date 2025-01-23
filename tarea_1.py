@@ -63,28 +63,6 @@ class NueveCuartosCiego(NueveCuartos):
     def percepcion(self, estado):
         return super().percepcion(estado)
     
-class AgenteReactivo(entornos_f.Agente):
-        
-    def __init__(self):
-        self.modelo = ['A','?','?','?','?','?','?','?','?','?'] 
-
-    def programa(self, persepcion):
-        robot,situación = persepcion 
-
-        self.modelo[0] = robot
-        self.modelo[' ABCDEFGHI'.find(robot)] = situación
-
-        a,b,c,d,e,f,g,h,i = self.modelo[1], self.modelo[2],self.modelo[3],self.modelo[4],self.modelo[5],self.modelo[6],self.modelo[7],self.modelo[8],self.modelo[9]
-        return ('Nada' if a == b == c == d == e == f == g == h == i == 'limpio' else
-                'Limpiar' if situación == '?' else
-                 'ir_Derecha' if robot in ['B','C','E','F','H','I'] else
-                 'ir_Izquierda' if robot in ['A','B','D','E','G','H'] else
-                 'Subir' if robot in ['A','D'] else 
-                 'bajar' if robot in ['I','F'] else
-                 'otra accion')
-    
-    
-
 
 
 class AgenteReactivoModeloNueveCuartos(entornos_f.Agente):
@@ -107,15 +85,36 @@ class AgenteReactivoModeloNueveCuartos(entornos_f.Agente):
         self.modelo[' ABCDEFGHI'.find(robot)] = situación
 
         # Decide sobre el modelo interno
+        #Cambiar las acciones que regresa, aqui esta el error del bucle
         a,b,c,d,e,f,g,h,i = self.modelo[1], self.modelo[2],self.modelo[3],self.modelo[4],self.modelo[5],self.modelo[6],self.modelo[7],self.modelo[8],self.modelo[9]
         return ('Nada' if a == b == c == d == e == f == g == h == i == 'limpio' else
                 'Limpiar' if situación == 'sucio' else
                  'ir_Derecha' if robot in ['B','C','E','F','H','I'] else
-                 'ir_Izquierda' if robot in ['A','B','D','E','G','H'] else
+                 'ir_Izquierda' if robot in ['A','B','D','E','G','H'] else 
                  'Subir' if robot in ['A','D'] else 
                  'bajar' if robot in ['I','F'] else
                  'otra accion')
 
+class AgenteReactivo(entornos_f.Agente):
+        
+    def __init__(self):
+        self.modelo = ['A','?','?','?','?','?','?','?','?','?'] 
+
+    def programa(self, persepcion):
+        robot,situación = persepcion 
+
+        self.modelo[0] = robot
+        self.modelo[' ABCDEFGHI'.find(robot)] = situación
+
+        a,b,c,d,e,f,g,h,i = self.modelo[1], self.modelo[2],self.modelo[3],self.modelo[4],self.modelo[5],self.modelo[6],self.modelo[7],self.modelo[8],self.modelo[9]
+        return ('Nada' if a == b == c == d == e == f == g == h == i == 'limpio' else
+                'Limpiar' if situación == '?' else
+                 'ir_Derecha' if robot in ['B','C','E','F','H','I'] else
+                 'ir_Izquierda' if robot in ['A','B','D','E','G','H'] else
+                 'Subir' if robot in ['A','D'] else 
+                 'bajar' if robot in ['I','F'] else
+                 'otra accion')    
+    
 
 
 class AgenteAleatorio(entornos_f.Agente):
@@ -146,20 +145,23 @@ def prueba_agente_ciego(agente):
         ),
         ["A","?","?","?","?","?","?","?","?","?",]
     )
-
-   
-
-
+  
 def test():
     """
     Prueba del entorno y los agentes
 
     """    
+
     print("Prueba del entorno con un agente aleatorio")
     prueba_agente(AgenteAleatorio(['ir_Izquierda','ir_Derecha','Bajar','Subir','Limpiar','Nada']))
     
     print("Prueba del entorno con un agente reactivo con modelo")
     prueba_agente(AgenteReactivoModeloNueveCuartos())
+
+    print("---------------------------------------ENTRONO CIEGO----------------------------------------------")
+
+    print("Prueba del entorno ciego con un agente reactivo")
+    prueba_agente_ciego(AgenteAleatorio(['ir_Izquierda','ir_Derecha','Bajar','Subir','Limpiar','Nada']))
 
     print("Prueba del entorno ciego con un agente reactivo")
     prueba_agente_ciego(AgenteReactivo())
