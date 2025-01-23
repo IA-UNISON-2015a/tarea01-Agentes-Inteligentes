@@ -13,8 +13,8 @@ import entornos_f
 from random import choice
 
 class NueveCuartos(entornos_f.Entorno):
-    def accion_legal(self,estado,accion):
-        
+    def accion_legal(self,_,accion):
+        #Restringir las acciones dependiendo del estado
         return accion in ("ir_Derecha","ir_Izquierda","Subir","Bajar", "Limpiar", "Nada")
     
     def transicion(self, estado, accion):
@@ -51,6 +51,41 @@ class NueveCuartos(entornos_f.Entorno):
                 
     def percepcion(self, estado):
         return estado[0], estado[" ABCDEFGHI".find(estado[0])] 
+    
+class NueveCuartosCiego(NueveCuartos): 
+
+    def accion_legal(self, _, accion):
+        return super().accion_legal(_, accion)
+    
+    def transicion(self, estado, accion):
+        return super().transicion(estado, accion)
+    
+    def percepcion(self, estado):
+        return super().percepcion(estado)
+    
+class AgenteReactivo(entornos_f.Agente):
+        
+    def __init__(self):
+        self.modelo = ['A','?','?','?','?','?','?','?','?','?'] 
+
+    def programa(self, persepcion):
+        robot,situación = persepcion 
+
+        self.modelo[0] = robot
+        self.modelo[' ABCDEFGHI'.find(robot)] = situación
+
+        a,b,c,d,e,f,g,h,i = self.modelo[1], self.modelo[2],self.modelo[3],self.modelo[4],self.modelo[5],self.modelo[6],self.modelo[7],self.modelo[8],self.modelo[9]
+        return ('Nada' if a == b == c == d == e == f == g == h == i == 'limpio' else
+                'Limpiar' if situación == '?' else
+                 'ir_Derecha' if robot in ['B','C','E','F','H','I'] else
+                 'ir_Izquierda' if robot in ['A','B','D','E','G','H'] else
+                 'Subir' if robot in ['A','D'] else 
+                 'bajar' if robot in ['I','F'] else
+                 'otra accion')
+    
+    
+
+
 
 class AgenteReactivoModeloNueveCuartos(entornos_f.Agente):
     """
@@ -96,10 +131,24 @@ def prueba_agente(agente):
             NueveCuartos(),
             agente,
             ["A", "sucio", "sucio","sucio","sucio","sucio","sucio","sucio","sucio","sucio"],
-            100
+            200
         ),
         ["A", "sucio", "sucio","sucio","sucio","sucio","sucio","sucio","sucio","sucio"]
     )
+
+def prueba_agente_ciego(agente): 
+        entornos_f.imprime_simulacion(
+        entornos_f.simulador(
+            NueveCuartos(),
+            agente,
+            ["A","?","?","?","?","?","?","?","?","?"],
+            200
+        ),
+        ["A","?","?","?","?","?","?","?","?","?",]
+    )
+
+   
+
 
 def test():
     """
@@ -108,10 +157,14 @@ def test():
     """    
     print("Prueba del entorno con un agente aleatorio")
     prueba_agente(AgenteAleatorio(['ir_Izquierda','ir_Derecha','Bajar','Subir','Limpiar','Nada']))
-
-
+    
     print("Prueba del entorno con un agente reactivo con modelo")
     prueba_agente(AgenteReactivoModeloNueveCuartos())
+
+    print("Prueba del entorno ciego con un agente reactivo")
+    prueba_agente_ciego(AgenteReactivo())
+
+
     
 
 if __name__ == "__main__":
