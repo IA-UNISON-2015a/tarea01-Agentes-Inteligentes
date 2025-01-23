@@ -45,7 +45,7 @@ class NueveCuartos(entornos_f.Entorno):
 
 class AgenteReactivo(entornos_f.Agente):
     def programa(self, percepcion):
-        cuarto, piso, situacion = percepcion
+        cuartos, piso, situacion = percepcion
         return ('limpiar' if situacion == 'sucio' else
                 'ir_Izquierda' if robot < 0 else 
                 'bajar' if robot == 0 else
