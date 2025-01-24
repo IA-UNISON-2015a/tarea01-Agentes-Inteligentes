@@ -16,7 +16,7 @@ class TresCuartos(entornos_f.Entorno):
     con la ubicación del robot y el estado de limpieza del cuarto en el que se encuentra
     """
     def accion_legal(self, estado, accion):
-        return accion in ("izq", "der", "limpiar", "nada")
+        return accion in ("izq", "der", "subir", "bajar", "limpiar", "nada")
 
     def transicion(self, estado, accion):
         robot, a, b, c = estado
