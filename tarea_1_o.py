@@ -10,6 +10,7 @@ Revisa el archivo README.md con las instrucciones de la tarea.
 __author__ = 'georginasalcido'
 
 import entornos_o
+import random
 from random import choice
 
 class NueveCuartos(entornos_o.Entorno):
@@ -107,9 +108,32 @@ class AgenteRacionalNueveCuartosCiego(entornos_o.Agente):
         self.modelo[1] = cuarto
         self.modelo[2][piso][cuarto] = "limpio"
 
-        return ('limpiar' if situacion == 'sucio' else
+        return ('limpiar' if self.modelo[2][piso][cuarto] == "sucio" else
                 'ir_Derecha' if cuarto < 2 and 'sucio' in self.modelo[2][piso][cuarto+1:] else
                 'subir' if cuarto == 2 and piso < 2 and 'sucio' in self.modelo[2][piso+1] else
                 'ir_Izquierda' if cuarto > 0 and 'sucio' in self.modelo[2][piso][:cuarto] else
                 'bajar' if cuarto == 0 and piso > 0 and 'sucio' in self.modelo[2][:piso] else
                 'nada')
+    
+class NueveCuartosEstocastivo(NueveCuartos):
+    def transicion(self, accion):
+        if not self.acción_legal(accion):
+            raise ValueError("La acción no es legal para este estado")
+
+        piso, cuarto, estado = self.x
+
+        if accion == "limpiar":
+            self.costo += 1
+            if random.random() <= 0.8:
+                estado[piso][cuarto] = "limpio"
+        elif accion in ("ir_Derecha", "ir_Izquierda"):
+            self.costo += 2
+            probabilidad = random.random()
+            if probabilidad <= 0.8:
+                super().transicion(accion) 
+            elif probabilidad <= 0.9:
+                pass
+            else:
+                acciones = ["ir_Derecha", "ir_Izquierda", "subir", "bajar", "limpiar", "nada"]
+                accion_random = choice(acciones)
+                super().transicion(accion_random)
