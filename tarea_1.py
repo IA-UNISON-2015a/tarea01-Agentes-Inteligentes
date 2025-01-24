@@ -124,6 +124,14 @@ class AgenteReactivoModeloNueveCuartos(entornos_o.Agente):
                         elif robot[1] > cuarto:
                             return "ir_Izquierda"
         return "nada"
+    
+    class NueveCuartosCiego(NueveCuartos):
+        """
+        Igual que NueveCuartos, pero no se puede ver nada
+
+        """
+        def percepcion(self):
+            return []
 
 
 def test():
@@ -138,11 +146,11 @@ def test():
     
     entornos_o.simulador(NueveCuartos(x0),
                          AgenteAleatorio(acciones),
-                         100)
+                         10)
     
     entornos_o.simulador(NueveCuartos(x0),
                          AgenteReactivoModeloNueveCuartos(),
-                         100)
+                         200)
     
 if __name__ == "__main__":
     test()
