@@ -29,10 +29,6 @@ class NueveCuartos(entornos_o.Entorno):
         super().__init__(x0)
         
     def accion_legal(self, accion):
-        print("Entrando a accion_legal")
-        print("El estado es: ", self.x)
-        print("La acción es: ", accion)
-        
         piso, cuarto = self.x[0]
         if accion == "ir_Derecha":
             return cuarto != 2
@@ -46,13 +42,13 @@ class NueveCuartos(entornos_o.Entorno):
             return accion in ["limpiar", "nada"]
     
     def transicion(self, accion):
-        if not self.acción_legal(accion):
-            print("accion ilegal")
-            raise ValueError("La acción no es legal para este estado")  
+        if not self.accion_legal(accion):
+            #raise ValueError("La acción no es legal para este estado")
+            accion = "nada"
         
         robot, cuartos = self.x[0], self.x[1]
 
-        if accion == "nada" and "sucio" in cuartos:
+        if accion == "nada" and "sucio" in [room for floor in cuartos for room in floor]:
             self.costo += 1
         elif accion == "limpiar":
             self.costo += 1
@@ -72,7 +68,6 @@ class NueveCuartos(entornos_o.Entorno):
             
     def percepcion(self):
         robot = self.x[0]
-        print("robot: ", robot)
         return robot, self.x[1][robot[0]][robot[1]]
     
 
@@ -85,11 +80,7 @@ class AgenteAleatorio(entornos_o.Agente):
         self.acciones = acciones
 
     def programa(self, _):
-        accion = choice(self.acciones)
-        while not NueveCuartos().acción_legal(accion):
-            print("accion ilegal")
-            accion = choice(self.acciones)
-        return accion
+        return choice(self.acciones)
 
 def test():
     """
@@ -98,20 +89,6 @@ def test():
     
     x0 = [(0,0), [["sucio" for _ in range(3)] for _ in range(3)]] # Estado inicial
     acciones = ["ir_Derecha", "ir_Izquierda", "subir", "bajar", "limpiar", "nada"]
-    
-    print("Prueba del entorno con un agente aleatorio")
-    
-    agente = AgenteAleatorio(acciones)
-    entorno = NueveCuartos(x0)
-    
-    
-    #for i in range(100):
-    #    print("Estado: ", entorno.percepcion())
-    #    accion = agente.programa(entorno.percepcion())
-    #    print("Acción: ", accion)
-    #    entorno.transicion(accion)
-    #    print("Costo: ", entorno.costo)
-    #    print()
     
     entornos_o.simulador(NueveCuartos(x0),
                          AgenteAleatorio(acciones),
