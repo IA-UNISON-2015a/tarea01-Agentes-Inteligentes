@@ -107,22 +107,32 @@ class AgenteReactivoModeloNueveCuartos(entornos_o.Agente):
 
         # Decide sobre el modelo interno
         cuartos = self.modelo[1]
-        if all(room == "limpio" for floor in cuartos for room in floor):
-            return "nada"
-        elif situacion == "sucio":
+        
+        if situacion == "sucio":
             return "limpiar"
-        else:
-            for piso in range(3):
-                for cuarto in range(3):
-                    if cuartos[piso][cuarto] == "sucio":
-                        if robot[0] < piso:
-                            return "subir"
-                        elif robot[0] > piso:
-                            return "bajar"
-                        elif robot[1] < cuarto:
+        
+        for piso in range(3):
+            for cuarto in range(3):
+                if cuartos[piso][cuarto] == "sucio":
+                    # Moverse verticalmente
+                    if robot[0] < piso and robot[1] == 2:
+                        return "subir"
+                    elif robot[0] > piso and robot[1] == 0:
+                        return "bajar"
+
+                    # Moverse horizontalemnte
+                    if robot[0] == piso:
+                        if robot[1] < cuarto:
                             return "ir_Derecha"
                         elif robot[1] > cuarto:
                             return "ir_Izquierda"
+
+                    # Ir a la orilla para bajar o subir
+                    if robot[0] < piso and robot[1] != 2:
+                        return "ir_Derecha"
+                    elif robot[0] > piso and robot[1] != 0:
+                        return "ir_Izquierda"
+
         return "nada"
     
     class NueveCuartosCiego(NueveCuartos):
