@@ -1,7 +1,7 @@
 import entornos_f
 from random import choice
 
-class TresCuartos(entornos_f.Entorno):
+class NueveCuartos(entornos_f.Entorno):
     """
     Clase para un entorno de tres cuartos.
     
@@ -28,12 +28,20 @@ class TresCuartos(entornos_f.Entorno):
             cuartos[robot] = "limpio"
             return ((robot, cuartos), 1)
         elif accion == "izq":
-            if robot > 0:
-                return ((robot - 1, cuartos), 1)
+            if robot in [1, 2, 4, 5, 7, 8]:
+                return ((robot - 1, cuartos), 2)
             return (estado, 1)
         elif accion == "der":
-            if robot < len(cuartos) - 1:
-                return ((robot + 1, cuartos), 1)
+            if robot in [0, 1, 3, 4, 6, 7]:
+                return ((robot + 1, cuartos), 2)
+            return (estado, 1)
+        elif accion == "bajar":
+            if robot in [3, 6]:
+                return ((robot - 3, cuartos), 3)
+            return (estado, 1)
+        elif accion == "subir":
+            if robot in [2, 5]:
+                return ((robot + 3, cuartos), 3)
             return (estado, 1)
 
     def percepcion(self, estado):
@@ -41,7 +49,7 @@ class TresCuartos(entornos_f.Entorno):
         return (robot, cuartos[robot])
     
 
-class AgenteAleatorioTresCuartos(entornos_f.Agente):
+class AgenteAleatorioNueveCuartos(entornos_f.Agente):
     """
     Un agente que solo regresa una accion al azar entre las acciones legales
     """
@@ -51,18 +59,20 @@ class AgenteAleatorioTresCuartos(entornos_f.Agente):
     def programa(self, _):
         return choice(self.acciones)
 
-class AgenteReactivoTresCuartos(entornos_f.Agente):
+class AgenteReactivoNueveCuartos(entornos_f.Agente):
     """
     Un agente reactivo simple para tres cuartos
     """
     def programa(self, percepcion):
         robot, situacion = percepcion
         return ('limpiar' if situacion == 'sucio' else  # Limpia si el cuarto donde se encuentra está sucio
-                choice(["izq", "der"]) if robot == 1 else # Se mueve si el cuantro donde se encuentra está 
-                "izq" if robot == 2 else
+                choice(["izq", "der"]) if robot in [1, 4, 7] else # Se mueve si el cuarto donde se encuentra está limpio
+                choice(["izq", "subir"]) if robot in [2, 5] else
+                choice(["der", "bajar"]) if robot in [3, 6] else
+                "izq" if robot == 8 else
                 'der')
 
-class AgenteReactivoModeloTresCuartos(entornos_f.Agente):
+class AgenteReactivoModeloNueveCuartos(entornos_f.Agente):
     """
     Un agente reactivo basado en modelo para tres cuartos
     """
@@ -83,19 +93,21 @@ class AgenteReactivoModeloTresCuartos(entornos_f.Agente):
         cuartos = self.modelo[1:]
         return ('nada' if all(c == 'limpio' for c in cuartos) else # No hace nada si todo está limpio
                 'limpiar' if situacion == 'sucio' else  # Limpia si el cuarto donde se encuentra está sucio
-                choice(["izq", "der"]) if robot == 1 else # Se mueve si el cuantro donde se encuentra está 
-                "izq" if robot == 2 else
+                choice(["izq", "der"]) if robot in [1, 4, 7] else # Se mueve si el cuarto donde se encuentra está limpio
+                choice(["izq", "subir"]) if robot in [2, 5] else
+                choice(["der", "bajar"]) if robot in [3, 6] else
+                "izq" if robot == 8 else
                 'der')
     
 def prueba_agente(agente):
     entornos_f.imprime_simulacion(
         entornos_f.simulador(
-            TresCuartos(),
+            NueveCuartos(),
             agente,
-            (0, ["sucio", "sucio", "sucio"]),  # Estado inicial
+            (0, ["sucio", "sucio", "sucio", "sucio", "sucio", "sucio", "sucio", "sucio", "sucio"]),  # Estado inicial
             100
         ),
-        ["A", "sucio", "sucio", "sucio"]
+        [0, ["sucio", "sucio", "sucio", "sucio", "sucio", "sucio", "sucio", "sucio", "sucio"]]
     )
 
 def test():
@@ -103,13 +115,13 @@ def test():
     Prueba del entorno y los agentes
     """
     print("Prueba del entorno con un agente aleatorio")
-    prueba_agente(AgenteAleatorioTresCuartos(['izq', 'der', 'limpiar', 'nada']))
+    prueba_agente(AgenteAleatorioNueveCuartos(['izq', 'der', "subir", "bajar", 'limpiar', 'nada']))
 
     print("Prueba del entorno con un agente reactivo")
-    prueba_agente(AgenteReactivoTresCuartos())
+    prueba_agente(AgenteReactivoNueveCuartos())
 
     print("Prueba del entorno con un agente reactivo con modelo")
-    prueba_agente(AgenteReactivoModeloTresCuartos(3))
+    prueba_agente(AgenteReactivoModeloNueveCuartos(9))
 
 if __name__ == "__main__":
     test()

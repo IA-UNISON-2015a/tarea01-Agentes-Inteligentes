@@ -102,16 +102,16 @@ def imprime_simulacion(historial, s_0):
     print("\n\nSimulación, iniciando en el estado" + 
             str(s_0) + "\n") 
 
-    print('Paso'.center(10) +
-            'Acción'.center(40) +
-            'Siguente estado'.center(25) +
+    print('Paso'.center(5) +
+            'Acción'.center(10) +
+            'Siguente estado'.center(100) +
             'Costo'.center(15))
-    print('_' * (10 + 40 + 25 + 15))
+    print('_' * (5 + 10 + 100 + 15))
 
     for (i, (a_i, s_i, c_i)) in enumerate(historial):
-        print(str(i).center(10) +
-                str(a_i).center(40) +
-                str(s_i).center(25) +
+        print(str(i).center(5) +
+                str(a_i).center(10) +
+                str(s_i).center(100) +
                 str(c_i).rjust(12))
-    print('_' * (10 + 40 + 25 + 15) + '\n\n')
+    print('_' * (5 + 10 + 100 + 15) + '\n\n')
 
