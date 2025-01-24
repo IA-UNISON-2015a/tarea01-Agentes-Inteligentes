@@ -7,6 +7,7 @@ __author__ = 'Jesus Flores Lacarra'
 
 import entornos_o
 from random import choice
+from copy import deepcopy
 
 class NueveCuartos(entornos_o.Entorno):
     """
@@ -47,6 +48,7 @@ class NueveCuartos(entornos_o.Entorno):
             accion = "nada"
         
         robot, cuartos = self.x[0], self.x[1]
+        cuartos = deepcopy(cuartos) 
 
         if accion == "nada" and "sucio" in [room for floor in cuartos for room in floor]:
             self.costo += 1
@@ -55,16 +57,18 @@ class NueveCuartos(entornos_o.Entorno):
             cuartos[robot[0]][robot[1]] = "limpio"
         elif accion == "ir_Derecha":
             self.costo += 2
-            self.x[0] = (robot[0], robot[1] + 1)
+            robot = (robot[0], robot[1] + 1)
         elif accion == "ir_Izquierda":
             self.costo += 2
-            self.x[0] = (robot[0], robot[1] - 1)
+            robot = (robot[0], robot[1] - 1)
         elif accion == "bajar":
             self.costo += 3
-            self.x[0] = (robot[0] - 1, robot[1])
-        else:  # accion == "subir"
+            robot = (robot[0] - 1, robot[1])
+        elif accion == "subir":
             self.costo += 3
-            self.x[0] = (robot[0] + 1, robot[1])
+            robot = (robot[0] + 1, robot[1])
+            
+        self.x = (robot, cuartos)
             
     def percepcion(self):
         robot = self.x[0]
@@ -81,6 +85,46 @@ class AgenteAleatorio(entornos_o.Agente):
 
     def programa(self, _):
         return choice(self.acciones)
+    
+class AgenteReactivoModeloNueveCuartos(entornos_o.Agente):
+    """
+    Un agente reactivo basado en modelo
+
+    """
+    def __init__(self):
+        """
+        Inicializa el modelo interno en el peor de los casos
+
+        """
+        self.modelo = [(0,0), [["sucio" for _ in range(3)] for _ in range(3)]]
+
+    def programa(self, percepcion):
+        robot, situacion = percepcion
+
+        # Actualiza el modelo interno
+        self.modelo[0] = robot 
+        self.modelo[1][robot[0]][robot[1]] = situacion 
+
+        # Decide sobre el modelo interno
+        cuartos = self.modelo[1]
+        if all(room == "limpio" for floor in cuartos for room in floor):
+            return "nada"
+        elif situacion == "sucio":
+            return "limpiar"
+        else:
+            for piso in range(3):
+                for cuarto in range(3):
+                    if cuartos[piso][cuarto] == "sucio":
+                        if robot[0] < piso:
+                            return "subir"
+                        elif robot[0] > piso:
+                            return "bajar"
+                        elif robot[1] < cuarto:
+                            return "ir_Derecha"
+                        elif robot[1] > cuarto:
+                            return "ir_Izquierda"
+        return "nada"
+
 
 def test():
     """
@@ -90,8 +134,14 @@ def test():
     x0 = [(0,0), [["sucio" for _ in range(3)] for _ in range(3)]] # Estado inicial
     acciones = ["ir_Derecha", "ir_Izquierda", "subir", "bajar", "limpiar", "nada"]
     
+    print("Estado inicial del entorno: ", x0)
+    
     entornos_o.simulador(NueveCuartos(x0),
                          AgenteAleatorio(acciones),
+                         100)
+    
+    entornos_o.simulador(NueveCuartos(x0),
+                         AgenteReactivoModeloNueveCuartos(),
                          100)
     
 if __name__ == "__main__":
