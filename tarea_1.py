@@ -135,13 +135,52 @@ class AgenteReactivoModeloNueveCuartos(entornos_o.Agente):
 
         return "nada"
     
-    class NueveCuartosCiego(NueveCuartos):
+class NueveCuartosCiego(NueveCuartos):
+    """
+    Igual que NueveCuartos, pero no se puede ver nada
+    """
+    def percepcion(self):
+        return []
+
+class AgenteReactivoModeloNueveCuartosCiego(entornos_o.Agente):
+    """
+    Un agente reactivo basado en modelo
+
+    """
+    def __init__(self):
         """
-        Igual que NueveCuartos, pero no se puede ver nada
+        Inicializa el modelo interno en el peor de los casos
 
         """
-        def percepcion(self):
-            return []
+        self.modelo = [(0,0), [["sucio" for _ in range(3)] for _ in range(3)]]
+
+    def programa(self, _):
+        
+        # Decide sobre el modelo interno
+        robot, cuartos = self.modelo
+        for piso in range(3):
+            for cuarto in range(3):
+                if cuartos[piso][cuarto] == "sucio":
+                    # Moverse verticalmente
+                    if robot[0] < piso and robot[1] == 2:
+                        return "subir"
+                    elif robot[0] > piso and robot[1] == 0:
+                        return "bajar"
+
+                    # Moverse horizontalemnte
+                    if robot[0] == piso:
+                        if robot[1] < cuarto:
+                            return "ir_Derecha"
+                        elif robot[1] > cuarto:
+                            return "ir_Izquierda"
+
+                    # Ir a la orilla para bajar o subir
+                    if robot[0] < piso and robot[1] != 2:
+                        return "ir_Derecha"
+                    elif robot[0] > piso and robot[1] != 0:
+                        return "ir_Izquierda"
+        
+        return "nada"
 
 
 def test():
@@ -160,6 +199,10 @@ def test():
     
     entornos_o.simulador(NueveCuartos(x0),
                          AgenteReactivoModeloNueveCuartos(),
+                         200)
+    
+    entornos_o.simulador(NueveCuartosCiego(x0),
+                         AgenteReactivoModeloNueveCuartosCiego(),
                          200)
     
 if __name__ == "__main__":
