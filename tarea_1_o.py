@@ -61,7 +61,8 @@ class AgenteAleatorio(entornos_o.Agente):
 
     def programa(self, _):
         return choice(self.acciones)
-    
+
+"""
 class AgenteReactivoNuevecuartos(entornos_o.Agente):
     def programa(self, percepcion):
         piso, cuarto, situacion = percepcion
@@ -71,20 +72,18 @@ class AgenteReactivoNuevecuartos(entornos_o.Agente):
                 'ir_Izquierda' if cuarto > 0 else
                 'bajar' if cuarto == 0 and piso > 0 else
                 'nada' )
+"""
     
 class AgenteReactivoModeloNueveCuartos(entornos_o.Agente):
     def __init__(self):
         self.modelo = [0, 0, [["sucio"] * 3 for _ in range(3)]]
 
     def programa(self, percepcion):
-        # robot, situacion = percepcion
         piso, cuarto, situacion = percepcion
 
         self.modelo[0] = piso
         self.modelo[1] = cuarto
         self.modelo[2][piso][cuarto] = situacion
-
-        #a, b = self.modelo[1], self.modelo[2]
 
         return ('limpiar' if situacion == 'sucio' else
                 'ir_Derecha' if cuarto < 2 and 'sucio' in self.modelo[2][piso][cuarto+1:] else
@@ -92,41 +91,25 @@ class AgenteReactivoModeloNueveCuartos(entornos_o.Agente):
                 'ir_Izquierda' if cuarto > 0 and 'sucio' in self.modelo[2][piso][:cuarto] else
                 'bajar' if cuarto == 0 and piso > 0 and 'sucio' in self.modelo[2][:piso] else
                 'nada')
-    
-class NuevoCuartosCiego(NueveCuartos):
+ 
+class NueveCuartosCiego(NueveCuartos):
     def percepcion(self):
-        return []
+        return self.x[0], self.x[1]
     
-class AgenteReactivoModeloNueveCuartosCiego(entornos_o.Agente):
-    """
-    Un agente reactivo basado en modelo
-
-    """
+class AgenteRacionalNueveCuartosCiego(entornos_o.Agente):
     def __init__(self):
-        """
-        Inicializa el modelo interno en el peor de los casos
+        self.modelo = [0, 0, [["sucio"] * 3 for _ in range(3)]]
 
-        """
-        self.modelo = ['?', 'sucio', 'sucio']
+    def programa(self, percepcion):
+        piso, cuarto = percepcion
 
-    def programa(self, _):
-        
-        # Decide sobre el modelo interno
-        robot, a, b = self.modelo
-        accion = ('ir_A' if robot == '?' else
-                  'nada' if a == b == 'limpio' else
-                  'limpiar' if self.modelo[' AB'.find(robot)] == 'sucio' else
-                  'ir_A' if robot == 'B' else 'ir_B' 
-                  
-                  )
+        self.modelo[0] = piso
+        self.modelo[1] = cuarto
+        self.modelo[2][piso][cuarto] = "limpio"
 
-        # Actualiza el modelo interno
-        if accion == 'ir_A':
-            self.modelo[0] = 'A'
-        elif accion == 'ir_B':
-            self.modelo[0] = 'B'
-        elif accion == 'limpiar':
-            self.modelo[' AB'.find(robot)] = 'limpio'
-            
-        return accion
-        
+        return ('limpiar' if situacion == 'sucio' else
+                'ir_Derecha' if cuarto < 2 and 'sucio' in self.modelo[2][piso][cuarto+1:] else
+                'subir' if cuarto == 2 and piso < 2 and 'sucio' in self.modelo[2][piso+1] else
+                'ir_Izquierda' if cuarto > 0 and 'sucio' in self.modelo[2][piso][:cuarto] else
+                'bajar' if cuarto == 0 and piso > 0 and 'sucio' in self.modelo[2][:piso] else
+                'nada')
