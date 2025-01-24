@@ -10,7 +10,7 @@ Revisa el archivo README.md con las instrucciones de la tarea.
 __author__ = 'Manuel Búsani Yanes'
 
 import entornos_f
-from doscuartos_f import AgenteAleatorio
+from random import choice
 
 # Requiere el modulo entornos_f.py o entornos_o.py
 # Usa el modulo doscuartos_f.py para reutilizar código
@@ -54,9 +54,11 @@ class NueveCuartos(entornos_f.Entorno):
 				   0 if ((accion == "nada") and (cuartos == tmp)) else 1)
 
 		if accion == "ir_Derecha":
-			x = x+1
+			if x != 2:
+				x = x+1
 		elif accion == "ir_Izquierda":
-			x = x-1
+			if x != 0:
+				x = x-1
 		elif accion == "subir":
 			y = y+1
 		elif accion == "bajar":
@@ -64,12 +66,39 @@ class NueveCuartos(entornos_f.Entorno):
 		elif accion == "limpiar":
 			cuartos[x][y] = True
 
+		print(cuartos)
 		return ([x, y, cuartos], c_local)
 	
 	def percepcion(self, estado):
 		x, y, cuartos = estado
 		return (x, y, cuartos[x][y])
 
+class AgenteAleatorio(entornos_f.Agente):
+    """
+    Un agente que solo regresa una accion al azar entre las acciones legales
+
+    """
+    def __init__(self, acciones):
+        self.acciones = acciones
+
+    def programa(self, percepcion):
+        x = percepcion[0]
+        y = percepcion[1]
+
+        if (x != 2) or (y == 2):
+        	self.acciones.remove("subir")
+        if (x != 0) or (y == 0):
+        	self.acciones.remove("bajar")
+        salida = choice(self.acciones)
+
+        if (not "subir" in self.acciones):
+        	self.acciones.append("subir")
+        if (not "bajar" in self.acciones):
+        	self.acciones.append("bajar")
+
+        return salida
+
+'''
 class AgenteReactivoModeloNueveCuartos(entornos_f.Agente):
     # Un agente reactivo basado en modelo
 
@@ -84,13 +113,23 @@ class AgenteReactivoModeloNueveCuartos(entornos_f.Agente):
     	# Actualiza el modelo interno
     	self.modelo[0] = x
     	self.modelo[1] = y
-    	self.modelo[2][x][y] = cuarto_limpio
+    	self.modelo[2][x][y] = cuartoLimpio
 
     	# Decide sobre el modelo interno
-		return ("limpiar" if not cuarto_limpio else
-				"ir_Derecha" if ((x != 2) and (not cuartos[x+1][y]) or
-								 (x == 0) and (not(cuartos[2][y]))) else 
-				"ir_Izquierda" if ((x != 0) and (not cuartos[x-1][y]) or
-								   (x == 2) and (not(cuartos[0][y]))) else
-				"subir" if ((x == 0) and (y != 2) and (cuartos[0] != [True, True, True])
-
+		return ("limpiar" if not cuartoLimpio else
+				"ir_Derecha" if ((x != 2) and (not cuartos[x+1][y]) or (x == 0) and (not(cuartos[2][y]))) else 
+				"ir_Izquierda" if ((x != 0) and (not cuartos[x-1][y]) or (x == 2) and (not(cuartos[0][y]))) else
+				"subir" if ((x == 0) and (y != 2) and (cuartos[0] != [True, True, True])) else True)
+'''
+def prueba_nueve_cuartos(agente):
+    entornos_f.imprime_simulacion(
+        entornos_f.simulador(
+            NueveCuartos(),
+            agente,
+            [0,0,[[False,False,False],[False,False,False],[False,False,False]]],
+            100
+        ),
+        [0,0,[[False,False,False],[False,False,False],[False,False,False]]]
+    )
+if __name__ == "__main__":
+	prueba_nueve_cuartos(AgenteAleatorio(["ir_Derecha", "ir_Izquierda", "subir", "bajar", "limpiar", "nada"]))
