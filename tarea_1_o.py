@@ -115,7 +115,7 @@ class AgenteRacionalNueveCuartosCiego(entornos_o.Agente):
                 'bajar' if cuarto == 0 and piso > 0 and 'sucio' in self.modelo[2][:piso] else
                 'nada')
     
-class NueveCuartosEstocastivo(NueveCuartos):
+class NueveCuartosEstocastico(NueveCuartos):
     def transicion(self, accion):
         if not self.acción_legal(accion):
             raise ValueError("La acción no es legal para este estado")
@@ -137,3 +137,21 @@ class NueveCuartosEstocastivo(NueveCuartos):
                 acciones = ["ir_Derecha", "ir_Izquierda", "subir", "bajar", "limpiar", "nada"]
                 accion_random = choice(acciones)
                 super().transicion(accion_random)
+
+class AgenteRacionalEstocastico(entornos_o.Agente):
+    def __init__(self):
+        self.modelo = [0, 0, [["sucio"] * 3 for _ in range(3)]]
+
+    def programa(self, percepcion):
+        piso, cuarto = percepcion
+
+        self.modelo[0] = piso
+        self.modelo[1] = cuarto
+        self.modelo[2][piso][cuarto] = "limpio"
+
+        return ('limpiar' if self.modelo[2][piso][cuarto] == 'sucio' else
+                'ir_Derecha' if cuarto < 2 and 'sucio' in self.modelo[2][piso][cuarto+1:] else
+                'subir' if cuarto == 2 and piso < 2 and 'sucio' in self.modelo[2][piso+1] else
+                'ir_Izquierda' if cuarto > 0 and 'sucio' in self.modelo[2][piso][:cuarto] else
+                'bajar' if cuarto == 0 and piso > 0 and 'sucio' in self.modelo[2][:piso] else
+                'nada')
