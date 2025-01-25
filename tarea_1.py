@@ -150,14 +150,35 @@ class AgenteReactivoModeloNueveCuartosCiego(entornos_o.Agente):
     def __init__(self):
         """
         Inicializa el modelo interno en el peor de los casos
-
         """
         self.modelo = [(0,0), [["sucio" for _ in range(3)] for _ in range(3)]]
 
     def programa(self, _):
-        
         # Decide sobre el modelo interno
         robot, cuartos = self.modelo
+        
+        # Internamente actualiza el modelo
+        self.modelo[robot[0]][robot[1]] = "limpio"
+        
+        # Verifica que esten limpios todos los cuartos
+        if all([room == "limpio" for floor in cuartos for room in floor]):
+            return "nada"
+        
+        """
+        if robot[1] < 2:
+            self.modelo[0] = (robot[0], robot[1] + 1)
+            return "ir_Derecha"
+        elif robot[1] == 2 and robot[0] < 2:
+            self.modelo[0] = (robot[0] + 1, robot[1])
+            return "subir"
+        elif robot[1] > 0:
+            self.modelo[0] = (robot[0], robot[1] - 1)
+            return "ir_Izquierda"
+        elif robot[1] == 0 and robot[0] > 0:
+            self.modelo[0] = (robot[0] - 1, robot[1])
+            return "bajar"
+        
+        """
         for piso in range(3):
             for cuarto in range(3):
                 if cuartos[piso][cuarto] == "sucio":
@@ -195,15 +216,15 @@ def test():
     
     entornos_o.simulador(NueveCuartos(x0),
                          AgenteAleatorio(acciones),
-                         10)
+                         100)
     
     entornos_o.simulador(NueveCuartos(x0),
                          AgenteReactivoModeloNueveCuartos(),
-                         200)
+                         100)
     
     entornos_o.simulador(NueveCuartosCiego(x0),
                          AgenteReactivoModeloNueveCuartosCiego(),
-                         200)
+                         100)
     
 if __name__ == "__main__":
     test()
