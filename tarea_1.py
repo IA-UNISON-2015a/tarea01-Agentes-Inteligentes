@@ -109,7 +109,7 @@ def simulate(agent, environment, steps=200):
     log = []
     for step in range(steps):
         if environment.all_rooms_clean():
-            print(f"\nAll rooms are clean! Simulation stopped after {step} steps.")
+            log.append([step + 1, "All rooms clean", f"Floor {environment.agent_position[0] + 1}, Room {environment.agent_position[1] + 1}", environment.energy_cost])
             break
         
         percept = environment.rooms[environment.agent_position[0]][environment.agent_position[1]]
@@ -133,16 +133,32 @@ def simulate(agent, environment, steps=200):
         print("\nSimulation Log:")
         print(tabulate(log, headers=["Step", "Action", "Agent Position", "Energy Cost"]))
     
-    return environment.energy_cost
+    return log, environment.energy_cost
 
 simple_agent = SimpleReflexAgent()
 simple_env = NineRooms()
-print("Simple Reflex Agent Simulation:")
-simple_cost = simulate(simple_agent, simple_env)
+simple_log, simple_cost = simulate(simple_agent, simple_env)
 
 model_agent = ModelBasedReflexAgent()
 model_env = NineRooms()
-print("\nModel-based Reflex Agent Simulation:")
-model_cost = simulate(model_agent, model_env)
+model_log, model_cost = simulate(model_agent, model_env)
 
-print(f"\nEnergy Cost Comparison:\n- Simple Reflex Agent: {simple_cost}\n- Model-based Reflex Agent: {model_cost}")
+# La tabla del agente reactivo
+print("\nSimple Reflex Agent Results:")
+print(tabulate(simple_log, headers=["Step", "Agent Position", "Energy Cost"]))
+
+# La tabla del agente basado en modelo
+print("\nModel-based Reflex Agent Results:")
+print(tabulate(model_log, headers=["Step", "Agent Position", "Energy Cost"]))
+
+# Resumen comparando los resultados de ambos modelos
+print("\nEnergy Cost Comparison:")
+print(f"- Simple Reflex Agent: {simple_cost} energy units")
+print(f"- Model-based Reflex Agent: {model_cost} energy units")
+
+if model_cost < simple_cost:
+    print(f"✅ Model-based agent saved {simple_cost - model_cost} energy units!")
+elif model_cost > simple_cost:
+    print(f"⚠️ Simple agent was more efficient by {model_cost - simple_cost} energy units!")
+else:
+    print("Both agents used the same amount of energy")
