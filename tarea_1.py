@@ -12,7 +12,6 @@ __author__ = 'Luis Mario Sainz'
 import entornos_f
 import entornos_o
 import random
-from math import inf
 from tabulate import tabulate
 
 class NineRooms:
@@ -80,28 +79,18 @@ class ModelBasedReflexAgent:
         if self.internal_state[floor][room] == "dirty":
             return "clean"
         
-        nearest_dirty_room = None
-        min_cost = inf
-        
         for f in range(3):
             for r in range(3):
                 if self.internal_state[f][r] != "clean":
-                    cost = abs(f - floor) * 5 + abs(r - room) * 2 
-                    if cost < min_cost:
-                        min_cost = cost
-                        nearest_dirty_room = (f, r)
-        
-        if nearest_dirty_room:
-            target_floor, target_room = nearest_dirty_room
-            if target_floor > floor and room == 2:
-                return "go_Upstairs"
-            elif target_floor < floor and room == 0:
-                return "go_Downstairs"
-            elif target_room > room:
-                return "go_Right"
-            elif target_room < room:
-                return "go_Left"
-        
+                    if f > floor and room == 2:
+                        return "go_Upstairs"
+                    elif f < floor and room == 1:
+                        return "go_Downstairs"
+                    elif r > room:
+                        return "go_Right"
+                    elif r < room:
+                        return "go_Left"
+
         return "do_Nothing"
 
 
@@ -130,8 +119,10 @@ def simulate(agent, environment, steps=200):
             environment.energy_cost
         ])
 
-        print("\nSimulation Log:")
-        print(tabulate(log, headers=["Step", "Action", "Agent Position", "Energy Cost"]))
+        # Si alguno de los agentes se queda atorado, intentemos romper el ciclo
+        if action == "do_Nothing" and environment.energy_cost > 0:
+            log.append([step + 1, "Agent stuck", f"Floor {environment.agent_position[0] + 1}. Room {environment.agent_position[1] + 1}", environment.energy_cost])
+            break
     
     return log, environment.energy_cost
 
@@ -145,11 +136,11 @@ model_log, model_cost = simulate(model_agent, model_env)
 
 # La tabla del agente reactivo
 print("\nSimple Reflex Agent Results:")
-print(tabulate(simple_log, headers=["Step", "Agent Position", "Energy Cost"]))
+print(tabulate(simple_log, headers=["Step", "Action", "Agent Position", "Energy Cost"]))
 
 # La tabla del agente basado en modelo
 print("\nModel-based Reflex Agent Results:")
-print(tabulate(model_log, headers=["Step", "Agent Position", "Energy Cost"]))
+print(tabulate(model_log, headers=["Step", "Action", "Agent Position", "Energy Cost"]))
 
 # Resumen comparando los resultados de ambos modelos
 print("\nEnergy Cost Comparison:")
