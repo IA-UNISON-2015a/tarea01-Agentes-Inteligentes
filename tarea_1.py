@@ -15,10 +15,17 @@ import random
 from tabulate import tabulate
 
 class NineRooms:
-    def __init__(self):
-        self.rooms = [["dirty"] * 3 for _ in range(3)] 
-        self.agent_position = [0, 0] 
+    def __init__(self, seed=None):
+        if seed is not None:
+            random.seed(seed)
+        self.rooms = [
+            [random.choice(["clean", "dirty"]) for _ in range(3)] for _ in range(3)
+        ]
+        self.agent_position = [0, 0]
         self.energy_cost = 0
+
+    def all_rooms_clean(self):
+        return all(room == "clean" for floor in self.rooms for room in floor)
     
     def perform_action(self, action):
         floor, room = self.agent_position
@@ -126,12 +133,14 @@ def simulate(agent, environment, steps=200):
     
     return log, environment.energy_cost
 
+SEED = 42
+
 simple_agent = SimpleReflexAgent()
-simple_env = NineRooms()
+simple_env = NineRooms(seed=SEED)
 simple_log, simple_cost = simulate(simple_agent, simple_env)
 
 model_agent = ModelBasedReflexAgent()
-model_env = NineRooms()
+model_env = NineRooms(seed=SEED)
 model_log, model_cost = simulate(model_agent, model_env)
 
 # La tabla del agente reactivo
