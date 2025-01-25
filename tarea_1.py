@@ -12,11 +12,12 @@ __author__ = 'Luis Mario Sainz'
 import entornos_f
 import entornos_o
 import random
+from math import inf
 
 class NineRooms:
     def __init__(self):
-        self.rooms = [["dirty"] * 3 for _ in range(3)] # Los tres pisos con tres cuartos (todos sucios por defecto)
-        self.agent_position = [0, 0] # [piso, cuarto] inicializados en 0
+        self.rooms = [["dirty"] * 3 for _ in range(3)] 
+        self.agent_position = [0, 0] 
         self.energy_cost = 0
     
     def perform_action(self, action):
@@ -24,7 +25,7 @@ class NineRooms:
 
         if action == "clean":
             self.rooms[floor][room] = "clean"
-            self.energy_cost += 1 # Limpiar el cuarto es la segunda opcion economica
+            self.energy_cost += 1 # 
         elif action == "go_Right" and room < 2:
             self.agent_position[1] += 1
             self.energy_cost += 2
@@ -33,12 +34,12 @@ class NineRooms:
             self.energy_cost += 2
         elif action == "go_Upstairs" and floor < 2 and room == 2:
             self.agent_position[0] += 1
-            self.energy_cost += 5 # Subir las escaleras es una accion costosa
+            self.energy_cost += 5 
         elif action == "go_Downstairs" and floor >2 and room == 0:
             self.agent_position[0] -= 1
-            self.energy_cost += 5 # Bajar las escaleras es una accion costosa
+            self.energy_cost += 5 
         elif action == "do_Nothing":
-            self.energy_cost += 0 # Hacer nada es la opcion mas economica
+            self.energy_cost += 0 
 
     def all_rooms_clean(self):
         return all(all(room == "clean" for room in floor) for floor in self.rooms)
@@ -62,8 +63,8 @@ class SimpleReflexAgent:
 
 class ModelBasedReflexAgent:
     def __init__(self):
-        self.internal_state = [[None for _ in range(3)] for _ in range(3)] # Su representacion interna del entorno
-        self.visited_rooms = set() # Manteniendo un registro de los cuartos visitados
+        self.internal_state = [[None for _ in range(3)] for _ in range(3)] 
+        self.visited_rooms = set() 
 
     def update_state(self, position, percept):
         """Update the internal state based on the percept"""
@@ -75,25 +76,33 @@ class ModelBasedReflexAgent:
         """Choose the next action based on the internal state"""
         floor, room = position
 
-        # Priorizamos limpiar los cuartos sucios
         if self.internal_state[floor][room] == "dirty":
             return "clean"
         
-        # Busca el cuarto mas cercano o un cuarto sucio
+        nearest_dirty_room = None
+        min_cost = inf
+        
         for f in range(3):
             for r in range(3):
                 if self.internal_state[f][r] != "clean":
-                    if f > floor and room == 2:
-                        return "go_Upstairs"
-                    elif f < floor and room == 0:
-                        return "go_Downstairs"
-                    elif r > room:
-                        return "go_Right"
-                    elif r < room:
-                        return "go_Left"
+                    cost = abs(f - floor) * 5 + abs(r - room) * 2 
+                    if cost < min_cost:
+                        min_cost = cost
+                        nearest_dirty_room = (f, r)
         
-        # Accion por defecto cuando todos los cuartos se encuentren limpios
+        if nearest_dirty_room:
+            target_floor, target_room = nearest_dirty_room
+            if target_floor > floor and room == 2:
+                return "go_Upstairs"
+            elif target_floor < floor and room == 0:
+                return "go_Downstairs"
+            elif target_room > room:
+                return "go_Right"
+            elif target_room < room:
+                return "go_Left"
+        
         return "do_Nothing"
+
 
 def simulate(agent, environment, steps=200):
     for step in range(steps):
@@ -103,25 +112,20 @@ def simulate(agent, environment, steps=200):
         
         percept = environment.rooms[environment.agent_position[0]][environment.agent_position[1]]
 
-        # Actualiza el estado si el agente es basado en modelo
         if hasattr(agent, 'update_state'):
             agent.update_state(environment.agent_position, percept)
         
-        # Decidir una accion
         action = agent.choose_action(
             percept if not hasattr(agent, 'update_state') else environment.agent_position
         )
 
-        # Realizar la accion en el entorno
         environment.perform_action(action)
 
-        # Imprime el entorno despues de cada paso
         print(f"Step {step + 1}: Agent chosen action '{action}'")
         environment.print_environment()
     
     return environment.energy_cost
 
-# Se realiza la comparacion
 simple_agent = SimpleReflexAgent()
 simple_env = NineRooms()
 print("Simple Reflex Agent Simulation:")
@@ -132,5 +136,4 @@ model_env = NineRooms()
 print("\nModel-based Reflex Agent Simulation:")
 model_cost = simulate(model_agent, model_env)
 
-# Resultados
 print(f"\nEnergy Cost Comparison:\n- Simple Reflex Agent: {simple_cost}\n- Model-based Reflex Agent: {model_cost}")
