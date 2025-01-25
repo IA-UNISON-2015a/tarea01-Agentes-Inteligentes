@@ -13,6 +13,7 @@ import entornos_f
 import entornos_o
 import random
 from math import inf
+from tabulate import tabulate
 
 class NineRooms:
     def __init__(self):
@@ -105,9 +106,10 @@ class ModelBasedReflexAgent:
 
 
 def simulate(agent, environment, steps=200):
+    log = []
     for step in range(steps):
         if environment.all_rooms_clean():
-            print(f"All rooms are clean! Simulation stopped after {step} steps.")
+            print(f"\nAll rooms are clean! Simulation stopped after {step} steps.")
             break
         
         percept = environment.rooms[environment.agent_position[0]][environment.agent_position[1]]
@@ -121,8 +123,15 @@ def simulate(agent, environment, steps=200):
 
         environment.perform_action(action)
 
-        print(f"Step {step + 1}: Agent chosen action '{action}'")
-        environment.print_environment()
+        log.append([
+            step + 1,
+            action,
+            f"Floor {environment.agent_position[0] + 1}, Room {environment.agent_position[1] + 1}",
+            environment.energy_cost
+        ])
+
+        print("\nSimulation Log:")
+        print(tabulate(log, headers=["Step", "Action", "Agent Position", "Energy Cost"]))
     
     return environment.energy_cost
 
