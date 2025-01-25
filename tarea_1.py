@@ -94,15 +94,20 @@ class AgenteReactivoModeloNueveCuartos(entornos_f.Agente):
         if a == b == c == d == e == f == g == h == i == 'limpio':
             return 'Nada' 
         if situación == 'sucio':
-            return 'Limpiar'
-        if robot in 'A' and (b,c) != 'limpio' or robot in 'B' and c != 'limpio':
+            return 'Limpiar'        
+        if robot in 'A' and (b == c != 'limpio') or robot in 'B' and (c == 'sucio'):
+            return 'ir_Izquierda'        
+        elif robot in 'A' and (b == c != 'sucio') and (d == e == f != 'limpio'):
+            return 'Subir'        
+        if robot in 'C' and (a == b != 'limpio') or (a == b == 'limpio') or robot in 'B' and (a == 'sucio'):
+            return 'ir_Derecha'        
+        elif robot in 'D' and (e == f != 'limpio') or robot in 'E' and (f == 'sucio'):
             return 'ir_Izquierda'
-        if robot in 'C' and (b,a) != 'sucio': 
-            return 'ir_Derecha'       
-        
+        elif robot in 'D' and (e == f != 'sucio') and (g == h == i != 'limpio'):
+            return 'Subir'
+          
 
-        elif d == 'sucio':
-            return 'Bajar'
+        
 
         
                 
