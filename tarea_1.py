@@ -13,7 +13,8 @@ import entornos_f
 from random import choice
 
 class NueveCuartos(entornos_f.Entorno):
-    def accion_legal(self,_,accion):
+    def accion_legal(self,estado,accion):
+                       
         #Restringir las acciones dependiendo del estado
         return accion in ("ir_Derecha","ir_Izquierda","Subir","Bajar", "Limpiar", "Nada")
     
@@ -28,15 +29,15 @@ class NueveCuartos(entornos_f.Entorno):
             c_local = 2
         
         return ((estado, c_local) if a == "Nada" else
-                (("B",a,b,c,d,e,f,g,h,i),c_local) if robot in ['C','A'] and accion in ['ir_Derecha', 'ir_Izquierda'] else
-                (("E",a,b,c,d,e,f,g,h,i),c_local) if robot in ['D','F'] and accion in ['ir_Derecha', 'ir_Izquierda'] else
-                (("H",a,b,c,d,e,f,g,h,i),c_local) if robot in ['G','I'] and accion in ['ir_Derecha', 'ir_Izquierda']else
-                (("C",a,b,c,d,e,f,g,h,i),c_local) if robot in ['F','B'] and accion in ['Bajar','ir_Izquierda'] else
-                (("F",a,b,c,d,e,f,g,h,i),c_local) if robot in ['I','E'] and accion in ['Bajar', 'ir_Izquierda'] else
-                (("D",a,b,c,d,e,f,g,h,i),c_local) if robot in ['A','E'] and accion in ['ir_Derecha', 'Subir'] else
-                (("G",a,b,c,d,e,f,g,h,i),c_local) if robot in ['D','H'] and accion in ['Subir', 'Derecha'] else
-                (("I",a,b,c,d,e,f,g,h,i),c_local) if robot in ['H'] and accion in ['ir_Izquierda'] else
-                (("A",a,b,c,d,e,f,g,h,i),c_local) if robot in ['B'] and accion in ['ir_Derecha']else
+                (("B",a,b,c,d,e,f,g,h,i),c_local) if robot == 'C' and accion == 'ir_Derecha' or robot == 'A' and accion ==  'ir_Izquierda' else
+                (("E",a,b,c,d,e,f,g,h,i),c_local) if robot == 'D'  and accion == 'ir_Izquierda' or robot == 'F' and accion == 'ir_Derecha' else
+                (("H",a,b,c,d,e,f,g,h,i),c_local) if robot =='G' and accion ==  'ir_Izquierda' or robot == 'I' and accion == 'ir_Derecha'else
+                (("C",a,b,c,d,e,f,g,h,i),c_local) if robot == 'F' and accion == 'Bajar' or robot  == 'B' and accion == 'ir_Izquierda'else
+                (("F",a,b,c,d,e,f,g,h,i),c_local) if robot == 'I' and accion == 'Bajar' or robot == 'E' and accion ==  'ir_Izquierda'else
+                (("D",a,b,c,d,e,f,g,h,i),c_local) if robot == 'A' and accion == 'Subir' or robot == 'E' and accion == 'ir_Derecha'else
+                (("G",a,b,c,d,e,f,g,h,i),c_local) if robot == 'D' and accion == 'Subir' or robot == 'H' and accion == 'ir_Derecha'else
+                (("I",a,b,c,d,e,f,g,h,i),c_local) if robot == 'H' and accion == 'ir_Izquierda' else
+                (("A",a,b,c,d,e,f,g,h,i),c_local) if robot == 'B' and accion == 'ir_Derecha'else
                 ((robot,"limpio",b,c,d,e,f,g,h,i),c_local)if robot == "A" else
                 ((robot,a,"limpio",c,d,e,f,g,h,i),c_local)if robot == "B" else
                 ((robot,a,b,"limpio",d,e,f,g,h,i),c_local)if robot == "C" else
@@ -61,8 +62,7 @@ class NueveCuartosCiego(NueveCuartos):
         return super().transicion(estado, accion)
     
     def percepcion(self, estado):
-        return super().percepcion(estado)
-    
+        return super().percepcion(estado)    
 
 
 class AgenteReactivoModeloNueveCuartos(entornos_f.Agente):
@@ -78,35 +78,54 @@ class AgenteReactivoModeloNueveCuartos(entornos_f.Agente):
         self.modelo = ['A', 'sucio', 'sucio','sucio','sucio','sucio','sucio','sucio','sucio','sucio']
 
     def programa(self, percepción):
-        robot, situación = percepción
-
+        robot, situación = percepción     
+        
         # Actualiza el modelo interno
         self.modelo[0] = robot
         self.modelo[' ABCDEFGHI'.find(robot)] = situación
 
         # Decide sobre el modelo interno
         #Cambiar las acciones que regresa, aqui esta el error del bucle
-        a,b,c,d,e,f,g,h,i = self.modelo[1], self.modelo[2],self.modelo[3],self.modelo[4],self.modelo[5],self.modelo[6],self.modelo[7],self.modelo[8],self.modelo[9]
-        return ('Nada' if a == b == c == d == e == f == g == h == i == 'limpio' else
-                'Limpiar' if situación == 'sucio' else
-                 'ir_Derecha' if robot in ['B','C','E','F','H','I'] else
-                 'ir_Izquierda' if robot in ['A','B','D','E','G','H'] else 
-                 'Subir' if robot in ['A','D'] else 
-                 'bajar' if robot in ['I','F'] else
-                 'otra accion')
+        a, b, c, d, e, f, g, h, i = (self.modelo[1], self.modelo[2], self.modelo[3],
+                                 self.modelo[4], self.modelo[5], self.modelo[6],
+                                 self.modelo[7], self.modelo[8], self.modelo[9])           
+      
+                                                                                                                                                            
+        if a == b == c == d == e == f == g == h == i == 'limpio':
+            return 'Nada' 
+        if situación == 'sucio':
+            return 'Limpiar'
+        if robot in 'A' and (b,c) != 'limpio' or robot in 'B' and c != 'limpio':
+            return 'ir_Izquierda'
+        if robot in 'C' and (b,a) != 'sucio': 
+            return 'ir_Derecha'       
+        
 
+        elif d == 'sucio':
+            return 'Bajar'
+
+        
+                
+    
+        
+
+
+            
 class AgenteReactivo(entornos_f.Agente):
         
     def __init__(self):
         self.modelo = ['A','?','?','?','?','?','?','?','?','?'] 
-
+    
     def programa(self, persepcion):
-        robot,situación = persepcion 
-
+        robot,situación = persepcion         
+        
         self.modelo[0] = robot
         self.modelo[' ABCDEFGHI'.find(robot)] = situación
 
-        a,b,c,d,e,f,g,h,i = self.modelo[1], self.modelo[2],self.modelo[3],self.modelo[4],self.modelo[5],self.modelo[6],self.modelo[7],self.modelo[8],self.modelo[9]
+        a,b,c,d,e,f,g,h,i = (self.modelo[1], self.modelo[2], self.modelo[3],
+                             self.modelo[4], self.modelo[5], self.modelo[6],
+                             self.modelo[7], self.modelo[8], self.modelo[9])
+        
         return ('Nada' if a == b == c == d == e == f == g == h == i == 'limpio' else
                 'Limpiar' if situación == '?' else
                  'ir_Derecha' if robot in ['B','C','E','F','H','I'] else
@@ -150,21 +169,21 @@ def test():
     """
     Prueba del entorno y los agentes
 
-    """    
+    """   
 
-    print("Prueba del entorno con un agente aleatorio")
-    prueba_agente(AgenteAleatorio(['ir_Izquierda','ir_Derecha','Bajar','Subir','Limpiar','Nada']))
+    #print("Prueba del entorno con un agente aleatorio")
+    #prueba_agente(AgenteAleatorio(['ir_Izquierda','ir_Derecha','Bajar','Subir','Limpiar','Nada']))
     
     print("Prueba del entorno con un agente reactivo con modelo")
     prueba_agente(AgenteReactivoModeloNueveCuartos())
 
     print("---------------------------------------ENTRONO CIEGO----------------------------------------------")
 
-    print("Prueba del entorno ciego con un agente reactivo")
-    prueba_agente_ciego(AgenteAleatorio(['ir_Izquierda','ir_Derecha','Bajar','Subir','Limpiar','Nada']))
+    #print("Prueba del entorno ciego con un agente Aleatorio")
+    #prueba_agente_ciego(AgenteAleatorio(['ir_Izquierda','ir_Derecha','Bajar','Subir','Limpiar','Nada']))
 
-    print("Prueba del entorno ciego con un agente reactivo")
-    prueba_agente_ciego(AgenteReactivo())
+#    print("Prueba del entorno ciego con un agente reactivo")
+ #   prueba_agente_ciego(AgenteReactivo())
 
 
     
