@@ -230,7 +230,7 @@ def prueba_agente(agente):
             NueveCuartos(),
             agente,
             ["A", "sucio", "sucio","sucio","sucio","sucio","sucio","sucio","sucio","sucio"],
-            100
+            200
         ),
         ["A", "sucio", "sucio","sucio","sucio","sucio","sucio","sucio","sucio","sucio"]
     )
@@ -241,7 +241,7 @@ def prueba_agente_ciego(agente):
             NueveCuartos(),
             agente,
             ["A","?","?","?","?","?","?","?","?","?"],
-            100
+            200
         ),
         ["A","?","?","?","?","?","?","?","?","?",]
     )
