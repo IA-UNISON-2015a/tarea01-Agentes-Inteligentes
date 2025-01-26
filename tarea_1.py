@@ -104,10 +104,10 @@ def prueba_agente(agente):
         entornos_f.simulador(
             NueveCuartos(),
             agente,
-            (0, ["sucio", "sucio", "sucio", "sucio", "sucio", "sucio", "sucio", "sucio", "sucio"]),  # Estado inicial
-            100
+            (0, ["sucio"] * 9),  # Estado inicial
+            200
         ),
-        [0, ["sucio", "sucio", "sucio", "sucio", "sucio", "sucio", "sucio", "sucio", "sucio"]]
+        [0, ["sucio"] * 9]
     )
 
 def test():
