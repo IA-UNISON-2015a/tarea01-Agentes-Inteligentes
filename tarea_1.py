@@ -11,9 +11,10 @@ __author__ = 'Raul Leoanrdo Lopez Ruiz'
 
 import entornos_f
 from random import choice
+import random
 
 class NueveCuartos(entornos_f.Entorno):
-    def accion_legal(self,estado,accion):
+    def accion_legal(self,_,accion):
                        
         #Restringir las acciones dependiendo del estado
         return accion in ("ir_Derecha","ir_Izquierda","Subir","Bajar", "Limpiar", "Nada")
@@ -64,6 +65,16 @@ class NueveCuartosCiego(NueveCuartos):
     def percepcion(self, estado):
         return super().percepcion(estado)    
 
+class NueveCuartosEstocastico(NueveCuartos):
+    def accion_legal(self, estado, accion):
+        return super().accion_legal(estado, accion)
+
+    def transicion(self, estado, accion):
+        return super().transicion(estado, accion)
+    
+    def percepcion(self, estado):
+        return super().percepcion(estado)
+    
 
 class AgenteReactivoModeloNueveCuartos(entornos_f.Agente):
     """
@@ -88,15 +99,15 @@ class AgenteReactivoModeloNueveCuartos(entornos_f.Agente):
         #Cambiar las acciones que regresa, aqui esta el error del bucle
         a, b, c, d, e, f, g, h, i = (self.modelo[1], self.modelo[2], self.modelo[3],
                                  self.modelo[4], self.modelo[5], self.modelo[6],
-                                 self.modelo[7], self.modelo[8], self.modelo[9])           
+                                 self.modelo[7], self.modelo[8], self.modelo[9]) 
       
                                                                                                                                                             
         if a == b == c == d == e == f == g == h == i == 'limpio':
             return 'Nada' 
-        if situación == 'sucio':
-            return 'Limpiar'        
+        if situación == 'sucio': 
+            return 'Limpiar'  
         if robot in 'A' and (b == c != 'limpio') or robot in 'B' and (c == 'sucio') or robot in 'D' and (e == f != 'limpio') or robot in 'E' and (f == 'sucio') or robot in 'G' and (h == i != 'limpio') or robot in 'H' and (i == 'sucio'):
-            return 'ir_Izquierda'        
+         return 'ir_Izquierda'  
         elif robot in 'A' and (b == c != 'sucio') and (d == e == f != 'limpio') or robot in 'D' and (e == f != 'sucio') and (g == h == i != 'limpio'):
             return 'Subir'        
         if robot in 'C' and (a == b != 'limpio') or (a == b == 'limpio') or robot in 'B' and (a == 'sucio') or robot in 'F' and (e == d != 'limpio') or robot in 'E' and (d == 'sucio') or robot in 'I' and (h == g != 'limpio') or robot in 'H' and (g == 'sucio'): 
@@ -104,13 +115,49 @@ class AgenteReactivoModeloNueveCuartos(entornos_f.Agente):
         if robot in 'I' and (h == g != 'sucio') and (d == e == f != 'limpio') or robot in 'F' and (e == d != 'sucio') and (a == b == c != 'limpio'):
             return 'Bajar'
         
+class AgenteEstocastico(entornos_f.Agente):
+    def __init__(self):
+        """
+        Inicializa el modelo interno en el peor de los casos
 
+        """
+        self.modelo = ['A', 'sucio', 'sucio','sucio','sucio','sucio','sucio','sucio','sucio','sucio']
+
+    def programa(self, percepción):
+        robot, situación = percepción     
+        aleatorio = random.random()
+        acciones = ['ir_Derecha','ir_Izquierda','Subir','Bajar','Limpiar','Nada']
+        accion = random.choice(acciones)
+        # Actualiza el modelo interno
+        self.modelo[0] = robot
+        self.modelo[' ABCDEFGHI'.find(robot)] = situación
         
-                
-    
         
-
-
+        # Decide sobre el modelo interno
+        #Cambiar las acciones que regresa, aqui esta el error del bucle
+        a, b, c, d, e, f, g, h, i = (self.modelo[1], self.modelo[2], self.modelo[3],
+                                 self.modelo[4], self.modelo[5], self.modelo[6],
+                                 self.modelo[7], self.modelo[8], self.modelo[9]) 
+      
+                                                                                                                                                            
+        if a == b == c == d == e == f == g == h == i == 'limpio':
+            return 'Nada' 
+        if aleatorio < 0.8:
+            if situación == 'sucio':
+                return 'Limpiar'       
+            if robot in 'A' and (b == c != 'limpio') or robot in 'B' and (c == 'sucio') or robot in 'D' and (e == f != 'limpio') or robot in 'E' and (f == 'sucio') or robot in 'G' and (h == i != 'limpio') or robot in 'H' and (i == 'sucio'):
+                return 'ir_Izquierda'      
+            elif robot in 'A' and (b == c != 'sucio') and (d == e == f != 'limpio') or robot in 'D' and (e == f != 'sucio') and (g == h == i != 'limpio'):
+                return 'Subir'        
+            if robot in 'C' and (a == b != 'limpio') or (a == b == 'limpio') or robot in 'B' and (a == 'sucio') or robot in 'F' and (e == d != 'limpio') or robot in 'E' and (d == 'sucio') or robot in 'I' and (h == g != 'limpio') or robot in 'H' and (g == 'sucio'): 
+                return 'ir_Derecha'
+            if robot in 'I' and (h == g != 'sucio') and (d == e == f != 'limpio') or robot in 'F' and (e == d != 'sucio') and (a == b == c != 'limpio'):
+                return 'Bajar'
+        else:
+            if aleatorio < 0.9:
+                return 'Nada'
+            else:
+                return accion
             
 class AgenteReactivo(entornos_f.Agente):
         
@@ -127,14 +174,18 @@ class AgenteReactivo(entornos_f.Agente):
                              self.modelo[4], self.modelo[5], self.modelo[6],
                              self.modelo[7], self.modelo[8], self.modelo[9])
         
-        return ('Nada' if a == b == c == d == e == f == g == h == i == 'limpio' else
-                'Limpiar' if situación == '?' else
-                 'ir_Derecha' if robot in ['B','C','E','F','H','I'] else
-                 'ir_Izquierda' if robot in ['A','B','D','E','G','H'] else
-                 'Subir' if robot in ['A','D'] else 
-                 'bajar' if robot in ['I','F'] else
-                 'otra accion')   
-    
+        if a == b == c == d == e == f == g == h == i == 'limpio':
+            return 'Nada'
+        if situación == '?': 
+            return 'Limpiar'  
+        if robot in 'A' and (b == c != 'limpio') or robot in 'B' and (c == '?') or robot in 'D' and (e == f != 'limpio') or robot in 'E' and (f == '?') or robot in 'G' and (h == i != 'limpio') or robot in 'H' and (i == '?'):
+         return 'ir_Izquierda'  
+        elif robot in 'A' and (b == c != '?') and (d == e == f != 'limpio') or robot in 'D' and (e == f != '?') and (g == h == i != 'limpio'):
+            return 'Subir'        
+        if robot in 'C' and (a == b != 'limpio') or (a == b == 'limpio') or robot in 'B' and (a == '?') or robot in 'F' and (e == d != 'limpio') or robot in 'E' and (d == '?') or robot in 'I' and (h == g != 'limpio') or robot in 'H' and (g == '?'): 
+            return 'ir_Derecha'
+        if robot in 'I' and (h == g != '?') and (d == e == f != 'limpio') or robot in 'F' and (e == d != '?') and (a == b == c != 'limpio'):
+            return 'Bajar'
 
 
 class AgenteAleatorio(entornos_f.Agente):
@@ -183,10 +234,17 @@ def test():
     print("Prueba del entorno ciego con un agente Aleatorio")
     prueba_agente_ciego(AgenteAleatorio(['ir_Izquierda','ir_Derecha','Bajar','Subir','Limpiar','Nada']))
 
-    print("Prueba del entorno ciego con un agente reactivo")
+    print("Prueba del entorno ciego con un agente racional")
     prueba_agente_ciego(AgenteReactivo())
 
+    print("-------------------------------------ESTOCASTICO-------------------------------")
 
+    print("Prueba del entrono estocastico con un agente aleatorio")
+    prueba_agente(AgenteAleatorio(['ir_Izquierda','ir_Derecha','Bajar','Subir','Limpiar','Nada']))
+
+    print("Prueba del entorno estocastico con un agente racional")
+    prueba_agente(AgenteEstocastico())
+   
     
 
 if __name__ == "__main__":
