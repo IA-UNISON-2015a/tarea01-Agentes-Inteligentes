@@ -49,7 +49,7 @@ class DosCuartos(entornos_f.Entorno):
                 ((robot, a, "limpio"), c_local))
 
     def percepcion(self, estado):
-        return estado[0], estado[" AB".find(estado[0])]
+        return estado[0], estado[" AB".find(estado[0])] ## sirve para encontrar la posicion y si esta limpio o sucio (descrito como A o B)
 
 
 class AgenteAleatorio(entornos_f.Agente):

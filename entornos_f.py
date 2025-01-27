@@ -91,27 +91,38 @@ def simulador(entorno, agente, s, T=10, c=0):
     return ([] + [(a, s_n, c + c_local)] if T <= 1 else
             [(a, s_n, c + c_local)] + simulador(entorno, agente, s_n, T - 1, c + c_local))
     
-def imprime_simulacion(historial, s_0):
+def imprime_simulacion(historial, s_0, formato="default"):
     """
-    Imprime una secuencia generada por simulador
+    Imprime una secuencia generada por el simulador
 
     @param historial: el resultado de simulador
     @param s_0: estado inicial
-
+    @param formato: tipo de impresión ("default" o "mejorado")
     """
-    print("\n\nSimulación, iniciando en el estado" + 
-            str(s_0) + "\n") 
 
-    print('Paso'.center(10) +
-            'Acción'.center(40) +
-            'Siguente estado'.center(25) +
-            'Costo'.center(15))
-    print('_' * (10 + 40 + 25 + 15))
+    if formato == "mejorado":
+        print(f"\n\nSimulación, iniciando en el estado {s_0}\n")
+        print(f"{'Paso':<8} {'Acción':<35} {'Siguiente Estado':<30} {'Costo':>10}")
+        print("-" * 85)
 
-    for (i, (a_i, s_i, c_i)) in enumerate(historial):
-        print(str(i).center(10) +
-                str(a_i).center(40) +
-                str(s_i).center(25) +
-                str(c_i).rjust(12))
-    print('_' * (10 + 40 + 25 + 15) + '\n\n')
+        for i, (a_i, s_i, c_i) in enumerate(historial):
+            print(f"{i:<8} {str(a_i):<35} {str(s_i):<30} {c_i:>10}")
+        
+        print("-" * 85 + "\n")
 
+    else:  # Usa el formato original
+        print("\n\nSimulación, iniciando en el estado" + str(s_0) + "\n")
+
+        print('Paso'.center(10) +
+              'Acción'.center(40) +
+              'Siguente estado'.center(25) +
+              'Costo'.center(15))
+        print('_' * (10 + 40 + 25 + 15))
+
+        for (i, (a_i, s_i, c_i)) in enumerate(historial):
+            print(str(i).center(10) +
+                  str(a_i).center(40) +
+                  str(s_i).center(25) +
+                  str(c_i).rjust(12))
+
+        print('_' * (10 + 40 + 25 + 15) + '\n\n')
