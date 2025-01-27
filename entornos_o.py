@@ -10,6 +10,8 @@ Entornos y agentes desde una prespectiva OO
 
 __author__ = 'juliowaissman'
 
+import copy
+
 class Entorno:
     """
     Clase abstracta para entornos
@@ -96,7 +98,7 @@ def simulador(entorno, agente, pasos=10, verbose=True):
         entorno.transicion(a)
 
         historial_costo.append(entorno.costo)
-        historial_estados.append(entorno.x[:])
+        historial_estados.append(copy.deepcopy(entorno.x)) # Editado para que imprimiera bien
         historial_acciones.append(a)
 
     historial_acciones.append(None)
