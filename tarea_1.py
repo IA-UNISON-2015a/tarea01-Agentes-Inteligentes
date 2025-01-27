@@ -137,21 +137,17 @@ class AgenteReactivoModeloNueveCuartos(entornos_o.Agente):
     
 class NueveCuartosCiego(NueveCuartos):
     """
-    Igual que NueveCuartos, pero no se puede ver nada
+    Igual que NueveCuartos, pero solo se puede percibir la ubicación del robot, no el estado de limpieza
     """
+    
     def percepcion(self):
-        return []
+        return self.x[0]
 
-class AgenteReactivoModeloNueveCuartosCiego(entornos_o.Agente):
+class AgenteReactivoModeloNueveCuartosCiego(AgenteReactivoModeloNueveCuartos):
     """
-    Un agente reactivo basado en modelo
+    Un agente reactivo basado en modelo, para entornos ciegos
 
     """
-    def __init__(self):
-        """
-        Inicializa el modelo interno en el peor de los casos
-        """
-        self.modelo = [(0,0), [["sucio" for _ in range(3)] for _ in range(3)]]
 
     def programa(self, _):
         # Decide sobre el modelo interno
