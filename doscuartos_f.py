@@ -46,7 +46,7 @@ class DosCuartos(entornos_f.Entorno):
                 (("A", a, b), c_local) if acción == "ir_A" else
                 (("B", a, b), c_local) if acción == "ir_B" else
                 ((robot, "limpio", b), c_local) if robot == "A" else
-                ((robot, a, "limpio"), c_local))
+                ((robot, a, "limpio"), c_local))    
 
     def percepcion(self, estado):
         return estado[0], estado[" AB".find(estado[0])]
