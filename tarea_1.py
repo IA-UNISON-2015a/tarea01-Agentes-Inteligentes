@@ -30,7 +30,7 @@ class NueveCuartos(entornos_f.Entorno):
 	cuartos es una lista de listas de booleanos donde los indices
 	con que se acceden representa el cuarto, e.g cuartos[0][0] es
 	el cuarto del primer piso en la izquierda, y el valor booleano
-	representa si está limpio o no
+	representa si está limpio o no, donde True significa limpio
 
 	'''
 	def accion_legal(self, estado, accion):
@@ -66,7 +66,6 @@ class NueveCuartos(entornos_f.Entorno):
 		elif accion == "limpiar":
 			cuartos[x][y] = True
 
-		print(cuartos)
 		return ([x, y, cuartos], c_local)
 	
 	def percepcion(self, estado):
@@ -127,9 +126,10 @@ def prueba_nueve_cuartos(agente):
             NueveCuartos(),
             agente,
             [0,0,[[False,False,False],[False,False,False],[False,False,False]]],
-            100
+            300
         ),
         [0,0,[[False,False,False],[False,False,False],[False,False,False]]]
     )
+
 if __name__ == "__main__":
 	prueba_nueve_cuartos(AgenteAleatorio(["ir_Derecha", "ir_Izquierda", "subir", "bajar", "limpiar", "nada"]))
