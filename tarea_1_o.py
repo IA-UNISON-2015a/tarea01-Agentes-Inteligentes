@@ -97,7 +97,7 @@ class NueveCuartosCiego(NueveCuartos):
     def percepcion(self):
         return self.x[0], self.x[1]
     
-class AgenteRacionalNueveCuartosCiego(entornos_o.Agente):
+class AgenteRacionalCiego(entornos_o.Agente):
     def __init__(self):
         self.modelo = [0, 0, [["sucio"] * 3 for _ in range(3)]]
 
@@ -167,30 +167,22 @@ class AgenteRacionalEstocastico(entornos_o.Agente):
         self.modelo[1] = cuarto
         self.modelo[2][piso][cuarto] = situacion
 
-        """
-        return ('limpiar' if situacion == 'sucio' else
-                'ir_Derecha' if cuarto < 2 and 'sucio' in self.modelo[2][piso][cuarto+1:] else
-                'subir' if cuarto == 2 and piso < 2 and 'sucio' in self.modelo[2][piso+1] else
-                'ir_Izquierda' if cuarto > 0 and 'sucio' in self.modelo[2][piso][:cuarto] else
-                'bajar' if cuarto == 0 and piso > 0 else #and 'sucio' in self.modelo[2][:piso] else
-                'nada')
-        """
-    
         return ('limpiar' if situacion == 'sucio' else
                 'ir_Derecha' if cuarto < 2 and 'sucio' in self.modelo[2][piso][cuarto+1:] else
                 'subir' if cuarto == 2 and piso < 2 and 'sucio' in self.modelo[2][piso+1] else
                 'ir_Izquierda' if cuarto > 0 and 'sucio' in self.modelo[2][piso][:cuarto] else
                 'bajar' if cuarto == 0 and piso > 0 else
                 'nada')
-    
+
+# Correr uno por uno porque la función simulador no funciona bien jeje
 def test():
     x0=[0, 0, [["sucio"] * 3 for _ in range(3)]]
-     
+
     print("Prueba del entorno con un agente aleatorio")
     entornos_o.simulador(NueveCuartos(x0),
                          AgenteAleatorio(['ir_Derecha', 'ir_Izquierda', 'subir', 'bajar', 'limpiar', 'nada']),
                          200)
-    
+
     print("Prueba del entorno con un agente reactivo con modelo")
     entornos_o.simulador(NueveCuartos(x0), 
                          AgenteReactivoModeloNueveCuartos(), 
@@ -198,13 +190,12 @@ def test():
 
     print("Prueba del entorno con un agente racional ciego")
     entornos_o.simulador(NueveCuartosCiego(x0), 
-                         AgenteRacionalNueveCuartosCiego(), 
+                         AgenteRacionalCiego(), 
                          200)
-
+    
     print("Prueba del entorno con un agente racional estocastico")
     entornos_o.simulador(NueveCuartosEstocastico(x0), 
                          AgenteRacionalEstocastico(), 
-                         200)
-                         
+              
 if __name__ == "__main__":
     test()
