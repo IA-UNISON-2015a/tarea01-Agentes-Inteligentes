@@ -77,7 +77,7 @@ def simulador(entorno, agente, s, T=10, c=0):
     @param agente: Un objeto de la clase Agente
     @param s: Una tupla con un estado legal del entorno
     @param T: Un int con el número de pasos a simular
-    @param c: Un flotante con el costo hasta s 
+    @param c: Un flotante con el costo hasta s
 
     @return: [(a_1, s_1, c_1), ..., (a_T, s_T, c_T)] una lista de tripletas con
              la acción, estado y costo total en cada paso de simulación.
@@ -90,7 +90,7 @@ def simulador(entorno, agente, s, T=10, c=0):
 
     return ([] + [(a, s_n, c + c_local)] if T <= 1 else
             [(a, s_n, c + c_local)] + simulador(entorno, agente, s_n, T - 1, c + c_local))
-    
+
 def imprime_simulacion(historial, s_0):
     """
     Imprime una secuencia generada por simulador
@@ -100,7 +100,7 @@ def imprime_simulacion(historial, s_0):
 
     """
     print("\n\nSimulación, iniciando en el estado" + 
-            str(s_0) + "\n") 
+            str(s_0) + "\n")
 
     print('Paso'.center(10) +
             'Acción'.center(40) +
@@ -114,4 +114,3 @@ def imprime_simulacion(historial, s_0):
                 str(s_i).center(25) +
                 str(c_i).rjust(12))
     print('_' * (10 + 40 + 25 + 15) + '\n\n')
-
