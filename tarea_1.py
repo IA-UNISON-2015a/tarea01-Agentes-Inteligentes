@@ -211,7 +211,24 @@ class NueveCuartosEstocastico(NueveCuartos):
             cuartos[robot[0]][robot[1]] = "limpio" if random() < 0.8 else "sucio"
         elif accion == "ir_Derecha":
             self.costo += 2
-            robot = (robot[0], robot[1] + 1)
+            rand_num = random()
+            if rand_num < 0.80: 
+                robot = (robot[0], robot[1] + 1)
+            elif rand_num < 0.90:
+                rand_option = choice([accion for accion in 
+                                      ["ir_Izquierda", "subir", "bajar"] 
+                                      if self.accion_legal(accion)])
+                if rand_option == "ir_Izquierda":
+                    robot = (robot[0], robot[1] - 1)
+                elif rand_option == "subir":
+                    robot = (robot[0] + 1, robot[1])
+                elif rand_option == "bajar":
+                    robot = (robot[0] - 1, robot[1])
+                else:
+                    robot = (robot[0], robot[1] + 1)
+            else:
+                pass
+            
         elif accion == "ir_Izquierda":
             self.costo += 2
             robot = (robot[0], robot[1] - 1)
