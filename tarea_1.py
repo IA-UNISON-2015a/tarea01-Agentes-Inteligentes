@@ -177,12 +177,12 @@ class AgenteRacionalEstocastico(entornos_o.Agente):
 # Correr uno por uno porque la función simulador no funciona bien jeje
 def test():
     x0=[0, 0, [["sucio"] * 3 for _ in range(3)]]
-
+    
     print("Prueba del entorno con un agente aleatorio")
     entornos_o.simulador(NueveCuartos(x0),
                          AgenteAleatorio(['ir_Derecha', 'ir_Izquierda', 'subir', 'bajar', 'limpiar', 'nada']),
-                         200)
-
+                         300)
+    
     print("Prueba del entorno con un agente reactivo con modelo")
     entornos_o.simulador(NueveCuartos(x0), 
                          AgenteReactivoModeloNueveCuartos(), 
@@ -196,6 +196,35 @@ def test():
     print("Prueba del entorno con un agente racional estocastico")
     entornos_o.simulador(NueveCuartosEstocastico(x0), 
                          AgenteRacionalEstocastico(), 
-              
+                         200)
+                  
 if __name__ == "__main__":
     test()
+
+"""
+NOTAS:
+
+Agente Reactivo con Modelo vs Agente Aleatorio:
+    - El agente reactivo es más eficiente, limpia todo en 17 pasos en el peor caso y 
+        tiene un costo de 28 aproximadamente. 
+
+Agente Aleatorio:
+    - El agente aleatorio no termina de limpiar los 9 cuartos en tan solo 200 pasos,
+        debido a que tiene demasiadas opciones y las limitaciones de subir y bajar por un
+        lado exclusivamente, le dificulta completar la tarea sin seguir ningún orden.
+        Necesitaria aparoximadamente 230 pasos y un costo de 440 para poder limpiar todos
+        los cuartos.
+
+Agente Racional Ciego:
+    - A comparación con el Reactivo con Modelo, el agente racional ciego hace la misma 
+        cantidad de pasos y tiene el mismo costo que el agente reactivo con modelo en el 
+        peor caso, sin embargo, ese es el menor costo que puede tener, ya que al no conocer 
+        ningún estado, le toca hacer la ruta completa.
+
+Agente Racional Estocástico:
+    - El agente racional estocástico tiene un comportamiento similar al agente reactivo, la
+        diferencia es que al tener ciertos fallos, su costo y la cantidad de pasos requeridos
+        es mayor que el reactivo con modelo y el ciego. Sin embargo, termina la tarea dentro
+        los 200 pasos a diferencia del agente racional ciego. Este ocupa en promedio 25 pasos
+        y tiene un costo de 47 aproximadamente.
+"""

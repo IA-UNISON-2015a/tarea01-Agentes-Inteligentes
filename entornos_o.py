@@ -98,7 +98,7 @@ def simulador(entorno, agente, pasos=10, verbose=True):
         entorno.transicion(a)
 
         historial_costo.append(entorno.costo)
-        historial_estados.append(copy.deepcopy(entorno.x)) # Editado para que imprimiera mejor
+        historial_estados.append(copy.deepcopy(entorno.x)) # Editado para que imprimiera bien
         historial_acciones.append(a)
 
     historial_acciones.append(None)
