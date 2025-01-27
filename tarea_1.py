@@ -192,54 +192,53 @@ class AgenteReactivoModeloNueveCuartosCiego(AgenteReactivoModeloNueveCuartos):
 
 class NueveCuartosEstocastico(NueveCuartos):
     """
-    Igual que NueveCuartos, pero con suciedad y movimiento estocástico
+    Igual que NueveCuartos, pero con limpieza y movimiento estocástico:
+        - 80% de probabilidad de limpiar correctamente
+        - 80% de probabilidad de moverse correctamente
+        - 10% de probabilidad de no hacer nada
+        - 10% de probabilidad de moverse aleatoriamente
     
     """
     
     def transicion(self, accion):
+        """Realiza la transición de estado según la acción estocástica."""
         if not self.accion_legal(accion):
-            #raise ValueError("La acción no es legal para este estado")
             accion = "nada"
-        
-        robot, cuartos = self.x[0], self.x[1]
-        cuartos = deepcopy(cuartos) 
 
-        if accion == "nada" and "sucio" in [room for floor in cuartos for room in floor]:
+        robot, cuartos = self.x[0], deepcopy(self.x[1])
+        rand_num = random()
+
+        if accion == "limpiar":
             self.costo += 1
-        elif accion == "limpiar":  # Limpieza estocastica:
-            self.costo += 1
-            cuartos[robot[0]][robot[1]] = "limpio" if random() < 0.8 else "sucio"
-        elif accion == "ir_Derecha":
-            self.costo += 2
-            rand_num = random()
-            if rand_num < 0.80: 
-                robot = (robot[0], robot[1] + 1)
-            elif rand_num < 0.90:
-                rand_option = choice([accion for accion in 
-                                      ["ir_Izquierda", "subir", "bajar"] 
-                                      if self.accion_legal(accion)])
-                if rand_option == "ir_Izquierda":
-                    robot = (robot[0], robot[1] - 1)
-                elif rand_option == "subir":
-                    robot = (robot[0] + 1, robot[1])
-                elif rand_option == "bajar":
-                    robot = (robot[0] - 1, robot[1])
-                else:
-                    robot = (robot[0], robot[1] + 1)
-            else:
+            # Limpieza estocastica
+            cuartos[robot[0]][robot[1]] = "limpio" if rand_num < 0.8 else "sucio"
+
+        elif accion in ["ir_Derecha", "ir_Izquierda", "subir", "bajar"]: # Movimiento estocastico
+            if rand_num < 0.8:
+                robot = self._mover(robot, accion)
+            elif rand_num < 0.9:  # No hace nada
                 pass
-            
-        elif accion == "ir_Izquierda":
-            self.costo += 2
-            robot = (robot[0], robot[1] - 1)
-        elif accion == "bajar":
-            self.costo += 3
-            robot = (robot[0] - 1, robot[1])
-        elif accion == "subir":
-            self.costo += 3
-            robot = (robot[0] + 1, robot[1])
-            
+            else:  # Accion legal aleatoria
+                random_accion = choice([a for a in ["ir_Izquierda", "ir_Derecha", "subir", "bajar"] if self.accion_legal(a)])
+                robot = self._mover(robot, random_accion)
+            self.costo += 2 if accion in ["ir_Izquierda", "ir_Derecha"] else 3
+
+        elif accion == "nada":
+            self.costo += 1 if "sucio" in [room for floor in cuartos for room in floor] else 0
+
         self.x = (robot, cuartos)
+        
+    def _mover(self, robot, accion):
+        """Calcula la nueva posición del robot según la acción."""
+        if accion == "ir_Derecha":
+            return (robot[0], robot[1] + 1)
+        elif accion == "ir_Izquierda":
+            return (robot[0], robot[1] - 1)
+        elif accion == "subir":
+            return (robot[0] + 1, robot[1])
+        elif accion == "bajar":
+            return (robot[0] - 1, robot[1])
+        return robot
 
 
 def test():
@@ -254,27 +253,27 @@ def test():
     
     entornos_o.simulador(NueveCuartos(x0),
                          AgenteAleatorio(acciones),
-                         100)
+                         200)
     
     entornos_o.simulador(NueveCuartos(x0),
                          AgenteReactivoModeloNueveCuartos(),
-                         100)
+                         200)
     
     entornos_o.simulador(NueveCuartosCiego(x0),
                          AgenteAleatorio(acciones),
-                         100)
+                         200)
     
     entornos_o.simulador(NueveCuartosCiego(x0),
                          AgenteReactivoModeloNueveCuartosCiego(),
-                         100)
+                         200)
     
     entornos_o.simulador(NueveCuartosEstocastico(x0),
                          AgenteAleatorio(acciones),
-                         100)
+                         200)
     
     entornos_o.simulador(NueveCuartosEstocastico(x0),
                          AgenteReactivoModeloNueveCuartos(),
-                         100)
+                         200)
     
 if __name__ == "__main__":
     test()
