@@ -99,7 +99,7 @@ def imprime_simulacion(historial, s_0):
     @param s_0: estado inicial
 
     """
-    print("\n\nSimulación, iniciando en el estado" + 
+    print("\n\nSimulación, iniciando en el estado " + 
             str(s_0) + "\n") 
 
     print('Paso'.center(5) +

@@ -48,6 +48,16 @@ class NueveCuartos(entornos_f.Entorno):
         robot, cuartos = estado
         return (robot, cuartos[robot])
     
+class NueveCuartosCiego(NueveCuartos):
+    """
+    Entorno de nueve cuartos donde el agente solo percibe su ubicación,
+    pero no sabe si el cuarto está limpio o sucio.
+    """
+    def percepcion(self, estado):
+        robot, _ = estado
+        return robot  # Solo devuelve la posición del robot
+    
+
 
 class AgenteAleatorioNueveCuartos(entornos_f.Agente):
     """
@@ -99,10 +109,35 @@ class AgenteReactivoModeloNueveCuartos(entornos_f.Agente):
                 "izq" if robot == 8 else
                 'der')
     
-def prueba_agente(agente):
+class AgenteReactivoModeloNueveCuartosCiego(entornos_f.Agente):
+    """
+    Un agente reactivo basado en modelo para el entorno NueveCuartosCiego.
+    Mantiene un modelo interno para rastrear el estado de los cuartos.
+    """
+    def __init__(self, n_cuartos):
+        self.modelo = [0] + ["sucio"] * n_cuartos  # [robot, cuartos]
+
+    def programa(self, percepcion):
+        robot = percepcion
+        self.modelo[0] = robot
+
+        cuartos = self.modelo[1:]
+        if all(c == "limpio" for c in cuartos):
+            return "nada"
+        if self.modelo[1 + robot] == "sucio":
+            self.modelo[1 + robot] = "limpio"
+            return "limpiar"
+        if robot in [1, 4, 7]: return choice(["izq", "der"])
+        elif robot in [2, 5]: return choice(["izq", "subir"])
+        elif robot in [3, 6]: return choice(["der", "bajar"])
+        elif robot == 8: return "izq"
+        return 'der'
+    
+    
+def prueba_agente(agente, entorno_class):
     entornos_f.imprime_simulacion(
         entornos_f.simulador(
-            NueveCuartos(),
+            entorno_class(),
             agente,
             (0, ["sucio"] * 9),  # Estado inicial
             200
@@ -112,16 +147,27 @@ def prueba_agente(agente):
 
 def test():
     """
-    Prueba del entorno y los agentes
+    Prueba del entorno de nueve cuartos y los agentes
     """
     print("Prueba del entorno con un agente aleatorio")
-    prueba_agente(AgenteAleatorioNueveCuartos(['izq', 'der', "subir", "bajar", 'limpiar', 'nada']))
+    prueba_agente(AgenteAleatorioNueveCuartos(['izq', 'der', "subir", "bajar", 'limpiar', 'nada']), NueveCuartos)
 
     print("Prueba del entorno con un agente reactivo")
-    prueba_agente(AgenteReactivoNueveCuartos())
+    prueba_agente(AgenteReactivoNueveCuartos(), NueveCuartos)
 
     print("Prueba del entorno con un agente reactivo con modelo")
-    prueba_agente(AgenteReactivoModeloNueveCuartos(9))
+    prueba_agente(AgenteReactivoModeloNueveCuartos(9), NueveCuartos)
+
+def test_ciego():
+    """
+    Prueba del entorno de nueve cuartos ciego y los agentes
+    """
+    print("Prueba del entorno NueveCuartosCiego con un agente aleatorio")
+    prueba_agente(AgenteAleatorioNueveCuartos(), NueveCuartosCiego)
+
+    print("Prueba del entorno NueveCuartosCiego con un agente reactivo basado en modelo")
+    prueba_agente(AgenteReactivoModeloNueveCuartosCiego(9), NueveCuartosCiego)
 
 if __name__ == "__main__":
     test()
+    # test_ciego()
