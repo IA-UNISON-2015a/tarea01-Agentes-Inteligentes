@@ -6,7 +6,7 @@ tarea_1.py
 __author__ = 'Jesus Flores Lacarra'
 
 import entornos_o
-from random import choice
+from random import choice, random
 from copy import deepcopy
 
 class NueveCuartos(entornos_o.Entorno):
@@ -149,32 +149,22 @@ class AgenteReactivoModeloNueveCuartosCiego(AgenteReactivoModeloNueveCuartos):
 
     """
 
-    def programa(self, _):
+    def programa(self, percepcion):
+        robot = percepcion
+
+        # Actualiza el modelo interno
+        self.modelo[0] = robot 
+
         # Decide sobre el modelo interno
-        robot, cuartos = self.modelo
+        cuartos = self.modelo[1]
         
-        # Internamente actualiza el modelo
-        self.modelo[robot[0]][robot[1]] = "limpio"
+        # Situacion basada en el modelo
+        if self.modelo[1][robot[0]][robot[1]] == "sucio":
+            print("Actualizamos modelo interno: \t %r = %r" % (robot, "limpio"))
+            print("Modelo interno: \t %r" % self.modelo)
+            self.modelo[1][robot[0]][robot[1]] = "limpio"
+            return "limpiar"
         
-        # Verifica que esten limpios todos los cuartos
-        if all([room == "limpio" for floor in cuartos for room in floor]):
-            return "nada"
-        
-        """
-        if robot[1] < 2:
-            self.modelo[0] = (robot[0], robot[1] + 1)
-            return "ir_Derecha"
-        elif robot[1] == 2 and robot[0] < 2:
-            self.modelo[0] = (robot[0] + 1, robot[1])
-            return "subir"
-        elif robot[1] > 0:
-            self.modelo[0] = (robot[0], robot[1] - 1)
-            return "ir_Izquierda"
-        elif robot[1] == 0 and robot[0] > 0:
-            self.modelo[0] = (robot[0] - 1, robot[1])
-            return "bajar"
-        
-        """
         for piso in range(3):
             for cuarto in range(3):
                 if cuartos[piso][cuarto] == "sucio":
@@ -196,8 +186,43 @@ class AgenteReactivoModeloNueveCuartosCiego(AgenteReactivoModeloNueveCuartos):
                         return "ir_Derecha"
                     elif robot[0] > piso and robot[1] != 0:
                         return "ir_Izquierda"
-        
+                    
         return "nada"
+
+
+class NueveCuartosEstocastico(NueveCuartos):
+    """
+    Igual que NueveCuartos, pero con suciedad y movimiento estocástico
+    
+    """
+    
+    def transicion(self, accion):
+        if not self.accion_legal(accion):
+            #raise ValueError("La acción no es legal para este estado")
+            accion = "nada"
+        
+        robot, cuartos = self.x[0], self.x[1]
+        cuartos = deepcopy(cuartos) 
+
+        if accion == "nada" and "sucio" in [room for floor in cuartos for room in floor]:
+            self.costo += 1
+        elif accion == "limpiar":  # Limpieza estocastica:
+            self.costo += 1
+            cuartos[robot[0]][robot[1]] = "limpio" if random() < 0.8 else "sucio"
+        elif accion == "ir_Derecha":
+            self.costo += 2
+            robot = (robot[0], robot[1] + 1)
+        elif accion == "ir_Izquierda":
+            self.costo += 2
+            robot = (robot[0], robot[1] - 1)
+        elif accion == "bajar":
+            self.costo += 3
+            robot = (robot[0] - 1, robot[1])
+        elif accion == "subir":
+            self.costo += 3
+            robot = (robot[0] + 1, robot[1])
+            
+        self.x = (robot, cuartos)
 
 
 def test():
@@ -219,7 +244,19 @@ def test():
                          100)
     
     entornos_o.simulador(NueveCuartosCiego(x0),
+                         AgenteAleatorio(acciones),
+                         100)
+    
+    entornos_o.simulador(NueveCuartosCiego(x0),
                          AgenteReactivoModeloNueveCuartosCiego(),
+                         100)
+    
+    entornos_o.simulador(NueveCuartosEstocastico(x0),
+                         AgenteAleatorio(acciones),
+                         100)
+    
+    entornos_o.simulador(NueveCuartosEstocastico(x0),
+                         AgenteReactivoModeloNueveCuartos(),
                          100)
     
 if __name__ == "__main__":
