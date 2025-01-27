@@ -1,5 +1,5 @@
 import entornos_f
-from random import choice
+from random import choice, random
 
 class NueveCuartos(entornos_f.Entorno):
     """
@@ -56,8 +56,47 @@ class NueveCuartosCiego(NueveCuartos):
     def percepcion(self, estado):
         robot, _ = estado
         return robot  # Solo devuelve la posición del robot
-    
 
+class NueveCuartosEstocastico(NueveCuartos):
+    """
+    Clase para un entorno estocástico de nueve cuartos.
+    """
+    def transicion(self, estado, accion):
+        robot, cuartos = estado
+        cuartos = cuartos[:]  # Crear una copia de la lista para evitar efectos colaterales
+
+        if accion == "nada":
+            return (estado, 0 if all(c == "limpio" for c in cuartos) else 1)
+
+        if accion == "limpiar":
+            # 80% de probabilidad de limpiar correctamente
+            if random() < 0.8:
+                cuartos[robot] = "limpio"
+            return ((robot, cuartos), 1)
+
+        if accion in ("izq", "der", "subir", "bajar"):
+            prob = random()
+            if prob < 0.8:
+                if accion == "izq" and robot in [1, 2, 4, 5, 7, 8]:
+                    return ((robot - 1, cuartos), 2)
+                elif accion == "der" and robot in [0, 1, 3, 4, 6, 7]:
+                    return ((robot + 1, cuartos), 2)
+                elif accion == "bajar" and robot in [3, 6]:
+                    return ((robot - 3, cuartos), 3)
+                elif accion == "subir" and robot in [2, 5]:
+                    return ((robot + 3, cuartos), 3)
+                else:
+                    return (estado, 1)
+            elif prob < 0.9:
+                # 10% de probabilidad de quedarse en el mismo lugar
+                return (estado, 1)
+            else:
+                # 10% de probabilidad de realizar una acción legal aleatoria
+                acciones = ["izq", "der", "subir", "bajar", "limpiar", "nada"]
+                accion_aleatoria = choice(acciones)
+                return self.transicion(estado, accion_aleatoria)
+
+        return (estado, 1)
 
 class AgenteAleatorioNueveCuartos(entornos_f.Agente):
     """
