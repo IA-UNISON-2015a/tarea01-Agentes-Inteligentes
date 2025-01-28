@@ -98,6 +98,8 @@ class NueveCuartosEstocastico(NueveCuartos):
 
         return (estado, 1)
 
+
+
 class AgenteAleatorioNueveCuartos(entornos_f.Agente):
     """
     Un agente que solo regresa una accion al azar entre las acciones legales
@@ -172,6 +174,48 @@ class AgenteReactivoModeloNueveCuartosCiego(entornos_f.Agente):
         elif robot == 8: return "izq"
         return 'der'
     
+class AgenteRacionalNueveCuartosEstocastico(entornos_f.Agente):
+    """
+    Agente racional para el entorno estocástico.
+    """
+    def __init__(self, n_cuartos):
+        self.modelo = [0] + ["sucio"] * n_cuartos  # [robot, cuartos]
+
+    def programa(self, percepcion):
+        robot, situacion = percepcion
+
+        # Actualizar el modelo interno
+        self.modelo[0] = robot
+        self.modelo[1 + robot] = situacion
+
+        # Verificar si todo está limpio
+        cuartos = self.modelo[1:]
+        if all(c == "limpio" for c in cuartos):
+            return "nada"       # No hace nada si todo está limpio
+
+        # Limpiar si está sucio
+        if situacion == "sucio":
+            return "limpiar"    # Limpia si el cuarto donde se encuentra está sucio
+
+        # Decidir movimiento basado en el modelo interno
+        vecinos = []
+        if robot in [1, 2, 4, 5, 7, 8]:
+            vecinos.append("izq")
+        if robot in [0, 1, 3, 4, 6, 7]:
+            vecinos.append("der")
+        if robot in [3, 6]:
+            vecinos.append("bajar")
+        if robot in [2, 5]:
+            vecinos.append("subir")
+
+        # Priorizar cuartos sucios
+        for accion in vecinos:
+            nuevo_estado, _ = NueveCuartosEstocastico().transicion((robot, cuartos), accion)
+            if nuevo_estado[1][nuevo_estado[0]] == "sucio":
+                return accion
+
+        # Movimiento aleatorio si no hay prioridad
+        return choice(vecinos)
     
 def prueba_agente(agente, entorno_class):
     entornos_f.imprime_simulacion(
@@ -202,11 +246,23 @@ def test_ciego():
     Prueba del entorno de nueve cuartos ciego y los agentes
     """
     print("Prueba del entorno NueveCuartosCiego con un agente aleatorio")
-    prueba_agente(AgenteAleatorioNueveCuartos(), NueveCuartosCiego)
+    prueba_agente(AgenteAleatorioNueveCuartos(['izq', 'der', "subir", "bajar", 'limpiar', 'nada']), NueveCuartosCiego)
 
     print("Prueba del entorno NueveCuartosCiego con un agente reactivo basado en modelo")
     prueba_agente(AgenteReactivoModeloNueveCuartosCiego(9), NueveCuartosCiego)
 
+def test_estocastico():
+    """
+    Prueba del entorno estocástico y los agentes
+    """
+    print("Prueba del entorno NueveCuartosEstocastico con un agente aleatorio")
+    prueba_agente(AgenteAleatorioNueveCuartos(["izq", "der", "subir", "bajar", "limpiar", "nada"]), NueveCuartosEstocastico)
+
+    print("Prueba del entorno NueveCuartosEstocasticocon un agente racional")
+    prueba_agente(AgenteRacionalNueveCuartosEstocastico(9), NueveCuartosEstocastico)
+
+
 if __name__ == "__main__":
-    test()
+    # test()
     # test_ciego()
+    test_estocastico()
