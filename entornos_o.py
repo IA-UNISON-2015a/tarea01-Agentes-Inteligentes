@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import copy
 """
 entornos_o.py
 ------------
@@ -80,23 +81,22 @@ def simulador(entorno, agente, pasos=10, verbose=True):
     @param pasos: Un int con el número de pasos a simular
     @param verbose: Si True, imprime el resultado de la simulación
 
-    @retrun (historial_estados, historial_acciones,
-            historial_desempeño) donde cada una es una lista con los
-            estados, acciones y medida de desempeño encontradas a lo
-            largo de la simulación.
-
+    @return (historial_estados, historial_acciones, historial_desempeño)
+            donde cada una es una lista con los estados, acciones y medidas de desempeño
+            encontradas a lo largo de la simulación.
     """
     historial_costo = [entorno.costo]
-    historial_estados = [entorno.x[:]]
+    historial_estados = [copy.deepcopy(entorno.x)]  # Copia profunda del estado inicial
     historial_acciones = []
 
     for _ in range(pasos):
-        p = entorno.percepcion()
-        a = agente.programa(p)
+        p = entorno.percepcion()  # Obtenemos la percepción (estado actual)
+        # Pasamos el entorno completo al agente, no solo la percepción
+        a = agente.programa([entorno] + list(p))  # Ahora pasamos tanto el entorno como la percepción
         entorno.transicion(a)
 
         historial_costo.append(entorno.costo)
-        historial_estados.append(entorno.x[:])
+        historial_estados.append(copy.deepcopy(entorno.x))  # Copia profunda del estado actual
         historial_acciones.append(a)
 
     historial_acciones.append(None)
